@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="res10">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/permission_handler/intermediates/library_java_res/debug/res.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

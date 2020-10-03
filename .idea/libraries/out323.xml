@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="out32">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/flutter_local_notifications/intermediates/merged_java_res/debug/out.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

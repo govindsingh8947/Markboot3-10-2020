@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="R15">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/permission_handler/intermediates/compile_only_not_namespaced_r_class_jar/release/R.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

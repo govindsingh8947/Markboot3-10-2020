@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="R2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/cloud_firestore/intermediates/compile_only_not_namespaced_r_class_jar/release/R.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

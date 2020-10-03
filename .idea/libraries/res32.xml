@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="res3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/path_provider/intermediates/library_java_res/release/res.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

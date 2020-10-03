@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="res11">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/cloud_firestore/intermediates/library_java_res/release/res.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

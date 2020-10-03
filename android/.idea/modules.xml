@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" group="android" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="android/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1121106486/com.baseflow.permissionhandler-permission_handler.iml" filepath="$PROJECT_DIR$/.idea/modules/1121106486/com.baseflow.permissionhandler-permission_handler.iml" group="android/permission_handler" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1175248863/com.dexterous.flutterlocalnotifications-flutter_local_notifications.iml" filepath="$PROJECT_DIR$/.idea/modules/1175248863/com.dexterous.flutterlocalnotifications-flutter_local_notifications.iml" group="android/flutter_local_notifications" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-775598589/com.example.e2e-e2e.iml" filepath="$PROJECT_DIR$/.idea/modules/-775598589/com.example.e2e-e2e.iml" group="android/e2e" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-2012314599/file_picker.iml" filepath="$PROJECT_DIR$/.idea/modules/-2012314599/file_picker.iml" group="android/file_picker" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/573343960/flutter_mailer.iml" filepath="$PROJECT_DIR$/.idea/modules/573343960/flutter_mailer.iml" group="android/flutter_mailer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-470118434/io.flutter.plugins.firebase.cloudfirestore-cloud_firestore.iml" filepath="$PROJECT_DIR$/.idea/modules/-470118434/io.flutter.plugins.firebase.cloudfirestore-cloud_firestore.iml" group="android/cloud_firestore" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-175151586/io.flutter.plugins.firebase.core-firebase_core.iml" filepath="$PROJECT_DIR$/.idea/modules/-175151586/io.flutter.plugins.firebase.core-firebase_core.iml" group="android/firebase_core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1922113917/io.flutter.plugins.firebase.storage-firebase_storage.iml" filepath="$PROJECT_DIR$/.idea/modules/1922113917/io.flutter.plugins.firebase.storage-firebase_storage.iml" group="android/firebase_storage" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/599098492/io.flutter.plugins.firebaseauth-firebase_auth.iml" filepath="$PROJECT_DIR$/.idea/modules/599098492/io.flutter.plugins.firebaseauth-firebase_auth.iml" group="android/firebase_auth" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1801286253/io.flutter.plugins.firebasemessaging-firebase_messaging.iml" filepath="$PROJECT_DIR$/.idea/modules/-1801286253/io.flutter.plugins.firebasemessaging-firebase_messaging.iml" group="android/firebase_messaging" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1952786614/io.flutter.plugins.flutter_plugin_android_lifecycle-flutter_plugin_android_lifecycle.iml" filepath="$PROJECT_DIR$/.idea/modules/-1952786614/io.flutter.plugins.flutter_plugin_android_lifecycle-flutter_plugin_android_lifecycle.iml" group="android/flutter_plugin_android_lifecycle" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/173894231/io.flutter.plugins.imagepicker-image_picker.iml" filepath="$PROJECT_DIR$/.idea/modules/173894231/io.flutter.plugins.imagepicker-image_picker.iml" group="android/image_picker" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/820688640/io.flutter.plugins.pathprovider-path_provider.iml" filepath="$PROJECT_DIR$/.idea/modules/820688640/io.flutter.plugins.pathprovider-path_provider.iml" group="android/path_provider" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/642902607/io.flutter.plugins.share-share.iml" filepath="$PROJECT_DIR$/.idea/modules/642902607/io.flutter.plugins.share-share.iml" group="android/share" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1249066174/io.flutter.plugins.sharedpreferences-shared_preferences.iml" filepath="$PROJECT_DIR$/.idea/modules/-1249066174/io.flutter.plugins.sharedpreferences-shared_preferences.iml" group="android/shared_preferences" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/838608263/io.flutter.plugins.urllauncher-url_launcher.iml" filepath="$PROJECT_DIR$/.idea/modules/838608263/io.flutter.plugins.urllauncher-url_launcher.iml" group="android/url_launcher" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-692071424/io.github.ponnamkarthik.toast.fluttertoast-fluttertoast.iml" filepath="$PROJECT_DIR$/.idea/modules/-692071424/io.github.ponnamkarthik.toast.fluttertoast-fluttertoast.iml" group="android/fluttertoast" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-699622735/vn.hunghd.flutterdownloader-flutter_downloader.iml" filepath="$PROJECT_DIR$/.idea/modules/-699622735/vn.hunghd.flutterdownloader-flutter_downloader.iml" group="android/flutter_downloader" />
+    </modules>
+  </component>
+</project>

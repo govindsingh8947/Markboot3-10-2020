@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="res31">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/firebase_auth/intermediates/library_java_res/release/res.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

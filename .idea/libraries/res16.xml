@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="res16">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/flutter_plugin_android_lifecycle/intermediates/library_java_res/release/res.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
