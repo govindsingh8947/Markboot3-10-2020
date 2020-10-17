@@ -23,7 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   flutter_swiper: ^1.1.6
   firebase_core: ^0.4.5
   firebase_auth: ^0.16.1
@@ -48,7 +47,7 @@ dependencies:
   file_picker: ^2.0.1+2
   mailer: ^3.2.1
   enough_mail: ^0.0.33
-
+  flutter_spinkit: "^4.1.2"
 
 
   # The following adds the Cupertino Icons font to your application.

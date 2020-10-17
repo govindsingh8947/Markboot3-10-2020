@@ -79,6 +79,7 @@ class CommonWidget {
       {subtype, disable = false, int cardColor = 0xff294073}) {
     print(snapshot.data);
     return Container(
+      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(10)),
       child: Material(
@@ -158,7 +159,7 @@ class CommonWidget {
             child: postType == "Internship"
                 ? Card(
                     child: Container(
-                      // height: 300,
+                      width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
@@ -167,7 +168,7 @@ class CommonWidget {
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.all(8),
-                            width: 100,
+                            width: MediaQuery.of(context).size.width*0.3,
                             height: 150,
                             decoration: BoxDecoration(
                                 //  color: Color(0xff051094),
@@ -299,6 +300,7 @@ class CommonWidget {
                 : Card(
                     child: Container(
                       width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height*0.3,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
@@ -307,8 +309,8 @@ class CommonWidget {
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.all(8),
-                            width: 90,
-                            height: 115,
+                            width: MediaQuery.of(context).size.width*0.2,
+                            height: MediaQuery.of(context).size.height*0.3,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
@@ -320,7 +322,7 @@ class CommonWidget {
                             margin: EdgeInsets.all(8),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,6 +330,7 @@ class CommonWidget {
                                     // snapshot["taskTitle"] ?? "",
                                     Container(
                                       width: MediaQuery.of(context).size.width*.60,
+                                      height: MediaQuery.of(context).size.height*0.04,
                                       child: Text(
                                         snapshot["taskTitle"] ?? "",
                                         overflow: TextOverflow.ellipsis,

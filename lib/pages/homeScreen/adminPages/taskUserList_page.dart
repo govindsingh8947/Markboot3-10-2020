@@ -97,7 +97,7 @@ class _TaskUserListPageState extends State<TaskUserListPage>
     }
     print(userData);
     return Container(
-      //height: 100,
+      width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -106,8 +106,8 @@ class _TaskUserListPageState extends State<TaskUserListPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[leftWidget(userData), rightWidget(userData)],
           ),
           SizedBox(
@@ -124,50 +124,52 @@ class _TaskUserListPageState extends State<TaskUserListPage>
   }
 
   Widget leftWidget(Map<String, dynamic> userData) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(userData["taskTitle"] ?? "",
-            style: TextStyle(
-                color: Colors.green,
-                fontSize: 20,
-                fontWeight: FontWeight.bold)),
-        SizedBox(
-          height: 5,
-        ),
-        Text(
-          userData["name"] ?? "",
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ),
-        Text(
-          userData["emailId"] ?? "",
-          style: TextStyle(color: Colors.white, fontSize: 12),
-        ),
-        Text(
-          userData["phoneNo"] ?? "",
-          style: TextStyle(color: Colors.white, fontSize: 12),
-        ),
-      ],
+    return Container(
+      width: MediaQuery.of(context).size.width*0.4,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(userData["taskTitle"] ?? "",
+              style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            userData["name"] ?? "",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          Text(
+            userData["emailId"] ?? "",
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ),
+          Text(
+            userData["phoneNo"] ?? "",
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 
   Widget rightWidget(Map<String, dynamic> userData) {
-    return Row(
+    return Column(
       children: <Widget>[
         Container(
-          height: 40,
+          width: MediaQuery.of(context).size.width*0.4,
+          height: 50,
           child: RaisedButton(
             onPressed: () {
               approvedAmount(userData["userId"], widget.reward,
                   userData["phoneNo"], userData);
             },
-            child: Row(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(userData["reward"] + "Rs." ?? ""),
-                SizedBox(
-                  width: 4,
-                ),
                 Text(
                   "Verify",
                   style: TextStyle(color: Colors.green),

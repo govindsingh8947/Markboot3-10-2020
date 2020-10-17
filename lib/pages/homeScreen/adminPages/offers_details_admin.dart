@@ -23,6 +23,8 @@ class _offersState extends State<offers> {
   CommonWidget commonWidget = CommonWidget();
   List<String> types = ["Moneyback", "Wow Offers"];
   String selectedType;
+
+
   TextEditingController com_name = TextEditingController();
   TextEditingController user_name = TextEditingController();
   TextEditingController user_email = TextEditingController();
@@ -172,7 +174,6 @@ class _offersState extends State<offers> {
                       //                    print(email);
                       //                  print("\n");
                       if (user.documentID.toString() == "+91${phone}" &&
-                          user.data["name"] == name &&
                           user.data["emailId"] == email) {
                         print("user Got it");
                         setState(() {
@@ -180,7 +181,6 @@ class _offersState extends State<offers> {
                         });
                       }
                     }
-
                     for (var cam in campaigns) {
                       print(cam.data["taskTitle"]);
                       if (cam.data["taskTitle"].toString() == company) {
@@ -189,7 +189,6 @@ class _offersState extends State<offers> {
                           campaign = cam;
                         });
                       }
-
                       if (use != null && campaign != null) {
                         print("found");
                         _showMyDialog(use, campaign);
@@ -197,9 +196,8 @@ class _offersState extends State<offers> {
                         print("Data not Found");
                       }
                     }
+                    _showMyDialog(use ,campaign);
                   }
-
-//                    _showMyDialog();
                 },
                 child: Text(
                   "Submit",
@@ -276,7 +274,6 @@ class _offersState extends State<offers> {
   }
 
   Firestore _firestore = Firestore();
-
   Future<void> _pending_approved(
       DocumentSnapshot user, DocumentSnapshot campaign) async {
     return showDialog<void>(
@@ -320,97 +317,113 @@ class _offersState extends State<offers> {
       DocumentSnapshot user, DocumentSnapshot campaign, String status) async {
     // For the user Side
     var u = user.data;
-    print(u);
+    print(u["name"]);
+    final firestoreInstance = Firestore.instance;
     setState(() {
       if (status == "pending") {
-        u["pendingAmount"] =
-            "${int.parse(u["pendingAmount"]) + int.parse(user_reward.text.trim().toString())}";
+        firestoreInstance.collection("Users").document(user.documentID).updateData({"pendingAmount":u["pendingAmount"]+int.parse(user_reward.text)});
+        firestoreInstance.collection("UsersOffers").add({
+          "offer name":com_name.text.toString(),
+          "reward":user_reward.text.toString(),
+          "time":Timestamp.now(),
+          "status":status,
+          "user phone":user.documentID
+        }).then((value) {Fluttertoast.showToast(msg: "offer added in pending list");});
       } else if (status == "approved") {
-        u["approvedAmount"] =
-            "${int.parse(u["approvedAmount"]) + int.parse(user_reward.text.trim().toString())}";
+        firestoreInstance.collection("Users").document(user.documentID).updateData({"approvedAmount":u["approvedAmount"]+int.parse(user_reward.text)});
+        firestoreInstance.collection("UsersOffers").add({
+          "offer name":com_name.text.toString(),
+          "reward":user_reward.text.toString(),
+          "time":Timestamp.now(),
+          "status":status,
+          "user phone":user.documentID
+        }).then((value) {Fluttertoast.showToast(msg: "offer added in approved list");});
       }
-      var users_cam = u["offersList"];
-      users_cam["${campaign.documentID}"] = false;
-      //print(u["campaignList"]);
-      // users_cam.add(({"${campaign.documentID}" : false}));
-      u["offersList"] = users_cam;
+      else{
+        firestoreInstance.collection("UsersOffers").add({
+          "offer name":com_name.text.toString(),
+          "reward":user_reward.text.toString(),
+          "time":Timestamp.now(),
+          "status":status,
+          "user phone":user.documentID
+        }).then((value) {Fluttertoast.showToast(msg: "offer added in rejected list");});
+      }
+      //var users_cam = u["offersList"];
+      //users_cam["${user.documentID}"] = false;
+      ////print(u["campaignList"]);
+      //// users_cam.add(({"${campaign.documentID}" : false}));
+      //u["offersList"] = users_cam;
     });
     print(u);
 
-    await _firestore
-        .collection("Users")
-        .document(user.documentID)
-        .setData(u, merge: true);
-
     // For Task Side
 
-    List<DocumentSnapshot> campaigns_task =
-        await CommonFunction().getPost("Posts/Offers/Tasks");
-
-    int flag = 0;
-    DocumentSnapshot cam;
-    for (var cams in campaigns_task) {
-      if (cams.documentID.toString() == campaign.documentID) {
-        setState(() {
-          flag = 1;
-          cam = cams;
-        });
-      }
-    }
-
-    print(flag);
-
-    List userr;
-    if (flag == 1) {
-      userr = cam.data["submittedBy"];
-      for (var ut in userr) {
-        //print(ut);
-        if (ut["name"] == u["name"]) {
-          print("user present");
-          print(userr.indexOf(ut));
-          userr.remove(ut);
-          break;
-        }
-      }
-      userr.add({
-        "name": u["name"] ?? "",
-        "emailId": u["emailId"] ?? "",
-        "uploadWorkUri": campaign.data["imgUri"] ?? "",
-        "taskTitle": campaign.data["taskTitle"],
-        "companyName": campaign.data["companyName"],
-        "userId": u["userId"] ?? "",
-        "phoneNo": u["phoneNo"] ?? "",
-        "description": "kdskdsk",
-        "status": status,
-        "reward": user_reward.text.trim().toString()
-      });
-    } else {
-      userr = [];
-      userr.add({
-        "name": u["name"] ?? "",
-        "emailId": u["emailId"] ?? "",
-        "uploadWorkUri": campaign.data["imgUri"] ?? "",
-        "taskTitle": campaign.data["taskTitle"],
-        "companyName": campaign.data["companyName"],
-        "userId": u["userId"] ?? "",
-        "phoneNo": u["phoneNo"] ?? "",
-        "description": "kdskdsk",
-        "status": status,
-        "reward": user_reward.text.trim().toString()
-      });
-    }
-
-    print(userr);
-    Map<String, dynamic> updatedPost = {"submittedBy": userr};
-
-    print(updatedPost);
-
-    await _firestore
-        .collection("Posts")
-        .document("Offers")
-        .collection("Tasks")
-        .document(campaign.documentID)
-        .setData(updatedPost, merge: true);
+    //List<DocumentSnapshot> campaigns_task =
+    //    await CommonFunction().getPost("Posts/Offers/Tasks");
+//
+    //int flag = 0;
+    //DocumentSnapshot cam;
+    //for (var cams in campaigns_task) {
+    //  if (cams.documentID.toString() == campaign.documentID) {
+    //    setState(() {
+    //      flag = 1;
+    //      cam = cams;
+    //    });
+    //  }
+    //}
+//
+    //print(flag);
+//
+    //List userr;
+    //if (flag == 1) {
+    //  userr = cam.data["submittedBy"];
+    //  for (var ut in userr) {
+    //    //print(ut);
+    //    if (ut["name"] == u["name"]) {
+    //      print("user present");
+    //      print(userr.indexOf(ut));
+    //      userr.remove(ut);
+    //      break;
+    //    }
+    //  }
+    //  userr.add({
+    //    "name": u["name"] ?? "",
+    //    "emailId": u["emailId"] ?? "",
+    //    "uploadWorkUri": campaign.data["imgUri"] ?? "",
+    //    "taskTitle": campaign.data["taskTitle"],
+    //    "companyName": campaign.data["companyName"],
+    //    "userId": u["userId"] ?? "",
+    //    "phoneNo": u["phoneNo"] ?? "",
+    //    "description": "kdskdsk",
+    //    "status": status,
+    //    "reward": user_reward.text.trim().toString()
+    //  });
+    //} else {
+    //  userr = [];
+    //  userr.add({
+    //    "name": u["name"] ?? "",
+    //    "emailId": u["emailId"] ?? "",
+    //    "uploadWorkUri": campaign.data["imgUri"] ?? "",
+    //    "taskTitle": campaign.data["taskTitle"],
+    //    "companyName": campaign.data["companyName"],
+    //    "userId": u["userId"] ?? "",
+    //    "phoneNo": u["phoneNo"] ?? "",
+    //    "description": "kdskdsk",
+    //    "status": status,
+    //    "reward": user_reward.text.trim().toString()
+    //  });
+    //}
+//
+    //print(userr);
+    //Map<String, dynamic> updatedPost = {"submittedBy": userr};
+    //print(updatedPost);
+//
+    //await _firestore
+    //    .collection("Posts")
+    //    .document("Offers")
+    //    .collection("Tasks")
+    //    .document(campaign.documentID)
+    //    .setData(updatedPost, merge: true);
   }
 }
 

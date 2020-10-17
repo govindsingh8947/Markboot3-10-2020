@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:markBoot/common/style.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage1 extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage1> {
   ScrollController _scrollController;
   double _containerMaxHeight = 56, _offset, _delta = 0, _oldOffset = 0;
   Firestore _firestore = Firestore.instance;

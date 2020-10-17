@@ -1,4 +1,6 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:markBoot/common/commonFunc.dart';
@@ -25,11 +27,10 @@ class _AmountReqUserListPageState extends State<AmountReqUserListPage>
     //print(snaps[0].data);
     for (DocumentSnapshot snapshot in snaps) {
       for (var map in snapshot.data["submittedBy"]) {
-        //print(map);
+        print(map);
         if (map["status"] == "pending") {
           map["documentId"] = snapshot.documentID.toString();
-          print(map);
-
+          print("mapi=$map");
           //setState(() {
           mapi.add(map);
 
@@ -47,11 +48,10 @@ class _AmountReqUserListPageState extends State<AmountReqUserListPage>
     //print(snaps[0].data);
     for (DocumentSnapshot snapshot in snaps) {
       for (var map in snapshot.data["submittedBy"]) {
-        //print(map);
+        print("map=$map");
         if (map["status"] == "pending") {
           map["documentId"] = snapshot.documentID.toString();
-          print(map);
-
+          print("maps=$map");
           //setState(() {
           mapi_offers.add(map);
 
@@ -86,8 +86,8 @@ class _AmountReqUserListPageState extends State<AmountReqUserListPage>
     });
     // print(maps.length);
 
-    print(maps_gigs.length);
-    print(maps_campaign.length);
+    print("gigs=${maps_gigs.length}");
+    print("cam=${maps_campaign.length}");
     print(maps_offers.length);
   }
 
@@ -131,7 +131,6 @@ class _AmountReqUserListPageState extends State<AmountReqUserListPage>
               unselectedLabelColor: Colors.white,
               //indicatorSize: TabBarIndicatorSize.label,
               indicatorSize: TabBarIndicatorSize.label,
-
               indicator: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -211,7 +210,17 @@ class _AmountReqUserListPageState extends State<AmountReqUserListPage>
                 ),
               ));
   }
-
+   // ignore: missing_return
+   Future<DocumentSnapshot> getUser(String phone) async {
+     List<DocumentSnapshot> usersList =
+     await CommonFunction().getPost("Users");
+     for (var userDocument in usersList) {
+       if (userDocument.documentID.toString() == "phone") {
+         print(userDocument.documentID.toString());
+         return userDocument;
+       }
+     }
+   }
   getoffers() {
     return isShowInitBar == true
         ? Container(
@@ -219,27 +228,94 @@ class _AmountReqUserListPageState extends State<AmountReqUserListPage>
               child: CircularProgressIndicator(),
             ),
           )
-        : (maps_offers.length > 0
-            ? ListView.builder(
-                itemBuilder: (context, index) {
-                  // return Text("hello");
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: taskUserCard(maps_offers[index], "offers"),
-                  );
-                },
-                itemCount: maps_offers.length,
-              )
-            : Center(
-                child: Container(
-                  child: Text(
-                    "No users found",
-                    style: TextStyle(fontSize: 15, color: Colors.white),
-                  ),
-                ),
-              ));
+        : StreamBuilder(stream: _firestore.collection("UsersOffers").orderBy('time',descending: true).snapshots(),
+      builder: (context,snapShot) {
+          if(snapShot.connectionState==ConnectionState.waiting){
+            return Center(child: CircularProgressIndicator(),);
+          }
+          else{
+            return ListView.builder(itemCount:snapShot.data.documents.length,itemBuilder: (ctx,index) {
+              return FutureBuilder(
+                future: Firestore.instance.collection("Users").document(snapShot.data.documents[index]["user phone"]).get(),
+                builder: (context, snapshotA) {
+                  if (snapshotA.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator(),);
+                  }
+                  else {
+                    return ListTile(
+                      leading: CircleAvatar(
+                        radius: 30,
+                        child: Text(
+                        snapShot.data.documents[index]['offer name'],
+                        style: TextStyle(color: Colors.white),),
+                        backgroundColor:
+                        snapShot.data.documents[index]['status'] == "pending"
+                            ? Color(0xff051094)
+                            :
+                        snapShot.data.documents[index]['status'] == "approved"
+                            ? Colors.green
+                            : Colors.redAccent,),
+                      title: Text(snapShot.data.documents[index]['user phone']),
+                      subtitle: Text("${snapshotA.data["emailId"]}"),
+                      trailing: RaisedButton(
+                        child: Text(
+                          snapShot.data.documents[index]['status'] == "pending"
+                              ? "Pending\nRs.${snapShot.data.documents[index]["reward"].toString()}"
+                              : snapShot.data.documents[index]['status'] ==
+                              "approved" ? "Approved\nRs.${snapShot.data.documents[index]["reward"].toString()}" : "Rejected\nRs.${snapShot.data.documents[index]["reward"].toString()}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: Color(0xff051094),
+                      ),
+                      onTap: () {
+                        if (snapShot.data.documents[index]['status'] == "pending") {
+                          updateData(int A) {
+                            final firestoreInstance = Firestore.instance;
+                            if(A==1){
+                            int amount=snapshotA.data["pendingAmount"]-int.parse(snapShot.data.documents[index]["reward"]);
+                            firestoreInstance.collection("Users").document(snapShot.data.documents[index]["user phone"]).updateData({"pendingAmount":amount});
+                            Navigator.of(context).pop();
+                            }
+                            else{
+                              int pAmount=snapshotA.data["pendingAmount"]-int.parse(snapShot.data.documents[index]["reward"]);
+                              int aAmount=snapshotA.data["approvedAmount"]+int.parse(snapShot.data.documents[index]["reward"]);
+                              firestoreInstance.collection("Users").document(snapShot.data.documents[index]["user phone"]).updateData({"pendingAmount":pAmount});
+                              firestoreInstance.collection("Users").document(snapShot.data.documents[index]["user phone"]).updateData({"approvedAmount":aAmount});
+                              Navigator.of(context).pop();
+                            }
+                            return ;
+                          }
+                          return showDialog(context: context,builder: (BuildContext context) {
+                            final firestoreInstance = Firestore.instance;
+                            QuerySnapshot snap = snapShot.data; // Snapshot
+                            List<DocumentSnapshot> items = snap.documents; // List of Documents
+                            DocumentSnapshot item = items[index];
+                            return AlertDialog(
+                              title: Text("Choose One"), actions: [
+                              FlatButton(child: Text("approve"), onPressed: () {
+                                updateData(0);
+                                setState(() {
+                                  firestoreInstance.collection("UsersOffers").document(item.documentID).updateData({"status":"approved"});
+                                });
+                              },),
+                              FlatButton(onPressed: () {
+                                updateData(1);
+                                setState(() {
+                                  firestoreInstance.collection("UsersOffers").document(item.documentID).updateData({"status":"rejected"});
+                                });
+                              }, child: Text("reject"))
+                            ],);
+                          });
+                        }
+                      },
+                    );
+                  }
+                }
+              );
+            });
+          }
+      },);
   }
-
   Widget taskUserCard(Map<String, dynamic> userData, String type) {
     //print(userData);
     return Container(
@@ -314,15 +390,14 @@ class _AmountReqUserListPageState extends State<AmountReqUserListPage>
               print(user.data["pendingAmount"]);
               print(user.data["approvedAmount"]);
               print(userData["reward"]);
-
-              int pending = int.parse(user.data["pendingAmount"] ?? "0");
-              int approved = int.parse(user.data["approvedAmount"] ?? "0");
+              int pending = int.parse(user.data["pendingAmount"].toString() ?? "0");
+              int approved = int.parse(user.data["approvedAmount"].toString() ?? "0");
               int reward = int.parse(userData["reward"]);
               setState(() {
                 pending = pending - reward;
                 approved = approved + reward;
-                u["pendingAmount"] = "$pending";
-                u["approvedAmount"] = "$approved";
+                u["pendingAmount"] = pending;
+                u["approvedAmount"] = approved;
               });
               //  print(u);
               await _firestore

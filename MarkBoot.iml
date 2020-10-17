@@ -5,6 +5,9 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/Markboot3-10-2020/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/Markboot3-10-2020/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/Markboot3-10-2020/build" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="inheritedJdk" />

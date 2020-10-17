@@ -467,7 +467,6 @@ class _InternshipPageDetailsState extends State<InternshipPageDetails>
                     ),
                     GestureDetector(
                         onTap: () {
-//                          showPickImageDialog(_workedImgFile);
                           getFile();
                         },
                         child: Text("upload Resume Doc/pdf file")),
@@ -576,10 +575,14 @@ class _InternshipPageDetailsState extends State<InternshipPageDetails>
 
   Future<void> getFile() async {
     try {
-      FilePickerResult result = await FilePicker.platform.pickFiles(allowMultiple: false ,allowedExtensions: ['pdf', 'doc']);
-
+      FilePickerResult result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc'],
+        allowMultiple: false,
+      );
       if(result != null) {
         resumeFile = File(result.files.single.path);
+        Fluttertoast.showToast(msg: "Uploaded File ${result.names[0]}");
       }
       debugPrint("FILE $resumeFile");
     } catch (e) {

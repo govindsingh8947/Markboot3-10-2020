@@ -7,6 +7,7 @@ import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
 import 'package:markBoot/pages/homeScreen/home.dart';
+import 'package:markBoot/pages/singup/verification_confirm.dart';
 import 'package:markBoot/pages/singup/verification_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,15 +23,17 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  bool isEmail=true;
   TextEditingController nameCont = TextEditingController();
-  TextEditingController phoneNoCont = TextEditingController();
+  TextEditingController pass2Cont = TextEditingController();
   TextEditingController emailCont = TextEditingController();
+  TextEditingController phoneCont = TextEditingController();
   TextEditingController passCont = TextEditingController();
   TextEditingController inviteCodeCont = TextEditingController();
   SharedPreferences prefs;
   CommonFunction commonFunction = CommonFunction();
   CommonWidget commonWidget = CommonWidget();
-
+  var isLoading=false;
   // Firebase
   Firestore _firestore = Firestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -52,7 +55,7 @@ class _SignUpPageState extends State<SignUpPage> {
       backgroundColor: Colors.white,
       body: Container(
         height: MediaQuery.of(context).size.height,
-        color: Color(0xff051094),
+        color: Color(CommonStyle().introBackgroundColor),
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: SingleChildScrollView(
           child: Column(
@@ -76,11 +79,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: TextField(
                     controller: nameCont,
                     //textAlign: TextAlign.center,
-
                     decoration: InputDecoration(
                       hintText: "Name",
-                      contentPadding: EdgeInsets.only(left: 10),
                       border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(left: 10),
                       icon: Icon(Icons.ac_unit),
                     ),
                   )),
@@ -95,59 +97,78 @@ class _SignUpPageState extends State<SignUpPage> {
                     color: Colors.white,
                   ),
                   child: TextField(
-                    controller: phoneNoCont,
-                    keyboardType: TextInputType.number,
+                    controller: phoneCont,
                     //textAlign: TextAlign.center,
-
                     decoration: InputDecoration(
-                      hintText: "Phone No",
-                      contentPadding: EdgeInsets.only(left: 10),
+                      hintText: "Phone No.",
                       border: InputBorder.none,
-                      icon: Icon(Icons.ac_unit),
+                      contentPadding: EdgeInsets.only(left: 10),
+                      icon: Icon(Icons.phone),
                     ),
                   )),
               SizedBox(
                 height: 10,
               ),
-              // Container(
-              //     margin: EdgeInsets.only(left: 30, right: 30),
-              //     padding: EdgeInsets.only(left: 10, right: 10),
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(30),
-              //       color: Colors.white,
-              //     ),
-              //     child: TextField(
-              //       controller: emailCont,
-              //       //textAlign: TextAlign.center,
-              //
-              //       decoration: InputDecoration(
-              //         hintText: "Email Id",
-              //         border: InputBorder.none,
-              //         contentPadding: EdgeInsets.only(left: 10),
-              //         icon: Icon(Icons.ac_unit),
-              //       ),
-              //     )),
-              // SizedBox(
-              //   height: 10,
-              // ),
-              // Container(
-              //     margin: EdgeInsets.only(left: 30, right: 30),
-              //     padding: EdgeInsets.only(left: 10, right: 10),
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(30),
-              //       color: Colors.white,
-              //     ),
-              //     child: TextField(
-              //       controller: passCont,
-              //       //textAlign: TextAlign.center,
-              //
-              //       decoration: InputDecoration(
-              //         hintText: "Password",
-              //         border: InputBorder.none,
-              //         contentPadding: EdgeInsets.only(left: 10),
-              //         icon: Icon(Icons.ac_unit),
-              //       ),
-              //     )),
+             Container(
+                   margin: EdgeInsets.only(left: 30, right: 30),
+                   padding: EdgeInsets.only(left: 10, right: 10),
+                   decoration: BoxDecoration(
+                     borderRadius: BorderRadius.circular(30),
+                     color: Colors.white,
+                   ),
+                   child: TextField(
+                     controller: emailCont,
+                     //textAlign: TextAlign.center,
+                     decoration: InputDecoration(
+                       hintText: isEmail?"Email Id":"Phone No.",
+                       border: InputBorder.none,
+                       contentPadding: EdgeInsets.only(left: 10),
+                       icon: Icon(Icons.email),
+                     ),
+                   )),
+               SizedBox(
+                 height: 10,
+               ),
+               isEmail?Container(
+                   margin: EdgeInsets.only(left: 30, right: 30),
+                   padding: EdgeInsets.only(left: 10, right: 10),
+                   decoration: BoxDecoration(
+                     borderRadius: BorderRadius.circular(30),
+                     color: Colors.white,
+                   ),
+                   child: TextField(
+                     obscureText: true,
+                     controller: passCont,
+                     //textAlign: TextAlign.center,
+                     decoration: InputDecoration(
+                       hintText: "Enter Password",
+                       border: InputBorder.none,
+                       contentPadding: EdgeInsets.only(left: 10),
+                       icon: Icon(Icons.lock_outline),
+                     ),
+                   )):SizedBox(),
+              SizedBox(
+                height: 10,
+              ),
+              isEmail?Container(
+                  margin: EdgeInsets.only(left: 30, right: 30),
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.white,
+                  ),
+                  child: TextField(
+                    obscureText: true,
+                    controller: pass2Cont,
+                    //textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      hintText: "Re-enter Password",
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(left: 10),
+                      icon: Icon(Icons.lock_outline),
+
+                    ),
+                  )):SizedBox(),
               SizedBox(
                 height: 10,
               ),
@@ -161,18 +182,17 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: TextField(
                     controller: inviteCodeCont,
                     //textAlign: TextAlign.center,
-
                     decoration: InputDecoration(
-                      hintText: "Invite Code (Optional)",
+                      hintText: "Invite Code (optional)",
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(left: 10),
                       icon: Icon(Icons.ac_unit),
                     ),
                   )),
               SizedBox(
-                height: 30,
+                height: 10,
               ),
-              Center(
+              isLoading?CircularProgressIndicator():Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 30),
                   width: 220,
@@ -183,7 +203,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         borderRadius: BorderRadius.circular(60)),
                     onPressed: () {
                       FocusScope.of(context).unfocus();
-                      SignUpService();
+                      signUp();
                     },
                     child: Text(
                       "Sign Up",
@@ -227,6 +247,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
+
               SizedBox(
                 height: 50,
               )
@@ -236,7 +257,6 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-
   Widget appLogo() {
     return Container(
       //height: 50,
@@ -281,14 +301,14 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  SignUpService() async {
-    try {
+  signUp() async {
+    if(isEmail) {
+      var email = emailCont.text.trim();
+      var pass1 = passCont.text.trim();
+      var pass2 = pass2Cont.text.trim();
       String name = nameCont.text.trim().toString();
-      String phoneNo = phoneNoCont.text.trim().toString();
-      String email = emailCont.text.trim().toString();
-      String password = passCont.text.trim().toString();
       String inviteCode = inviteCodeCont.text.trim().toString();
-
+      String phoneNo =phoneCont.text.trim().toString();
       if (name.isEmpty) {
         Fluttertoast.showToast(
             msg: "Enter name.",
@@ -302,61 +322,150 @@ class _SignUpPageState extends State<SignUpPage> {
             textColor: Colors.white);
         return;
       }
-      // else if (email.isEmpty) {
-      //   Fluttertoast.showToast(
-      //       msg: "Enter email id.",
-      //       backgroundColor: Colors.red,
-      //       textColor: Colors.white);
-      //   return;
-      // } else if (password.isEmpty) {
-      //   Fluttertoast.showToast(
-      //       msg: "Enter password.",
-      //       backgroundColor: Colors.red,
-      //       textColor: Colors.white);
-      //   return;
-      // }
-
-      if(widget.user.isEmailVerified == false) {
-       AuthResult authResult = await FirebaseAuth.instance.signInWithEmailAndPassword(email: widget.user.email, password: widget.pass);
-        if(authResult.user.isEmailVerified == false) {
-          BotToast.showText(text: "Please verify your email id.");
+      else if (email.isEmpty) {
+        Fluttertoast.showToast(
+            msg: "Enter email id.",
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+        return;
+      } else if (pass1.isEmpty) {
+        Fluttertoast.showToast(
+            msg: "Enter password.",
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+        return;
+      }
+      else {
+        if (pass2 == pass1) {
+          if (pass1.length < 6) {
+            Fluttertoast.showToast(msg: "please enter a strong password"
+            );
+            return;
+          }
+          try {
+            FirebaseAuth auth = FirebaseAuth.instance;
+            AuthResult authResult = await auth.createUserWithEmailAndPassword(
+                email: email, password: pass1);
+            FirebaseUser user = await auth.currentUser();
+            await user.reload();
+            try {
+              await user.sendEmailVerification();
+              Fluttertoast.showToast(
+                  msg: "verification email sent please verify"
+              );
+              await user.reload();
+              prefs.setString("userName", name);
+              prefs.setString("userPhoneNo", ("+91"+"$phoneNo"));
+              prefs.setString("userEmailId", user.email);
+              prefs.setString("userPassword", pass1);
+              prefs.setString("userInviteCode", inviteCode);
+              prefs.setBool("isLogin", true);
+              Future.delayed(Duration(seconds: 0), () {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                  return VerificationConfirmPage(email,pass1,phoneNo,name,inviteCode: inviteCode);
+                })
+                );
+              }
+              );
+              if(user.isEmailVerified){
+                print("verified");
+              }
+              else{
+                print("not verified");
+              }
+            }
+            catch (err) {
+              print(err);
+            }
+          } catch (err) {
+            print(err);
+          }
+        }
+        else if (pass1 != pass2) {
+          Fluttertoast.showToast(msg: "Password do not match"
+          );
           return;
         }
       }
+    }
+    else{
+      try {
+        String name = nameCont.text.trim().toString();
+        String phoneNo = emailCont.text.trim().toString();
+        String password = passCont.text.trim().toString();
+        String inviteCode = inviteCodeCont.text.trim().toString();
 
-      // show ProgressBar
-      commonFunction.showProgressDialog(isShowDialog: true, context: context);
+        if (name.isEmpty) {
+          Fluttertoast.showToast(
+              msg: "Enter name.",
+              backgroundColor: Colors.red,
+              textColor: Colors.white);
+          return;
+        } else if (phoneNo.isEmpty) {
+          Fluttertoast.showToast(
+              msg: "Enter phone number.",
+              backgroundColor: Colors.red,
+              textColor: Colors.white);
+          return;
+        }
+        //else if (email.isEmpty) {
+        //  Fluttertoast.showToast(
+        //      msg: "Enter email id.",
+        //      backgroundColor: Colors.red,
+        //      textColor: Colors.white);
+        //  return;
+        //} else if (password.isEmpty) {
+        //  Fluttertoast.showToast(
+        //      msg: "Enter password.",
+        //      backgroundColor: Colors.red,
+        //      textColor: Colors.white);
+        //  return;
+        //}
 
-      DocumentSnapshot snapshot =
-          await _firestore.collection("Users").document("+91$phoneNo").get();
-      debugPrint("SNAPSHOT ${snapshot.exists}");
-      if (snapshot.exists == false) {
-        prefs.setString("userName", name);
-        prefs.setString("userPhoneNo", "+91$phoneNo");
-        prefs.setString("userEmailId", widget.user.email);
-        prefs.setString("userPassword", widget.pass);
-        prefs.setString("userInviteCode", inviteCode);
-        Map<String, String> userData = {
-          "name": name,
-          "phoneNo": phoneNo,
-          "emailId": widget.user.email,
-          "inviteCode": inviteCode,
-          "userId": widget.user.uid.toString()
-        };
-        await Firestore.instance.collection("Users").document("+91$phoneNo").setData(userData,merge: true);
-        await commonFunction.showProgressDialog(
-            isShowDialog: false, context: context);
-        prefs.setBool("isLogin", true);
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-          builder: (context) => HomePage()
-        ), (route) => false);
-      } else {
-        await commonFunction.showProgressDialog(
-            isShowDialog: false, context: context);
-        Fluttertoast.showToast(msg: "Mobile no already in used");
+        if(widget.user.isEmailVerified == false) {
+          AuthResult authResult = await FirebaseAuth.instance.signInWithEmailAndPassword(email: widget.user.email, password: widget.pass);
+          if(authResult.user.isEmailVerified == false) {
+            BotToast.showText(text: "Please verify your email id.");
+            return;
+          }
+        }
+
+        // show ProgressBar
+        commonFunction.showProgressDialog(isShowDialog: true, context: context);
+
+        DocumentSnapshot snapshot =
+        await _firestore.collection("Users").document("+91$phoneNo").get();
+        debugPrint("SNAPSHOT ${snapshot.exists}");
+        if (snapshot.exists == false) {
+          prefs.setString("userName", name);
+          prefs.setString("userPhoneNo", "+91$phoneNo");
+          prefs.setString("userEmailId", widget.user.email);
+          prefs.setString("userPassword", widget.pass);
+          prefs.setString("userInviteCode", inviteCode);
+          Map<String, String> userData = {
+            "name": name,
+            "phoneNo": phoneNo,
+            "emailId": widget.user.email,
+            "inviteCode": inviteCode,
+            "userId": widget.user.uid.toString()
+          };
+          await Firestore.instance.collection("Users").document("+91$phoneNo").setData(userData,merge: true);
+          await commonFunction.showProgressDialog(
+              isShowDialog: false, context: context);
+          prefs.setBool("isLogin", true);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+              builder: (context) => HomePage()
+          ), (route) => false);
+        } else {
+          await commonFunction.showProgressDialog(
+              isShowDialog: false, context: context);
+          Fluttertoast.showToast(msg: "Mobile no already in used");
+        }
+
+      } catch (e) {
+        debugPrint("Exception : (SignUpService) - ${e.toString()}");
       }
-    } catch (e) {
-      debugPrint("Exception : (SignUpService) - ${e.toString()}");
     }
   }
-}
+  }
+

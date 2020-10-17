@@ -238,7 +238,7 @@ class _IntroPageState extends State<IntroPage> {
       //   color: Colors.blue,
       //padding: EdgeInsets.all(8),
       width: MediaQuery.of(context).size.width,
-      height: _height * .10,
+      height: MediaQuery.of(context).size.height*0.09,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -275,11 +275,11 @@ class _IntroPageState extends State<IntroPage> {
                 activeSize: 13.0,
                 size: 10)),
         itemWidth: 150,
-        itemHeight: 260,
+        itemHeight: MediaQuery.of(context).size.height*0.28,
         itemBuilder: (BuildContext context, int index) {
           return Container(
             width: 100,
-            height: 100,
+            height: MediaQuery.of(context).size.height*0.28,
             padding: EdgeInsets.all(50),
             margin: EdgeInsets.only(left: 30, right: 30, bottom: 40),
             child: ClipOval(
@@ -303,7 +303,7 @@ class _IntroPageState extends State<IntroPage> {
           Center(
             child: Container(
               width: 200,
-              height: 40,
+              height: MediaQuery.of(context).size.height*0.05,
               child: RaisedButton(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -329,16 +329,15 @@ class _IntroPageState extends State<IntroPage> {
           ),
           Container(
             width: 200,
-            height: 40,
+            height: MediaQuery.of(context).size.height*0.05,
             child: RaisedButton(
               color: Color(CommonStyle().lightYellowColor),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(60)),
               onPressed: () async {
 //                await CommonFunction().sendAndRetrieveMessage("this is body1","this is title1");
-
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => EmailSignup()));
+                    MaterialPageRoute(builder: (context) => SignUpPage()));
               },
               child: Text(
                 "Sign Up",

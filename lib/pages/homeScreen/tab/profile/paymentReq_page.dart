@@ -138,12 +138,7 @@ class _PaymentRequestPageState extends State<PaymentRequestPage> {
     try {
       FocusScope.of(context).unfocus();
       //String user_name = name;
-      String amount = amountCont.text;
-      String phoneNo = phoneNoCont.text;
-      String emailId = email.text;
-      if (phoneNo.length > 10) {
-        phoneNo = phoneNo.substring(phoneNo.length - 10);
-      }
+
 
       if (selectedPayMethod == null) {
         Fluttertoast.showToast(
@@ -151,26 +146,28 @@ class _PaymentRequestPageState extends State<PaymentRequestPage> {
             backgroundColor: Colors.red,
             textColor: Colors.white);
         return;
-      } else if (amount.isEmpty) {
+      } else if (phoneNoCont.text==null || phoneNoCont.text.length!=10) {
         Fluttertoast.showToast(
-            msg: "Enter a valid amount",
+            msg: "Enter a valid phone number",
             backgroundColor: Colors.red,
             textColor: Colors.white);
         return;
-      } else if (phoneNo.isEmpty) {
+      } else if (email.text==null || !email.text.contains(".") || !email.text.contains("@")) {
         Fluttertoast.showToast(
-            msg: "Enter valid phone number.",
+            msg: "Enter valid email address.",
             backgroundColor: Colors.red,
             textColor: Colors.white);
         return;
-      } else if (emailId.isEmpty || !emailId.contains("@gmail.com")) {
+      } else if (amountCont.text==null) {
         Fluttertoast.showToast(
-            msg: "Enter valid phone number.",
+            msg: "Enter valid amount.",
             backgroundColor: Colors.red,
             textColor: Colors.white);
         return;
       }
-
+      String amount = amountCont.text;
+      String phoneNo = phoneNoCont.text;
+      String emailId = email.text;
       CommonFunction().showProgressDialog(isShowDialog: true, context: context);
 
       // print("print ${name}");
@@ -179,13 +176,13 @@ class _PaymentRequestPageState extends State<PaymentRequestPage> {
       // print(random.nextIntOfDigits(9));
       DocumentSnapshot snapshot = await Firestore.instance
           .collection("Users")
-          .document(userPhoneNo)
+          .document("+91$phoneNo")
           .get();
       Map<String, dynamic> userData = snapshot.data;
       //String requestAmount = userData["requestAmount"] ?? "0";
-      String approvedAmount = userData["approvedAmount"] ?? "0";
-      print(approvedAmount);
-      print(userPhoneNo);
+      int approvedAmount = userData["approvedAmount"] ?? 0;
+      print(approvedAmount.toString());
+      print(phoneNo);
       // if (int.parse(requestAmount) > 0) {
       //   Fluttertoast.showToast(
       //       msg: "Another transaction is in progress",
@@ -195,12 +192,11 @@ class _PaymentRequestPageState extends State<PaymentRequestPage> {
       //       .showProgressDialog(isShowDialog: false, context: context);
       //   return;
       // }
-
       // requestAmount = (int.parse(requestAmount) + int.parse(amount)).toString();
       approvedAmount =
-          (int.parse(approvedAmount) - int.parse(amount)).toString();
-      print(approvedAmount);
-      if (int.parse(approvedAmount) < 0) {
+          (approvedAmount - int.parse(amount));
+      print(approvedAmount.toString());
+      if (approvedAmount < 0) {
         Fluttertoast.showToast(
             msg: "please try again or contact to admin",
             backgroundColor: Colors.red,
@@ -216,7 +212,7 @@ class _PaymentRequestPageState extends State<PaymentRequestPage> {
         "requestAmount": amount,
         "paymentMethod": selectedPayMethod,
         "paymentNo": phoneNo,
-        "paymentemail": emailId,
+        "paymentEmail": emailId,
         "status": "Processing",
       });
       print("req =$req");
@@ -228,11 +224,12 @@ class _PaymentRequestPageState extends State<PaymentRequestPage> {
 
       Fluttertoast.showToast(
           msg:
-              "Added payment request successfully \n Amount Transfer in 48 Hours",
+              "Added payment request successfully \n Amount will be processed in 48 Hours",
           backgroundColor: Colors.green,
           textColor: Colors.white);
       Navigator.pop(context, true);
     } catch (e) {
+      print(e);
       Fluttertoast.showToast(
           msg: "Please try again",
           backgroundColor: Colors.red,

@@ -11,7 +11,6 @@ import 'package:markBoot/pages/homeScreen/home.dart';
 import 'package:markBoot/pages/singup/email_sign_up.dart';
 import 'package:markBoot/pages/singup/signup_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'admin_login.dart';
 import 'forgot_page.dart';
 
@@ -50,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         //    padding: EdgeInsets.symmetric(horizontal: 0,),
-        color: Color(0xff051094),
+        color: Color(CommonStyle().introBackgroundColor),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -58,7 +57,6 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 70,
               ),
-
               appLogo(),
               SizedBox(
                 height: 20,

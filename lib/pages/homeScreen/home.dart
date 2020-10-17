@@ -106,6 +106,7 @@ class _HomePageState extends State<HomePage> {
           color: Colors.red,
           height: _offset + 56,
           child: BottomNavyBar(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             backgroundColor: Color(0xff051094),
             selectedIndex: _currentIndex,
             onItemSelected: (index) {
@@ -116,10 +117,11 @@ class _HomePageState extends State<HomePage> {
               BottomNavyBarItem(
                   activeColor: Colors.white,
                   inactiveColor: Colors.white,
+                  textAlign: TextAlign.start,
                   title: Text('Home'),
                   icon: Image.asset(
                     "assets/icons/home.png",
-                    width: 20,
+                    width: MediaQuery.of(context).size.width*0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -129,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Gigs'),
                   icon: Image.asset(
                     "assets/icons/gigs.png",
-                    width: 20,
+                    width: MediaQuery.of(context).size.width*0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -140,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Offers'),
                   icon: Image.asset(
                     "assets/icons/offers.png",
-                    width: 28,
+                    width: MediaQuery.of(context).size.width*0.055,
                     height: 28,
                     color: Colors.white,
                   )),
@@ -150,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Internship'),
                   icon: Image.asset(
                     "assets/icons/internship.png",
-                    width: 20,
+                    width: MediaQuery.of(context).size.width*0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -160,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Tournament'),
                   icon: Image.asset(
                     "assets/icons/tourn.png",
-                    width: 20,
+                    width: MediaQuery.of(context).size.width*0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -170,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Profile'),
                   icon: Image.asset(
                     "assets/icons/user.png",
-                    width: 20,
+                    width:MediaQuery.of(context).size.width*0.05,
                     height: 20,
                     color: Colors.white,
                   )),

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,7 +39,7 @@ class CommonFunction {
       QuerySnapshot querySnapshot =  await _firestore.collection(path).getDocuments();
       //print(querySnapshot);
       for(DocumentSnapshot snapshot in querySnapshot.documents) {
-        //print(snapshot.data);
+        print(snapshot.data);
         //debugPrint("SnapshotNAME ${snapshot["task"]}");
         documents.add(snapshot);
       }

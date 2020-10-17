@@ -12,7 +12,10 @@ import 'package:markBoot/pages/homeScreen/tab/profile/post_list_ui.dart';
 import 'package:markBoot/pages/homeScreen/tab/profile/settings_page.dart';
 import 'package:markBoot/pages/homeScreen/tab/profile/transaction_page.dart';
 import 'package:markBoot/pages/homeScreen/tab/tournament/tournament_tab.dart';
+import 'package:markBoot/pages/singup/intro_page.dart';
+import 'package:markBoot/pages/singup/signup_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProfileTab extends StatefulWidget {
   @override
@@ -64,13 +67,11 @@ class _UserProfileTabState extends State<UserProfileTab>
     internshipList = userData["internshipList"] ?? new Map();
     offersList = userData["offersList"] ?? new Map();
     tournamentList = userData["tournamentList"] ?? new Map();
-    approvedAmount = userData["approvedAmount"] ?? "0";
-    pendingAmount = userData["pendingAmount"] ?? "0";
-
+    approvedAmount = userData["approvedAmount"].toString() ?? "0";
+    pendingAmount = userData["pendingAmount"].toString() ?? "0";
     isShowInitBar = false;
     setState(() {});
   }
-
   @override
   void initState() {
     init();
@@ -78,7 +79,6 @@ class _UserProfileTabState extends State<UserProfileTab>
     // TODO: implement initState
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -100,7 +100,7 @@ class _UserProfileTabState extends State<UserProfileTab>
                   child: Stack(
                     children: [
                       Container(
-                          height: 200,
+                          height: MediaQuery.of(context).size.height*0.3,
                           padding:
                               EdgeInsets.only(left: 20, top: 30, right: 20),
                           decoration: BoxDecoration(
@@ -149,9 +149,9 @@ class _UserProfileTabState extends State<UserProfileTab>
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 15),
                                       ),
-//                        SizedBox(
-//                          height: 2,
-//                        ),
+                                   SizedBox(
+                                      height: 2,
+                                     ),
                                       Text(
                                         phoneNo ?? "",
                                         style: TextStyle(
@@ -171,7 +171,7 @@ class _UserProfileTabState extends State<UserProfileTab>
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Container(
-                                height: 110,
+                                height: MediaQuery.of(context).size.height*0.2,
                                 padding: EdgeInsets.only(top: 30, right: 20),
                                 child: Column(
                                   children: [
@@ -266,8 +266,8 @@ class _UserProfileTabState extends State<UserProfileTab>
                                                 children: <Widget>[
                                                   Image.asset(
                                                     "assets/icons/bank.png",
-                                                    width: 20,
-                                                    height: 20,
+                                                    width: MediaQuery.of(context).size.width*0.06,
+                                                    height: MediaQuery.of(context).size.height*0.06,
                                                   ),
                                                   SizedBox(
                                                     width: 1,
@@ -323,8 +323,8 @@ class _UserProfileTabState extends State<UserProfileTab>
                                                 children: <Widget>[
                                                   Image.asset(
                                                     "assets/icons/bank.png",
-                                                    width: 20,
-                                                    height: 20,
+                                                    width: MediaQuery.of(context).size.width*0.06,
+                                                    height: MediaQuery.of(context).size.height*0.06,
                                                   ),
                                                   SizedBox(
                                                     width: 1,
@@ -354,7 +354,7 @@ class _UserProfileTabState extends State<UserProfileTab>
                                         MainAxisAlignment.spaceAround,
                                     children: [
                                       Container(
-                                        height: 50,
+                                        height: MediaQuery.of(context).size.height*0.05,
                                         //padding: EdgeInsets.symmetric(horizontal: 30),
                                         width:
                                             MediaQuery.of(context).size.width *
@@ -384,7 +384,7 @@ class _UserProfileTabState extends State<UserProfileTab>
                                       ),
                                       Container(
                                         //padding: EdgeInsets.symmetric(horizontal: 30),
-                                        height: 50,
+                                        height: MediaQuery.of(context).size.height*0.05,
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.4,

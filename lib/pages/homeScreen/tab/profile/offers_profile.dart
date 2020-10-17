@@ -29,6 +29,7 @@ class _GeneralTabState extends State<GeneralTab>
   getpref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userId = prefs.get("userId");
+    String userPhone=prefs.get("userPhoneNo");
     print(userId);
     List mapi_a = [];
     List mapi_r = [];
@@ -62,17 +63,17 @@ class _GeneralTabState extends State<GeneralTab>
       mapi_r = [];
     });
 
-    snaps = await CommonFunction().getPost("Posts/Offers/Tasks");
+    snaps = await CommonFunction().getPost("UsersOffers");
     //print(snaps[0].data);
     for (DocumentSnapshot snapshot in snaps) {
-      for (var map in snapshot.data["submittedBy"]) {
-        if ((map["status"] == "pending" || map["status"] == "approved") &&
-            map["userId"] == userId) {
-          map["documentId"] = snapshot.documentID.toString();
-          mapi_a.add(map);
-        } else if (map["status"] == "rejected" && map["userId"] == userId) {
-          map["documentId"] = snapshot.documentID.toString();
-          mapi_r.add(map);
+      if(snapshot.data["user phone"]==userPhone){
+        if(snapshot.data["status"]=="approved"){
+          Map<String ,dynamic> a={"status":"approved","reward":snapshot.data["reward"],"offerName":snapshot.data["offer name"]};
+          mapi_a.add(a);
+        }
+        else if(snapshot.data["status"]=="rejected"){
+          Map<String ,dynamic> r={"status":"approved","reward":snapshot.data["reward"],"offerName":snapshot.data["offer name"]};
+          mapi_a.add(r);
         }
       }
     }
@@ -660,7 +661,7 @@ class _GeneralTabState extends State<GeneralTab>
         children: [
           Container(
               height: 100,
-              width: 100,
+              width: MediaQuery.of(context).size.width*0.3,
               child: ClipRect(
                 child: Image.network(userData["logoUri"]),
               )),
@@ -668,7 +669,7 @@ class _GeneralTabState extends State<GeneralTab>
           //   height: 40,
           // ),
           Container(
-            //width: 200,
+            width: MediaQuery.of(context).size.width*0.3,
             padding: EdgeInsets.only(left: 5),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
