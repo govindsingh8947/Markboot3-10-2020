@@ -176,7 +176,7 @@ class _PaymentRequestPageState extends State<PaymentRequestPage> {
       // print(random.nextIntOfDigits(9));
       DocumentSnapshot snapshot = await Firestore.instance
           .collection("Users")
-          .document("+91$phoneNo")
+          .document(prefs.get("userPhoneNo"))
           .get();
       Map<String, dynamic> userData = snapshot.data;
       //String requestAmount = userData["requestAmount"] ?? "0";

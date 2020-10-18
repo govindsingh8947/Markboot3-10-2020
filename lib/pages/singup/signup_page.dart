@@ -166,7 +166,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(left: 10),
                       icon: Icon(Icons.lock_outline),
-
                     ),
                   )):SizedBox(),
               SizedBox(
@@ -343,6 +342,9 @@ class _SignUpPageState extends State<SignUpPage> {
             return;
           }
           try {
+            setState(() {
+              isLoading=true;
+            });
             FirebaseAuth auth = FirebaseAuth.instance;
             AuthResult authResult = await auth.createUserWithEmailAndPassword(
                 email: email, password: pass1);
@@ -353,13 +355,9 @@ class _SignUpPageState extends State<SignUpPage> {
               Fluttertoast.showToast(
                   msg: "verification email sent please verify"
               );
-              await user.reload();
-              prefs.setString("userName", name);
-              prefs.setString("userPhoneNo", ("+91"+"$phoneNo"));
-              prefs.setString("userEmailId", user.email);
-              prefs.setString("userPassword", pass1);
-              prefs.setString("userInviteCode", inviteCode);
-              prefs.setBool("isLogin", true);
+              setState(() {
+                isLoading=false;
+              });
               Future.delayed(Duration(seconds: 0), () {
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
                   return VerificationConfirmPage(email,pass1,phoneNo,name,inviteCode: inviteCode);
@@ -375,9 +373,15 @@ class _SignUpPageState extends State<SignUpPage> {
               }
             }
             catch (err) {
+              setState(() {
+                isLoading=false;
+              });
               print(err);
             }
           } catch (err) {
+            setState(() {
+              isLoading=false;
+            });
             print(err);
           }
         }

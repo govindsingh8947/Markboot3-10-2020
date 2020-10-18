@@ -188,8 +188,8 @@ class _PostListUIPageState extends State<PostListUIPage>
   Widget commonCard(var snapshot, context, postType,
       {subtype, disable = false, int cardColor = 0xff294073}) {
     // print(snapshot.data);
-    return Expanded(
-      child: Container(
+    return
+       Container(
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10)),
         child: Material(
@@ -438,7 +438,6 @@ class _PostListUIPageState extends State<PostListUIPage>
                       ),
                     ),
             )),
-      ),
     );
   }
 }

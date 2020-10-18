@@ -354,11 +354,11 @@ class _UserProfileTabState extends State<UserProfileTab>
                                         MainAxisAlignment.spaceAround,
                                     children: [
                                       Container(
-                                        height: MediaQuery.of(context).size.height*0.05,
+                                        height: MediaQuery.of(context).size.height*0.07,
                                         //padding: EdgeInsets.symmetric(horizontal: 30),
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.4,
+                                                0.45,
                                         child: RaisedButton(
                                           color: Colors.pinkAccent,
                                           shape: RoundedRectangleBorder(
@@ -384,10 +384,10 @@ class _UserProfileTabState extends State<UserProfileTab>
                                       ),
                                       Container(
                                         //padding: EdgeInsets.symmetric(horizontal: 30),
-                                        height: MediaQuery.of(context).size.height*0.05,
+                                        height: MediaQuery.of(context).size.height*0.07,
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.4,
+                                                0.45,
                                         child: RaisedButton(
                                           color: Colors.pinkAccent,
                                           //color: Color(CommonStyle().lightYellowColor),

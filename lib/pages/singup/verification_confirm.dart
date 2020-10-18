@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:markBoot/pages/homeScreen/home.dart';
+import 'package:markBoot/pages/singup/signup_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,17 +28,35 @@ class VerificationConfirmPage extends StatefulWidget {
 class _VerificationConfirmPageState extends State<VerificationConfirmPage> {
   CommonFunction commonFunction = CommonFunction();
   SharedPreferences prefs;
+  var counter=0;
+  Future<void> init() async {
+    prefs = await SharedPreferences.getInstance();
+  }
   @override
   void initState() {
-    Timer.periodic(Duration(seconds: 10), (time) async {FirebaseAuth auth=FirebaseAuth.instance;
+    init();
+    Timer.periodic(Duration(seconds: 5), (time) async {FirebaseAuth auth=FirebaseAuth.instance;
     FirebaseUser user= await auth.currentUser();
+    counter+=5;
+    print(counter.toString());
     user.reload();
     print(user.email);
-    if(user.isEmailVerified){
+    print(time.toString());
+    if(user.isEmailVerified && counter<61){
       print("verified");
       navigate();
       time.cancel();
       return ;
+    }
+    else if(counter>60){
+      user.delete();
+      counter=0;
+      time.cancel();
+      Fluttertoast.showToast(msg: "Could'nt verify please try again");
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        return SignUpPage();
+      })
+      );
     }
     else{
       print("not");
@@ -60,6 +79,12 @@ class _VerificationConfirmPageState extends State<VerificationConfirmPage> {
   }
   navigate() async {
     try {
+      prefs.setString("userName", widget.name);
+      prefs.setString("userPhoneNo", ("+91"+"${widget.phoneNo}"));
+      prefs.setString("userEmailId", widget.email);
+      prefs.setString("userPassword", widget.pass);
+      prefs.setString("userInviteCode", widget.inviteCode);
+      prefs.setBool("isLogin", true);
       Firestore _firestore = Firestore.instance;
       commonFunction.showProgressDialog(isShowDialog: true, context: context);
       FirebaseAuth auth = FirebaseAuth.instance;

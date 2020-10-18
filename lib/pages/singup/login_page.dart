@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   SharedPreferences prefs;
   CommonFunction commonFunction = CommonFunction();
   String userVerificationId;
-
+  bool isLoading=false;
   Future<void> init() async {
     prefs = await SharedPreferences.getInstance();
   }
@@ -104,14 +104,14 @@ class _LoginPageState extends State<LoginPage> {
                 height: 30,
               ),
               Container(
-                width: 220,
+                width: isLoading?100:220,
                 padding: EdgeInsets.symmetric(horizontal: 30),
                 height: 40,
 //              shape: RoundedRectangleBorder(
 //                  borderRadius: BorderRadius.circular(20)
 //              ),
 
-                child: RaisedButton(
+                child: isLoading?CircularProgressIndicator():RaisedButton(
                   color: Color(CommonStyle().lightYellowColor),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
@@ -135,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
               GestureDetector(
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => EmailSignup()));
+                      MaterialPageRoute(builder: (context) => SignUpPage()));
                 },
                 child: Padding(
                   padding: EdgeInsets.all(8),
@@ -235,17 +235,24 @@ class _LoginPageState extends State<LoginPage> {
 
   userLogin() async {
     try {
+
       debugPrint("userLogin");
       String phoneNo = phoneCont.text.trim().toString();
       String password = passCont.text.trim().toString();
       print(password);
       if (phoneNo.isEmpty) {
+        setState(() {
+          isLoading=false;
+        });
         Fluttertoast.showToast(
             msg: "Enter phone number",
             backgroundColor: Colors.red,
             textColor: Colors.white);
         return;
       } else if (password.isEmpty) {
+        setState(() {
+          isLoading=false;
+        });
         Fluttertoast.showToast(
             msg: "Enter password",
             backgroundColor: Colors.red,
@@ -271,6 +278,9 @@ class _LoginPageState extends State<LoginPage> {
 
   login_user(String phoneNo, String password) async {
    try{
+     setState(() {
+       isLoading=true;
+     });
      DocumentSnapshot snapshot =
      await _firestore.collection("Users").document("+91$phoneNo").get();
      debugPrint("SNAPSHOT ${snapshot.exists}");
@@ -289,15 +299,20 @@ class _LoginPageState extends State<LoginPage> {
          prefs.setString("referralCode", userData["referralCode"] ?? "");
          prefs.setBool("isLogin", true);
          print(prefs.getString("userPhoneNo"));
-
          Navigator.pushAndRemoveUntil(
              context,
              MaterialPageRoute(builder: (context) => HomePage()),
                  (route) => false);
        } else {
+         setState(() {
+           isLoading=false;
+         });
          debugPrint("LOGIN UNSUCCESSFUL");
        }
      } else {
+       setState(() {
+         isLoading=false;
+       });
        Fluttertoast.showToast(
            msg: "Phone number doesn't exist.",
            backgroundColor: Colors.red,
@@ -305,6 +320,9 @@ class _LoginPageState extends State<LoginPage> {
      }
    }
    catch(e) {
+     setState(() {
+       isLoading=false;
+     });
      debugPrint("Exception :(login_user) -> $e");
      if(e.toString().contains("ERROR_WRONG_PASSWORD")) {
        BotToast.showText(text:"The password is invalid or the user does not have a password" ,contentColor: Colors.red);
@@ -313,6 +331,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   admin_user(String emialNo, String password) async {
+    setState(() {
+      isLoading=true;
+    });
     bool isLogin = false;
 
     DocumentSnapshot snapshot = await _firestore
@@ -333,14 +354,21 @@ class _LoginPageState extends State<LoginPage> {
         prefs.setBool("isAdminLogin", true);
         prefs.setBool("isLogin", false);
         //prefs.setBool("isLogin", true);
+
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => AdminHomePage()),
             (route) => false);
       } else {
+        setState(() {
+          isLoading=false;
+        });
         debugPrint("LOGIN UNSUCCESSFUL");
       }
     } else {
+      setState(() {
+        isLoading=false;
+      });
       Fluttertoast.showToast(
           msg: "Email ID doesn't exist.",
           backgroundColor: Colors.red,
