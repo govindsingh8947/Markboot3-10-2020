@@ -204,7 +204,7 @@ class CommonWidget {
                                       child: Text(
                                         snapshot["taskTitle"] ?? "",
                                         overflow: TextOverflow.clip,
-                                        maxLines: 1,
+                                        maxLines: 2,
                                         style: TextStyle(
                                             color: Color(0xff051094),
                                             fontSize: 20,
@@ -230,7 +230,6 @@ class CommonWidget {
                                         style: TextStyle(
                                           //         color: Color(CommonStyle().lightYellowColor),
                                           color: Colors.black,
-
                                           fontSize: 13,
                                         ),
                                       ),
@@ -310,7 +309,7 @@ class CommonWidget {
                           Container(
                             margin: EdgeInsets.all(8),
                             width: MediaQuery.of(context).size.width*0.2,
-                            height: MediaQuery.of(context).size.height*0.3,
+                            height: MediaQuery.of(context).size.height*0.38,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
@@ -330,14 +329,14 @@ class CommonWidget {
                                     // snapshot["taskTitle"] ?? "",
                                     Container(
                                       width: MediaQuery.of(context).size.width*.60,
-                                      height: MediaQuery.of(context).size.height*0.04,
+                                      height: MediaQuery.of(context).size.height*0.058,
                                       child: Text(
                                         snapshot["taskTitle"] ?? "",
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
                                         style: TextStyle(
                                             color: Colors.black54,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
