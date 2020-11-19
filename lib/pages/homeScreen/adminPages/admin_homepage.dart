@@ -77,13 +77,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         //backgroundColor: Color(CommonStyle().appbarColor),
-        backgroundColor: Color(0xff051094),
+        backgroundColor: Colors.amber,
         onPressed: () {
           showPostPopup();
         },
         child: Icon(
           Icons.add,
-          color: Color(CommonStyle().darkBlueColor),
+          color: Colors.white,
           size: 25,
         ),
       ),

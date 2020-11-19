@@ -7,7 +7,7 @@ import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/taskUserList_page.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/tournament_admin_page.dart';
-
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'internship_userlist_page.dart';
 
 class PostListPage extends StatefulWidget {
@@ -21,6 +21,25 @@ class PostListPage extends StatefulWidget {
 
 class _PostListPageState extends State<PostListPage> {
   List<DocumentSnapshot> snapshots;
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
+
+  void _onRefresh() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+      setState(() {
+
+      });
+    _refreshController.loadComplete();
+  }
 
   init() async {
     try {
@@ -49,50 +68,57 @@ class _PostListPageState extends State<PostListPage> {
           widget.title + " Posts",
         ),
       ),
-      body: CustomScrollView(
-        primary: false,
-        slivers: <Widget>[
-          snapshots != null && snapshots.length > 0
-              ? SliverPadding(
-                  padding: const EdgeInsets.all(20),
-                  sliver: SliverGrid.count(
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 2,
-                    childAspectRatio: 2 / 3,
-                    children: snapshots.map((item) {
-                      return singleCard(item, context, "Admin");
-                    }).toList(),
-                  ),
-                )
-              : (snapshots == null
-                  ? SliverToBoxAdapter(
-                      child: Container(
-                      margin: EdgeInsets.only(top: 50),
-                      child: Center(
+      body: SmartRefresher(
+        enablePullDown: true,
+        header: WaterDropHeader(),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
+        child: CustomScrollView(
+          primary: false,
+          slivers: <Widget>[
+            snapshots != null && snapshots.length > 0
+                ? SliverPadding(
+                    padding: const EdgeInsets.all(20),
+                    sliver: SliverGrid.count(
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: 2,
+                      childAspectRatio: 2 / 3,
+                      children: snapshots.map((item) {
+                        return singleCard(item, context, "Admin");
+                      }).toList(),
+                    ),
+                  )
+                : (snapshots == null
+                    ? SliverToBoxAdapter(
                         child: Container(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator()),
-                      ),
-                    ))
-                  : SliverToBoxAdapter(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height - 100,
+                        margin: EdgeInsets.only(top: 50),
                         child: Center(
                           child: Container(
-                            child: Text(
-                              "No Data Found",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator()),
+                        ),
+                      ))
+                    : SliverToBoxAdapter(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height - 100,
+                          child: Center(
+                            child: Container(
+                              child: Text(
+                                "No Data Found",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    )),
-        ],
+                      )),
+          ],
+        ),
       ),
     );
   }
@@ -100,8 +126,9 @@ class _PostListPageState extends State<PostListPage> {
   Widget singleCard(DocumentSnapshot snapshot, context, postType, {subtype}) {
     //print("snapi=${snapshot["submittedBy"][0]["companyName"]}");
     //if()
-
+    print("${snapshot.documentID} |");
     print(snapshot.data);
+    print(snapshot.data["appliedBy"][0]["companyName"]);
 //   if( (snapshot["submittedBy"].where((item){
 //     if(item["status"]=="applied"){
 //       return true;
@@ -171,7 +198,7 @@ class _PostListPageState extends State<PostListPage> {
                             left: 4, right: 2, top: 2, bottom: 2),
                         child: Text(
                           widget.path.contains("Internship")
-                              ? snapshot["companyName"] ?? ""
+                              ? snapshot.data["appliedBy"][0]["companyName"] ??""
                               : snapshot["submittedBy"][0]["companyName"],
                           style: TextStyle(
                             fontSize: 14,
@@ -184,7 +211,7 @@ class _PostListPageState extends State<PostListPage> {
                         height: 100,
                         child: Text(
                           widget.path.contains("Internship")
-                              ? snapshot["taskTitle"] ?? ""
+                              ? snapshot.data["appliedBy"][0]["taskTitle"] ?? ""
                               : snapshot["submittedBy"][0]["taskTitle"] ?? "",
                           overflow: TextOverflow.clip,
                           textAlign: TextAlign.center,

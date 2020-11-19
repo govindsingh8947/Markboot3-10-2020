@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:markBoot/pages/homeScreen/tab/gigs/tasks_page.dart';
@@ -168,14 +169,14 @@ class CommonWidget {
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.all(8),
-                            width: MediaQuery.of(context).size.width*0.3,
-                            height: 150,
+                            width: MediaQuery.of(context).size.width*0.2,
+                            height: MediaQuery.of(context).size.width*0.2,
                             decoration: BoxDecoration(
                                 //  color: Color(0xff051094),
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
-                                  fit: BoxFit.contain,
-                                  //   scale: 3,
+                                  fit: BoxFit.fill,
+                                     scale: 3,
                                   image: NetworkImage(
                                     snapshot["logoUri"].toString(),
                                   ),
@@ -196,18 +197,20 @@ class CommonWidget {
                                           //                  color: Color(CommonStyle().lightYellowColor),
                                           color: Colors.black,
                                           fontStyle: FontStyle.italic,
-                                          fontSize: 15,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
-                                    Center(
+                                    Container(
+                                      width: MediaQuery.of(context).size.width*.60,
+                                      height: MediaQuery.of(context).size.height*0.06,
                                       child: Text(
                                         snapshot["taskTitle"] ?? "",
-                                        overflow: TextOverflow.clip,
+                                        overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
                                         style: TextStyle(
                                             color: Color(0xff051094),
-                                            fontSize: 20,
+                                            fontSize: 17,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
@@ -309,7 +312,7 @@ class CommonWidget {
                           Container(
                             margin: EdgeInsets.all(8),
                             width: MediaQuery.of(context).size.width*0.2,
-                            height: MediaQuery.of(context).size.height*0.38,
+                            height: MediaQuery.of(context).size.width*0.2,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(

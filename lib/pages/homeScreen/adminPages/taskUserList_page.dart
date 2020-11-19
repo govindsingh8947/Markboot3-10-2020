@@ -9,7 +9,7 @@ import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/style.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'admin_homepage.dart';
 
 class TaskUserListPage extends StatefulWidget {
@@ -28,7 +28,25 @@ class _TaskUserListPageState extends State<TaskUserListPage>
 
   String _localPath;
   bool isShowDownloadBar = false;
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
 
+  void _onRefresh() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+      setState(() {
+
+      });
+    _refreshController.loadComplete();
+  }
   Future<String> _findLocalPath() async {
     final directory = await getExternalStorageDirectory();
     return directory.path;
@@ -38,7 +56,6 @@ class _TaskUserListPageState extends State<TaskUserListPage>
     Map<Permission, PermissionStatus> statuses = await [
       Permission.storage,
     ].request();
-
     _localPath = (await _findLocalPath()) + Platform.pathSeparator + 'Download';
 
     final savedDir = Directory(_localPath);
@@ -69,17 +86,24 @@ class _TaskUserListPageState extends State<TaskUserListPage>
         ),
         backgroundColor: Color(CommonStyle().backgroundColor),
         body: widget.taskUserList.length > 0
-            ? Container(
-                margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 10,
+            ? SmartRefresher(
+          enablePullDown: true,
+          header: WaterDropHeader(),
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoading: _onLoading,
+              child: Container(
+                  margin: EdgeInsets.only(top: 10),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10,
+                  ),
+                  child: ListView.builder(
+                      itemCount: widget.taskUserList.length,
+                      itemBuilder: (context, index) {
+                        return taskUserCard(widget.taskUserList[index]);
+                      }),
                 ),
-                child: ListView.builder(
-                    itemCount: widget.taskUserList.length,
-                    itemBuilder: (context, index) {
-                      return taskUserCard(widget.taskUserList[index]);
-                    }),
-              )
+            )
             : Center(
                 child: Container(
                   height: 30,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,6 +10,10 @@ import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
 
+enum OfferType{
+  Important,
+  UnImportant,
+}
 class offers extends StatefulWidget {
   //String type;
   //String subtype;
@@ -23,8 +28,7 @@ class _offersState extends State<offers> {
   CommonWidget commonWidget = CommonWidget();
   List<String> types = ["Moneyback", "Wow Offers"];
   String selectedType;
-
-
+  bool isClickcompanyLogo=true;
   TextEditingController com_name = TextEditingController();
   TextEditingController user_name = TextEditingController();
   TextEditingController user_email = TextEditingController();
@@ -32,25 +36,136 @@ class _offersState extends State<offers> {
   TextEditingController user_reward = TextEditingController();
 //  TextEditingController  = TextEditingController();
   TextEditingController descrip = TextEditingController();
-//  TextEditingController cashbackLinkCont = TextEditingController();
-//  TextEditingController salaryCont = TextEditingController();
-//  TextEditingController locationCont = TextEditingController();
-//  TextEditingController durationCont = TextEditingController();
-//  TextEditingController categoryCont = TextEditingController();
-//  TextEditingController designationCont = TextEditingController();
-//  TextEditingController startDateCont = TextEditingController();
-//  TextEditingController applyByCont = TextEditingController();
-//  TextEditingController skillsReqCont = TextEditingController();
-//
-  init() {}
+  File _companyFileImg;
+  final picker = ImagePicker();
+  var isClickoffer=false;
+  var isClickpost=false;
 
+  Widget showCamera(fileImg) {
+    return Center(
+        child: fileImg == null
+            ? Container(
+          width: 100,
+          height: 80,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(10)),
+          child: Container(
+              width: 20,
+              height: 20,
+              child: Image.asset(
+                "assets/icons/camera.png",
+                width: 20,
+                height: 20,
+                fit: BoxFit.cover,
+              )),
+        )
+            : Container(
+          width: 100,
+          height: 80,
+          decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white38)),
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.file(
+                fileImg,
+                fit: BoxFit.fill,
+              )),
+        ));
+  }
+  init() {}
+  Future<String> uploadToStorage(File uploadfile) async {
+    final StorageReference storageReference =
+    FirebaseStorage.instance.ref().child("image").child(uploadfile.path);
+    final StorageUploadTask uploadTask = storageReference.putFile(uploadfile);
+    debugPrint("Upload ${uploadTask.isComplete}");
+    StorageTaskSnapshot snapshot = await uploadTask.onComplete;
+    var downloadUrl = await snapshot.ref.getDownloadURL();
+    debugPrint("URL $downloadUrl");
+    return downloadUrl;
+  }
   @override
   void initState() {
     init();
     // TODO: implement initState
     super.initState();
   }
+  showPickImageDialog(showfileImg) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Material(
+            color: Colors.transparent,
+            child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Color(CommonStyle().blueColor),
+                    borderRadius: BorderRadius.circular(10)),
+                height: 260,
+                width: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        pickImageGallery(showfileImg);
+                      },
+                      child: Text("Gallery"),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        pickImageCamera(showfileImg);
+                      },
+                      child: Text("Camera"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+  pickImageGallery(pickFileImg) async {
+    try {
+      final pickedFile =
+      await picker.getImage(source: ImageSource.gallery, imageQuality: 100);
 
+      setState(() {
+        debugPrint("ISCLICK $isClickcompanyLogo");
+        if (isClickcompanyLogo == true) {
+          _companyFileImg = File(pickedFile.path);
+
+        }
+        isClickcompanyLogo = false;
+
+      });
+    } catch (e) {
+      debugPrint("Exception : (pickImage) -> $e");
+    }
+  }
+
+  pickImageCamera(showfileImg) async {
+    try {
+      final pickedFile =
+      await picker.getImage(source: ImageSource.camera, imageQuality: 100);
+      setState(() {
+        if (isClickcompanyLogo == true) {
+          debugPrint("COMPANYLOOOOOGO");
+          _companyFileImg = File(pickedFile.path);
+        }
+      });
+    } catch (e) {
+      debugPrint("Exception : (pickImage) -> $e");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,6 +225,15 @@ class _offersState extends State<offers> {
             Center(
                 child: commonWidget.commonTextField(
                     controller: user_reward, inputText: "Reward")),
+            SizedBox(height: 10,),
+            Center(child: Text("Logo"),),
+            GestureDetector(
+                onTap: () {
+                  showPickImageDialog(_companyFileImg);
+                  isClickcompanyLogo = true;
+                  setState(() {});
+                },
+                child: showCamera(_companyFileImg)),
             SizedBox(
               height: 20,
             ),
@@ -117,6 +241,7 @@ class _offersState extends State<offers> {
 //            SizedBox(
 //              height: 30,
 //            ),
+            SizedBox(height: 5,),
             Container(
               height: 50,
               width: MediaQuery.of(context).size.width,
@@ -149,7 +274,8 @@ class _offersState extends State<offers> {
                       name.isEmpty ||
                       phone.isEmpty ||
                       email.isEmpty ||
-                      reward.isEmpty) {
+                      reward.isEmpty
+                     ) {
                     print("Please enter the data");
                   } else {
                     List<DocumentSnapshot> users =
@@ -319,6 +445,9 @@ class _offersState extends State<offers> {
     var u = user.data;
     print(u["name"]);
     final firestoreInstance = Firestore.instance;
+    CommonFunction().showProgressDialog(isShowDialog: true, context: context);
+    String PicUri = await uploadToStorage(_companyFileImg);
+
     setState(() {
       if (status == "pending") {
         firestoreInstance.collection("Users").document(user.documentID).updateData({"pendingAmount":u["pendingAmount"]+int.parse(user_reward.text)});
@@ -327,7 +456,9 @@ class _offersState extends State<offers> {
           "reward":user_reward.text.toString(),
           "time":Timestamp.now(),
           "status":status,
-          "user phone":user.documentID
+          "user phone":user.documentID,
+          "logoUri":PicUri,
+
         }).then((value) {Fluttertoast.showToast(msg: "offer added in pending list");});
       } else if (status == "approved") {
         firestoreInstance.collection("Users").document(user.documentID).updateData({"approvedAmount":u["approvedAmount"]+int.parse(user_reward.text)});
@@ -336,7 +467,9 @@ class _offersState extends State<offers> {
           "reward":user_reward.text.toString(),
           "time":Timestamp.now(),
           "status":status,
-          "user phone":user.documentID
+          "user phone":user.documentID,
+          "logoUri":PicUri,
+
         }).then((value) {Fluttertoast.showToast(msg: "offer added in approved list");});
       }
       else{
@@ -345,7 +478,9 @@ class _offersState extends State<offers> {
           "reward":user_reward.text.toString(),
           "time":Timestamp.now(),
           "status":status,
-          "user phone":user.documentID
+          "user phone":user.documentID,
+          "logoUri":PicUri,
+
         }).then((value) {Fluttertoast.showToast(msg: "offer added in rejected list");});
       }
       //var users_cam = u["offersList"];

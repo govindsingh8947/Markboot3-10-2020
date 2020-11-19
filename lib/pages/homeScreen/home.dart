@@ -217,21 +217,22 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       int i = 1;
       headerSwipeList = new List();
       for (DocumentSnapshot snapshot in documentList_cash) {
+        print(documentList_cash.length);
         DocumentSnapshot snap = snapshot;
+       if(snapshot.data["isImportant"]){
         headerSwipeList.add({"type": "Cashbacks", "docx": snap});
-        print(snapshot.data);
-        if (i == 3) break;
+        if (i == 4) break;
         i++;
-      }
+      }}
       for (DocumentSnapshot snapshot in documentList_50_50) {
+        print(documentList_50_50.length);
         DocumentSnapshot snap = snapshot;
+        if(snapshot.data["isImportant"]){
         headerSwipeList.add({"type": "50 on 50", "docx": snap});
-        if (i == 3) break;
+        if (i == 4) break;
         i++;
-      }
-      debugPrint("DocumentSNAP $documentList_50_50");
+      }}
 
-      debugPrint("DocumentSNAP $documentList_cash");
       setState(() {});
     } catch (e) {
       debugPrint("Exception : (init)-> $e");
@@ -379,7 +380,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               image: DecorationImage(
                                   fit: BoxFit.fill,
                                   image: NetworkImage(headerSwipeList[index]
-                                      ["docx"]["imgUri"]))),
+                                      ["docx"]["offerPicUri"]))),
                         ),
                       ),
                       Positioned(

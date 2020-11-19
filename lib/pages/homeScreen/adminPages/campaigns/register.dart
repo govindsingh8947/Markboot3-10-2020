@@ -12,9 +12,6 @@ import 'package:markBoot/common/style.dart';
 class register extends StatefulWidget {
   //String type;
   //String subtype;
-
-  register();
-
   @override
   _registerState createState() => _registerState();
 }
@@ -140,24 +137,28 @@ class _registerState extends State<register> {
                       });
                     }
                   }
-
+                  print("finding campaigns");
+                  if(campaigns.isEmpty){
+                    Fluttertoast.showToast(msg: "Campaigns is empty");
+                  }
+                  else{
                   for (var cam in campaigns) {
                     print(cam.data["companyName"]);
-                    if (cam.data["taskTitle"].toString() == company) {
+                    if (cam.data["companyName"].toString() == company) {
                       print(" campaign Got it");
                       setState(() {
                         campaign = cam;
                       });
+                      break;
                     }
-
+                  }
                     if (use != null && campaign != null) {
                       print("found");
                       _showMyDialog(use, campaign);
                     } else {
                       print("Data not Found");
                     }
-                  }
-                }
+                }}
 
 //                    _showMyDialog();
               },
@@ -207,7 +208,7 @@ class _registerState extends State<register> {
                 //_pending_approved(user, campaign);
                 // _pending_approved(userId);
                 // Navigator.pop(context);
-                upload_data(user, campaign, "approved").then(() {
+                upload_data(user, campaign, "approved").then((value) {
                   Navigator.pop(context);
                 });
               },
@@ -218,12 +219,23 @@ class _registerState extends State<register> {
                 //_pending_approved(user, campaign);
                 // _pending_approved(userId);
                 //Navigator.pop(context);
-                await upload_data(user, campaign, "pending").then(() {
+                await upload_data(user, campaign, "pending").then((value) {
                   Navigator.pop(context);
                 });
                 //  Navigator.pop(context);
               },
             ),
+            FlatButton(
+              child: Text('On Going'),
+              onPressed: () async {
+                //_pending_approved(user, campaign);
+                // _pending_approved(userId);
+                // Navigator.pop(context);
+                upload_data(user, campaign, "ongoing").then((value) {
+                  Navigator.pop(context);
+                });
+              },
+            )
           ],
         );
       },
@@ -239,18 +251,15 @@ class _registerState extends State<register> {
     Map<String, dynamic> u = user.data;
     // print(u);
     print(status);
+    final firestoreInstance = Firestore.instance;
     setState(() {
       print(user_reward.text);
       if (status == "pending") {
-        print(int.parse(u["pendingAmount"]) +
-            int.parse(user_reward.text.trim().toString()));
-        print(int.parse(user_reward.text.trim().toString()));
-        //   "${int.parse(u["pendingAmount"]) + int.parse(user_reward.text.trim().toString())}");
-        u["pendingAmount"] =
-            "${int.parse(u["pendingAmount"] ?? "0") + int.parse(user_reward.text.trim().toString())}";
-      } else if (status == "approved") {
-        u["approvedAmount"] =
-            "${int.parse(u["approvedAmount"] ?? "0") + int.parse(user_reward.text.trim().toString())}";
+        firestoreInstance.collection("Users").document(user.documentID).updateData({"pendingAmount":u["pendingAmount"]+int.parse(user_reward.text)});
+      }
+      else if (status == "approved") {
+        firestoreInstance.collection("Users").document(user.documentID).updateData({"approvedAmount":u["approvedAmount"]+int.parse(user_reward.text)});
+
       }
       //    var users_cam = u["campaignList"];
 //      print(null);
@@ -263,14 +272,10 @@ class _registerState extends State<register> {
       //u["campaignList"] = users_cam;
       //}
     });
-    print(u);
-
-    print(user.documentID);
-    print(u);
-    await _firestore
-        .collection("Users")
-        .document(user.documentID)
-        .setData(u, merge: true);
+    //await _firestore
+    //    .collection("Users")
+    //    .document(user.documentID)
+    //    .setData(u, merge: true);
 
     // For Task Side
 
@@ -287,10 +292,8 @@ class _registerState extends State<register> {
         });
       }
     }
-
     print(flag);
     print(campaign.data);
-
     List userr;
     if (flag == 1) {
       userr = cam.data["submittedBy"];
@@ -311,13 +314,14 @@ class _registerState extends State<register> {
         "uploadWorkUri": campaign.data["imgUri"] ?? "",
         "userId": u["userId"] ?? "",
         "phoneNo": u["phoneNo"] ?? "",
-        //"description": "kdskdsk",
+        "description": descrip.text.trim(),
         "status": status,
         "reward": user_reward.text.trim().toString(),
         "imgUri": campaign.data["imgUri"],
         "logoUri": campaign.data["logoUri"],
         "target": campaign.data["target"],
-        "taskDesc": campaign.data["taskDesc"]
+        "taskDesc": campaign.data["taskDesc"],
+        "taskStatus":status=="approved"?campaign.data["maxStatus"]:0,
       });
     } else {
       userr = [];
@@ -329,16 +333,17 @@ class _registerState extends State<register> {
         "uploadWorkUri": campaign.data["imgUri"] ?? "",
         "userId": u["userId"] ?? "",
         "phoneNo": u["phoneNo"] ?? "",
-        //"description": "kdskdsk",
+        "description": descrip.text.trim(),
         "status": status,
         "reward": user_reward.text.trim().toString(),
         "imgUri": campaign.data["imgUri"],
         "logoUri": campaign.data["logoUri"],
         "target": campaign.data["target"],
-        "taskDesc": campaign.data["taskDesc"]
+        "taskDesc": campaign.data["taskDesc"],
+        "UserStatus":status=="approved"?campaign.data["maxStatus"]:0,
+        "maxStatus":campaign.data["maxStatus"],
       });
     }
-
     print(userr);
     Map<String, dynamic> updatedPost = {"submittedBy": userr};
 
@@ -350,5 +355,6 @@ class _registerState extends State<register> {
         .collection("Campaign Tasks")
         .document(campaign.documentID)
         .setData(updatedPost, merge: true);
+    return;
   }
 }

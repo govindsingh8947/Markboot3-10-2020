@@ -24,7 +24,6 @@ class _CampaignState extends State<Campaign> {
 //  List<String> types = ["Gigs","Offers","Internship","Tournament"];
 //  String selectedType ;
   TextEditingController com_name = TextEditingController();
-
   TextEditingController user_name = TextEditingController();
   TextEditingController user_email = TextEditingController();
   TextEditingController user_phone = TextEditingController();
@@ -163,13 +162,15 @@ class _CampaignState extends State<Campaign> {
                           user.data["emailId"] == email) {
                         print("user Got it");
                         setState(() {
+                          print("setting state");
                           use = user;
+                          print("set state");
                         });
                       }
                     }
-
+                    print("finding campaigns");
                     for (var cam in campaigns) {
-                      print(cam.data["companyName"]);
+                      print("finding campaigns");
                       if (cam.data["taskTitle"].toString() == company) {
                         print(" campaign Got it");
                         setState(() {
@@ -177,7 +178,7 @@ class _CampaignState extends State<Campaign> {
                         });
                       }
 
-                      if (use != null && campaign != null) {
+                      else if (use != null && campaign != null) {
                         print("found");
                         _showMyDialog(use, campaign);
                       } else {
@@ -186,7 +187,7 @@ class _CampaignState extends State<Campaign> {
                     }
                   }
 
-//                    _showMyDialog();
+//                   _showMyDialog();
                 },
                 child: Text(
                   "Submit",

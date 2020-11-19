@@ -363,6 +363,10 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           isLoading=false;
         });
+        Fluttertoast.showToast(
+            msg: "Sorry coudn\'t login Please enter valid credentials",
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
         debugPrint("LOGIN UNSUCCESSFUL");
       }
     } else {
@@ -373,7 +377,10 @@ class _LoginPageState extends State<LoginPage> {
           msg: "Email ID doesn't exist.",
           backgroundColor: Colors.red,
           textColor: Colors.white);
+
+
     }
+
 
     // FirebaseAuth auth = FirebaseAuth.instance;
     // AuthResult authResult = await auth.signInWithEmailAndPassword(

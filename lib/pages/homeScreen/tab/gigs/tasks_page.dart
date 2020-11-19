@@ -37,7 +37,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
   SharedPreferences prefs;
   Map<String, dynamic> userData;
   bool isApplied = false;
-  List<String> pendingPostList;
+  List<String> pendingPostList=[];
   List<int> textColors = [0xff00E676, 0xffEEFF41, 0xffE0E0E0, 0xffffffff];
   List<int> colors = [
     0xff11232D,
@@ -52,6 +52,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
 
   // Animation ------------------
   AnimationController animationController;
+  bool isCampaign=false;
   Animation animation;
   File _workedImgFile;
   String name;
@@ -71,6 +72,9 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
   Color col;
   String link;
   String ongoing;
+  int userStatus=0;
+  int maxStatus=0;
+  Firestore firestore=Firestore.instance;
   Future<void> init() async {
     print("hello+${widget.snapshot.data}");
     // print();
@@ -121,9 +125,12 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                   status = "Rejected";
                   col = Colors.red;
                 } else if (status == "ongoing") {
+                   var ref= await firestore.collection("/Posts/Gigs/Campaign Tasks").document("${widget.snapshot.documentID}").get();
+                   userStatus=user["UserStatus"];
                   status = "ongoing";
                   col = Colors.red;
                   link = user["link"];
+                  print("${widget.snapshot.data["UserStatus"]}");
                 } else {
                   status = "Accepted";
                   col = Colors.green;
@@ -215,6 +222,10 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                         stretch: true,
                         expandedHeight: MediaQuery.of(context).size.height * 0.70,
                         flexibleSpace: FlexibleSpaceBar(
+                          title: Visibility(visible: widget.subType
+                              .toLowerCase()
+                              .contains("campaign tasks") ??
+                              false ,child: Text("$userStatus/${widget.snapshot.data["maxStatus"]}")),
                           background: Hero(
                             tag: "img",
                             child: Container(
@@ -400,60 +411,38 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        Text(
-                                          "Task",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black
-                                              // color: Color(
-                                              //     CommonStyle().lightYellowColor),
+                                        Visibility(
+                                          visible:  !widget.subType
+                                              .toLowerCase()
+                                              .contains("campaign"),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Task",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black
+                                                    // color: Color(
+                                                    //     CommonStyle().lightYellowColor),
+                                                    ),
                                               ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          widget.snapshot["taskDesc"] ?? "",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              // color: Color(0xff051094)
-                                              color: Colors.black54),
-                                        ),
-                                      ],
-                                    )),
-                              ),
-                              Visibility(
-                                visible: widget.subType
-                                        .toLowerCase()
-                                        .contains("campaign") ??
-                                    false,
-                                child: Container(
-                                    margin: EdgeInsets.only(top: 8),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          "Target",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black
-                                              // color: Color(
-                                              //     CommonStyle().lightYellowColor),
+                                              SizedBox(
+                                                height: 5,
                                               ),
+                                              Text(
+                                                widget.snapshot["taskDesc"] ?? "",
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    // color: Color(0xff051094)
+                                                    color: Colors.black54),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          widget.snapshot["target"] ?? "",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              // color: Color(0xff051094)
-                                              color: Colors.black54),
-                                        ),
+
                                       ],
                                     )),
                               ),
@@ -626,6 +615,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                                   borderRadius:
                                                       BorderRadius.circular(8)),
                                               onPressed: () {
+
                                                 if (!widget.isDisabled) {
                                                   if (isApplied == false) {
                                                     if (animationController
@@ -636,6 +626,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                                       animationController
                                                           .forward();
                                                     }
+
                                                   }
                                                 }
                                               },
@@ -675,82 +666,95 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                           ),
                                         )
                                       : Container(
-                                          child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            status == "ongoing"
-                                                ? Column(children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Column(
-                                                          children: [
-                                                            Text(
-                                                              "Link",
-                                                              style: TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  // color: Color(
-                                                                  //     CommonStyle().lightYellowColor),
-                                                                  color: Colors
-                                                                      .black),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Text(
-                                                              link,
-                                                              style: TextStyle(
-                                                                  fontSize: 15,
-                                                                  //     color: Color(0xff051094)),
-                                                                  color: Color(
-                                                                      0xff051094)),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            // Clipboard.setData(
-                                                            //     new ClipboardData(
-                                                            //         text:
-                                                            //             link));
-                                                          },
-                                                          child: Icon(
-                                                              Icons.content_copy),
-                                                        )
-                                                      ],
-                                                    )
-                                                  ])
-                                                : Text(""),
-                                            Divider(
-                                              thickness: 5,
-                                            ),
-                                            Text(
-                                              "Status",
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  // color: Color(
-                                                  //     CommonStyle().lightYellowColor),
-                                                  color: Colors.black),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              status,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  //     color: Color(0xff051094)),
-                                                  color: col),
-                                            )
-                                          ],
-                                        )),
+                                            child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              status == "ongoing"
+                                                  ? Column(children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Column(
+                                                            children: [
+                                                                SingleChildScrollView(
+                                                                  scrollDirection:Axis.horizontal,
+                                                                  child: Text(
+                                                                    "Link",
+                                                                    style: TextStyle(
+                                                                        fontSize: 20,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        // color: Color(
+                                                                        //     CommonStyle().lightYellowColor),
+                                                                        color: Colors
+                                                                            .black),
+                                                                  ),
+                                                                ),
+
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              SingleChildScrollView(
+                                                                scrollDirection:Axis.horizontal,
+                                                                child: Container(
+                                                                  width:MediaQuery.of(context).size.
+                                                                      width*0.6,
+                                                                  child: Text(
+                                                                    link,
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        //     color: Color(0xff051094)),
+                                                                        color: Color(
+                                                                            0xff051094)),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),GestureDetector(
+                                                            onTap: () {
+                                                               Clipboard.setData(
+                                                                   new ClipboardData(
+                                                                       text:
+                                                                           link));
+                                                               Fluttertoast.showToast(msg: "copied link to clipboard");
+                                                            },
+                                                            child: Icon(
+                                                                Icons.content_copy),
+                                                          ),
+                                                          IconButton(icon: Icon(Icons.share_rounded), onPressed: () {Share.share(link,);})
+                                                        ],
+                                                      )
+                                                    ])
+                                                  : Text(""),
+                                              Divider(
+                                                thickness: 5,
+                                              ),
+                                              Text(
+                                                "Status",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    // color: Color(
+                                                    //     CommonStyle().lightYellowColor),
+                                                    color: Colors.black),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                status,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    //     color: Color(0xff051094)),
+                                                    color: col),
+                                              )
+                                            ],
+                                          )),
+
                             ],
                           ),
                         )),
@@ -1371,6 +1375,9 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
         pendingPostList.add(widget.snapshot.documentID.toString());
         debugPrint("PPPPPPPPPPPPPPP $pendingTaskList");
         prefs.setStringList("pendingTasks", pendingPostList);
+        setState(() {
+          isSubmitted=true;
+        });
       } else {
         isSubmitted = false;
       }

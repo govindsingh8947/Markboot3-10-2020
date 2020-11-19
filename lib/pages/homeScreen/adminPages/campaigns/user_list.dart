@@ -115,17 +115,23 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(userData["taskTitle"] ?? "",
-              style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold)),
+          Container(
+            width: MediaQuery.of(context).size.width*0.55,
+            height: 50,
+            child: Text(userData["taskTitle"] ?? "",
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+          ),
           SizedBox(
             height: 5,
           ),
           Text(
             userData["name"] ?? "",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           Text(
             userData["emailId"] ?? "",

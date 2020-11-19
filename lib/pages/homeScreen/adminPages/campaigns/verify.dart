@@ -20,15 +20,17 @@ class verify extends StatefulWidget {
 }
 
 class _verifyState extends State<verify> {
-  List<DocumentSnapshot> snapshots;
+  List<DocumentSnapshot> snapshots=[];
 
   init() async {
     try {
+      print(widget.path);
       snapshots = await CommonFunction().getPost(widget.path);
       debugPrint("SSNNNNN $snapshots");
       setState(() {});
+      print("len"+"${snapshots.length.toString()}");
     } catch (e) {
-      debugPrint("Exception : (init) -> $e");
+      debugPrint(e.message);
     }
   }
 
@@ -38,14 +40,13 @@ class _verifyState extends State<verify> {
     // TODO: implement initState
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
+    return  snapshots.length!=0
+        ? CustomScrollView(
       primary: false,
       slivers: <Widget>[
-        snapshots != null && snapshots.length > 0
-            ? SliverPadding(
+        SliverPadding(
                 padding: const EdgeInsets.all(20),
                 sliver: SliverGrid.count(
                   crossAxisSpacing: 10,
@@ -57,51 +58,19 @@ class _verifyState extends State<verify> {
                   }).toList(),
                 ),
               )
-            : (snapshots == null
-                ? SliverToBoxAdapter(
-                    child: Container(
-                    margin: EdgeInsets.only(top: 50),
-                    child: Center(
-                      child: Container(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator()),
-                    ),
-                  ))
-                : SliverToBoxAdapter(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height - 100,
-                      child: Center(
-                        child: Container(
-                          child: Text(
-                            "No Data Found",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )),
+
       ],
-    );
+    ):Center(child: Text("Data Not found",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),);
   }
-
   Widget singleCard(DocumentSnapshot snapshot, context, postType, {subtype}) {
-    //print("snapi=${snapshot["submittedBy"][0]["companyName"]}");
-    //if()
-
-    print(snapshot.data);
-//   if( (snapshot["submittedBy"].where((item){
-//     if(item["status"]=="applied"){
-//       return true;
-//     }
-//     return false;
-//   })).length==0){
-//     return Text("");
-//   }
-
+   if( (snapshot["submittedBy"].where((item){
+     if(item["status"]=="applied" || item["status"]=="pending"){
+       return true;
+     }
+     return false;
+   })).length==0){
+     return Text("");
+   }
     return Stack(
       children: <Widget>[
         Container(
@@ -226,8 +195,10 @@ class _verifyState extends State<verify> {
                         backgroundColor: Colors.green);
                     CommonFunction().showProgressDialog(
                         isShowDialog: false, context: context);
-                    snapshots.remove(snapshot);
-                    setState(() {});
+                    setState(() {
+                      snapshots.remove(snapshot);
+                      dispose();
+                    });
                   } catch (e) {}
                 },
               ),

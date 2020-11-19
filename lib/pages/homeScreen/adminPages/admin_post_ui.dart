@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddPostAdminPage extends StatefulWidget {
   String type;
@@ -27,6 +29,7 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
   TextEditingController descCont = TextEditingController();
   TextEditingController companyCont = TextEditingController();
   TextEditingController amountCont = TextEditingController();
+  TextEditingController maxStatusCont = TextEditingController();
   TextEditingController targetCont = TextEditingController();
   TextEditingController cashbackCont = TextEditingController();
   TextEditingController instructionCont = TextEditingController();
@@ -42,6 +45,7 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
   File _fileImg;
   File _companyFileImg;
   File _sampleFileImg;
+  File _offerFileImg;
   final picker = ImagePicker();
   String selectedSubType;
   List<String> subTypeList = new List();
@@ -53,6 +57,8 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
   bool isShowCouponsUI = false;
   bool isShowInternshipUI = false;
   bool isShowTournamentUI = false;
+  bool isImportant=false;
+  bool isClickOfferPic=false;
   TextEditingController questionCont = TextEditingController();
   TextEditingController option1Cont = TextEditingController();
   TextEditingController option2Cont = TextEditingController();
@@ -135,6 +141,16 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
                 child: commonWidget.commonTextField(
                     controller: titleCont, inputText: "Task Title ")),
             Visibility(
+              visible: (isShowCashbacksUI || isShow50on500UI) ?? false,
+              child: SwitchListTile(
+                  title: Text("Starred"),
+                  value: isImportant, onChanged: (a) {
+                setState(() {
+                  isImportant=!isImportant;
+                });
+              }),
+            ),
+            Visibility(
               visible: (isShowTournamentUI) ?? false,
               child: tournamentPostUI(),
             ),
@@ -191,6 +207,15 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
             ),
             Visibility(
                 visible:
+                ( isShowCampaignUI ) ??
+                    false,
+                child: Center(
+                    child: commonWidget.commonTextField(
+                        controller: maxStatusCont,
+                        inputText: "Max status value ",
+                        keyboardType: TextInputType.number))),
+            Visibility(
+                visible:
                     (isShowTasksUI || isShowCampaignUI || isShowTournamentUI) ??
                         false,
                 child: Center(
@@ -223,6 +248,33 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
                           setState(() {});
                         },
                         child: showCamera(_sampleFileImg)),
+                  ],
+                )),
+            Visibility(
+                visible:
+                (isImportant) ??
+                    false,
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Center(
+                      child: Text(
+                        "Offer Picture",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          showPickImageDialog(_offerFileImg);
+                          isClickOfferPic = true;
+                          setState(() {});
+                        },
+                        child: showCamera(_offerFileImg)),
                   ],
                 )),
             Visibility(
@@ -617,7 +669,11 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
         } else if (isClickSamplePic == true) {
           _sampleFileImg = File(pickedFile.path);
           isClickSamplePic = false;
-        } else {
+        } else if(isClickOfferPic){
+          _offerFileImg=File(pickedFile.path);
+          isClickOfferPic=false;
+        }
+        else {
           _fileImg = File(pickedFile.path);
         }
         isClickcompanyLogo = false;
@@ -631,7 +687,6 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
     try {
       final pickedFile =
           await picker.getImage(source: ImageSource.camera, imageQuality: 100);
-
       setState(() {
         if (isClickcompanyLogo == true) {
           debugPrint("COMPANYLOOOOOGO");
@@ -639,7 +694,12 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
         } else if (isClickSamplePic == true) {
           _sampleFileImg = File(pickedFile.path);
           isClickSamplePic = false;
-        } else {
+        }
+        else if(isClickOfferPic){
+          _offerFileImg=File(pickedFile.path);
+          isClickOfferPic=false;
+        }
+        else {
           _fileImg = File(pickedFile.path);
         }
         isClickcompanyLogo = false;
@@ -665,15 +725,26 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
     String designation = designationCont.text.trim().toString();
     String startDate = startDateCont.text.trim().toString();
     String applyBy = applyByCont.text.trim().toString();
+    int maxStatus= isShowCampaignUI?int.parse(maxStatusCont.text.trim().toString() ?? "0"):null;
     String skillReq = skillsReqCont.text.trim().toString();
-
+    FirebaseAuth _firebase=FirebaseAuth.instance;
+    FirebaseUser user= await _firebase.currentUser();
+    print(user);
     if (companyName.isEmpty) {
       Fluttertoast.showToast(
           msg: "Enter company name",
           backgroundColor: Colors.red,
           textColor: Colors.white);
       return;
-    } else if (_companyFileImg == null) {
+    }
+    else if (maxStatus == null && isShowCampaignUI) {
+      Fluttertoast.showToast(
+          msg: "enter max status value",
+          backgroundColor: Colors.red,
+          textColor: Colors.white);
+      return;
+    }
+    else if (_companyFileImg == null) {
       Fluttertoast.showToast(
           msg: "Select Company logo",
           backgroundColor: Colors.red,
@@ -745,19 +816,20 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
       }
       CommonFunction().showProgressDialog(isShowDialog: true, context: context);
       String samplePicUri = await uploadToStorage(_sampleFileImg);
-      Map<String, String> postData = {
+      Map<String, dynamic> postData = {
         "companyName": companyName,
         "taskTitle": title,
         "taskDesc": description,
         "reward": amount,
         "target": target,
-        "samplePicUri": samplePicUri
+        "samplePicUri": samplePicUri,
+        "maxStatus":isShowCampaignUI?maxStatus:0,
       };
       uploadData(postData);
     } else if (isShowCashbacksUI || isShow50on500UI) {
       if (cashbackAmount.isEmpty) {
         Fluttertoast.showToast(
-            msg: "Ente Cashback amount",
+            msg: "Enter CashBack amount",
             backgroundColor: Colors.red,
             textColor: Colors.white);
         return;
@@ -774,6 +846,10 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
             textColor: Colors.white);
         return;
       }
+      String offerPicUri="";
+      if(isImportant){
+        offerPicUri = await uploadToStorage(_offerFileImg);
+      }
       if (isShowCashbacksUI == true) {
         if (_sampleFileImg == null) {
           Fluttertoast.showToast(
@@ -785,20 +861,41 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
         CommonFunction()
             .showProgressDialog(isShowDialog: true, context: context);
         String samplePicUri = await uploadToStorage(_sampleFileImg);
-        Map<String, String> postData = {
+        Map<String, dynamic> postData =isImportant?
+        {
           "companyName": companyName,
           "taskTitle": title,
           "taskDesc": description,
           "cashbackAmount": cashbackAmount,
           "instruction": instruction,
           "link": link,
-          "samplePicUri": samplePicUri
+          "samplePicUri": samplePicUri,
+          "offerPicUri":offerPicUri,
+          "isImportant":isImportant,
+        }:
+        {
+          "companyName": companyName,
+          "taskTitle": title,
+          "taskDesc": description,
+          "cashbackAmount": cashbackAmount,
+          "instruction": instruction,
+          "link": link,
+          "samplePicUri": samplePicUri,
         };
         uploadData(postData);
       } else {
         CommonFunction()
             .showProgressDialog(isShowDialog: true, context: context);
-        Map<String, String> postData = {
+        Map<String, dynamic> postData = isImportant?{
+          "companyName": companyName,
+          "taskTitle": title,
+          "taskDesc": description,
+          "cashbackAmount": cashbackAmount,
+          "instruction": instruction,
+          "link": link,
+          "offerPicUri":offerPicUri,
+          "isImportant":isImportant,
+        } :{
           "companyName": companyName,
           "taskTitle": title,
           "taskDesc": description,
@@ -927,16 +1024,18 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
     try {
       String companyLogoUri = await uploadToStorage(_companyFileImg);
       String fileLogoUri = await uploadToStorage(_fileImg);
+      String offerUri =  isImportant? await uploadToStorage(_offerFileImg):"";
       if (companyLogoUri != null && fileLogoUri != null) {
         postData["imgUri"] = fileLogoUri;
         postData["logoUri"] = companyLogoUri;
+        isImportant?postData["offerUri"]=offerUri:print("A");
         savePostData(postData);
       } else {
         await CommonFunction()
             .showProgressDialog(isShowDialog: false, context: context);
       }
     } catch (e) {
-      debugPrint("Exception : (uploadData) -> $e");
+      debugPrint("Exception : ${e.message}");
     }
   }
 
@@ -964,32 +1063,32 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
           .whenComplete(() async {
             String desc = descCont.text;
             String title = titleCont.text;
-        fieldClear();
         await CommonFunction()
             .sendAndRetrieveMessage(desc, title);
         Fluttertoast.showToast(
             msg: "Save successfully",
             backgroundColor: Colors.green,
             textColor: Colors.white);
+            fieldClear();
       }).catchError((error) {
         Fluttertoast.showToast(
             msg: "getting some error.please contact to developer",
             backgroundColor: Colors.red,
             textColor: Colors.white);
-      }).timeout(Duration(seconds: 10), onTimeout: () async {
+      }).timeout(Duration(seconds: 30), onTimeout: () async {
         Fluttertoast.showToast(
             msg: "server not responding or your connection is too slow",
             backgroundColor: Colors.red,
             textColor: Colors.white);
       });
-      ;
     } catch (e) {
+      debugPrint("error:${e.message}");
       debugPrint("Exception : (SavePostData)-> $e");
     }
     await CommonFunction()
         .showProgressDialog(isShowDialog: false, context: context);
+    return;
   }
-
   fieldClear() {
     selectedType = null;
     titleCont.clear();

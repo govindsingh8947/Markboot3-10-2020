@@ -68,11 +68,11 @@ class _GeneralTabState extends State<GeneralTab>
     for (DocumentSnapshot snapshot in snaps) {
       if(snapshot.data["user phone"]==userPhone){
         if(snapshot.data["status"]=="approved"){
-          Map<String ,dynamic> a={"status":"approved","reward":snapshot.data["reward"],"offerName":snapshot.data["offer name"]};
+          Map<String ,dynamic> a={"status":"approved","reward":snapshot.data["reward"],"offerName":snapshot.data["offer name"],"logoUri":snapshot.data["logoUri"],};
           mapi_a.add(a);
         }
         else if(snapshot.data["status"]=="rejected"){
-          Map<String ,dynamic> r={"status":"approved","reward":snapshot.data["reward"],"offerName":snapshot.data["offer name"]};
+          Map<String ,dynamic> r={"status":"approved","reward":snapshot.data["reward"],"offerName":snapshot.data["offer name"],"logoUri":snapshot.data["logoUri"],};
           mapi_a.add(r);
         }
       }
@@ -678,7 +678,7 @@ class _GeneralTabState extends State<GeneralTab>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
+                    type=="offers"?SizedBox():Center(
                       child: Text(
                         userData["taskTitle"] ?? "",
                         overflow: TextOverflow.clip,
@@ -691,7 +691,7 @@ class _GeneralTabState extends State<GeneralTab>
                     ),
                     Center(
                       child: Text(
-                        userData["companyName"] ?? "",
+                        userData[type=="offers"?"offerName":"companyName"] ?? "",
                         style: TextStyle(
                           //                  color: Color(CommonStyle().lightYellowColor),
                           color: Colors.red,

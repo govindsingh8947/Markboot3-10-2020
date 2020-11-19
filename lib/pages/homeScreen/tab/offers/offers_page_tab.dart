@@ -171,7 +171,7 @@ class _OffersPageTabState extends State<OffersPageTab>
     int index = 0;
     return RefreshIndicator(
       onRefresh: _onCashbackRefresh,
-      child: CustomScrollView(
+      child: cashbackDocumentList != null && cashbackDocumentList.length > 0?CustomScrollView(
         primary: false,
         slivers: <Widget>[
           cashbackDocumentList != null && cashbackDocumentList.length > 0
@@ -218,7 +218,7 @@ class _OffersPageTabState extends State<OffersPageTab>
                       ),
                     )),
         ],
-      ),
+      ):Center(child: Text("Data Not Found",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),),
     );
   }
 

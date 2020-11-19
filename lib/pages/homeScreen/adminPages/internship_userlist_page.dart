@@ -111,7 +111,7 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
           Text(
             userData["user email"] ?? "",
             style: TextStyle(
-                color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -123,11 +123,19 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(userData["taskTitle"] ?? "",
+        Container(
+          width: MediaQuery.of(context).size.width*.60,
+          height: MediaQuery.of(context).size.height*0.055,
+          child: Text(
+            userData["taskTitle"] ?? "",
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
             style: TextStyle(
                 color: Colors.green,
-                fontSize: 20,
-                fontWeight: FontWeight.bold)),
+                fontSize: 15,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
         SizedBox(
           height: 5,
         ),
@@ -156,7 +164,7 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
         children: [
           SizedBox(height: 10),
           Container(
-              width: 120,
+              width: 110,
               height: 30,
               child: RaisedButton(
                   color: Colors.white,
@@ -191,7 +199,7 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
                   ))),
           SizedBox(height: 20),
           Container(
-              width: 120,
+              width: 90,
               height: 30,
               child: RaisedButton(
                   color: Colors.white,

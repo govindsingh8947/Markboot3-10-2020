@@ -308,6 +308,13 @@ class _SignUpPageState extends State<SignUpPage> {
       String name = nameCont.text.trim().toString();
       String inviteCode = inviteCodeCont.text.trim().toString();
       String phoneNo =phoneCont.text.trim().toString();
+      List<DocumentSnapshot> snaps =await CommonFunction().getPost("Users");
+      for (DocumentSnapshot snap in snaps) {
+        if(snap.documentID=="+91$phoneNo"){
+          Fluttertoast.showToast(msg: "User already exists try log in");
+          return;
+        }
+      }
       if (name.isEmpty) {
         Fluttertoast.showToast(
             msg: "Enter name.",
@@ -376,12 +383,14 @@ class _SignUpPageState extends State<SignUpPage> {
               setState(() {
                 isLoading=false;
               });
+              Fluttertoast.showToast(msg: err.message);
               print(err);
             }
           } catch (err) {
             setState(() {
               isLoading=false;
             });
+            Fluttertoast.showToast(msg: err.message);
             print(err);
           }
         }
