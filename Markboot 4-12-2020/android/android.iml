@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="android" name="Android">
+      <configuration>
+        <option name="ALLOW_USER_CONFIGURATION" value="false" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/app/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
+    </content>
+    <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="classes26" level="project" />
+    <orderEntry type="library" name="classes20" level="project" />
+    <orderEntry type="library" name="classes3" level="project" />
+    <orderEntry type="library" name="classes56" level="project" />
+    <orderEntry type="library" name="classes82" level="project" />
+    <orderEntry type="library" name="classes32" level="project" />
+    <orderEntry type="library" name="classes95" level="project" />
+    <orderEntry type="library" name="classes77" level="project" />
+    <orderEntry type="library" name="classes61" level="project" />
+    <orderEntry type="library" name="classes34" level="project" />
+    <orderEntry type="library" name="classes75" level="project" />
+    <orderEntry type="library" name="R8" level="project" />
+    <orderEntry type="library" name="classes53" level="project" />
+    <orderEntry type="library" name="R3" level="project" />
+    <orderEntry type="library" name="classes77" level="project" />
+    <orderEntry type="library" name="classes95" level="project" />
+    <orderEntry type="library" name="classes32" level="project" />
+    <orderEntry type="library" name="classes26" level="project" />
+    <orderEntry type="library" name="R8" level="project" />
+    <orderEntry type="library" name="classes34" level="project" />
+    <orderEntry type="library" name="classes53" level="project" />
+    <orderEntry type="library" name="R3" level="project" />
+    <orderEntry type="library" name="classes3" level="project" />
+    <orderEntry type="library" name="classes20" level="project" />
+    <orderEntry type="library" name="classes61" level="project" />
+    <orderEntry type="library" name="classes75" level="project" />
+    <orderEntry type="library" name="classes82" level="project" />
+    <orderEntry type="library" name="classes56" level="project" />
+    <orderEntry type="module" module-name="debug" />
+    <orderEntry type="module" module-name="firebase_messaging" />
+    <orderEntry type="module" module-name="release" />
+    <orderEntry type="module" module-name="firebase_messaging" />
+    <orderEntry type="module" module-name="debug" />
+    <orderEntry type="module" module-name="release" />
+  </component>
+</module>

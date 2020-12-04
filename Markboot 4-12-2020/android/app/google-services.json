@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "191731778517",
+    "firebase_url": "https://markick-app.firebaseio.com",
+    "project_id": "markick-app",
+    "storage_bucket": "markick-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191731778517:android:1300d483196c2a5ec1f35c",
+        "android_client_info": {
+          "package_name": "com.app.markboot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191731778517-m7lf5q8gbkekdql8scq0hfh9kol45uve.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.markboot",
+            "certificate_hash": "db0bee433943fc180904b5c9b790d7298032c3d5"
+          }
+        },
+        {
+          "client_id": "191731778517-6ba26t3f9ckf779ug4g9n4tf2pf8654s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiDBSc4suyWB3yyiUUR6gd6B019SYk-5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191731778517-6ba26t3f9ckf779ug4g9n4tf2pf8654s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "191731778517-1hvlpq5hp3cgqbm7f6gl16n47f33iqi7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.markbootapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
