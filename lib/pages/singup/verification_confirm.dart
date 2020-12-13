@@ -105,6 +105,19 @@ class _VerificationConfirmPageState extends State<VerificationConfirmPage> {
         };
         await Firestore.instance.collection("Users").document(
             "+91${widget.phoneNo}").setData(userData, merge: true);
+        if(widget.inviteCode.length == 6) {
+          try{
+            await Firestore.instance.collection("invitecodes").document(widget.inviteCode.toString()).get().then((value) async{
+              if(value.exists) {
+                List refferedTo = value.data["invitedTo"];
+                refferedTo.insert(0, widget.phoneNo.toString());
+                await Firestore.instance.collection("invitecodes").document(widget.inviteCode).updateData({
+                  "invitedTo":refferedTo,
+                });
+              }
+            });
+          }catch(e){}
+        }
         await commonFunction.showProgressDialog(
             isShowDialog: false, context: context);
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(

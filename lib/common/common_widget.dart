@@ -89,11 +89,8 @@ class CommonWidget {
           child: InkWell(
             onTap: () {
               print("$postType $subtype");
-              if (postType.contains("Admin")) {
-              } else if (subtype
-                  .toLowerCase()
-                  .toString()
-                  .contains("cashback")) {
+              //if (postType.contains("Admin")) {}
+              if (subtype.toLowerCase().toString().contains("cashback")) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -140,9 +137,12 @@ class CommonWidget {
                             snapshot: snapshot,
                             type: postType,
                             subType: subtype))).then((value) {
-                  if (value == true) {}
+                  //if (value == true) {}
                 });
-              } else {
+
+                // This will run when the user is navigated from the gigs page
+              }
+              else {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -321,7 +321,7 @@ class CommonWidget {
                                         snapshot["logoUri"].toString()))),
                           ),
                           Container(
-                            margin: EdgeInsets.all(8),
+                            margin: EdgeInsets.all(3),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

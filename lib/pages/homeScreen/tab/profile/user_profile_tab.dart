@@ -67,7 +67,7 @@ class _UserProfileTabState extends State<UserProfileTab>
     internshipList = userData["internshipList"] ?? new Map();
     offersList = userData["offersList"] ?? new Map();
     tournamentList = userData["tournamentList"] ?? new Map();
-    approvedAmount = userData["approvedAmount"].toString() ?? "0";
+    approvedAmount = userData["approvedAmount"].toString();   // this is Approved amount fetched from the databse
     pendingAmount = userData["pendingAmount"].toString() ?? "0";
     isShowInitBar = false;
     setState(() {});
@@ -266,8 +266,8 @@ class _UserProfileTabState extends State<UserProfileTab>
                                                 children: <Widget>[
                                                   Image.asset(
                                                     "assets/icons/bank.png",
-                                                    width: MediaQuery.of(context).size.width*0.06,
-                                                    height: MediaQuery.of(context).size.height*0.06,
+                                                    width: MediaQuery.of(context).size.width*0.04,
+                                                    height: MediaQuery.of(context).size.height*0.04,
                                                   ),
                                                   SizedBox(
                                                     width: 1,
@@ -323,8 +323,8 @@ class _UserProfileTabState extends State<UserProfileTab>
                                                 children: <Widget>[
                                                   Image.asset(
                                                     "assets/icons/bank.png",
-                                                    width: MediaQuery.of(context).size.width*0.06,
-                                                    height: MediaQuery.of(context).size.height*0.06,
+                                                    width: MediaQuery.of(context).size.width*0.04,
+                                                    height: MediaQuery.of(context).size.height*0.04,
                                                   ),
                                                   SizedBox(
                                                     width: 1,
@@ -500,11 +500,9 @@ class _UserProfileTabState extends State<UserProfileTab>
                                       }));
                                     },
                                     child: Container(
-                                      //   margin: EdgeInsets.symmetric(horizontal: 15),
                                       width: MediaQuery.of(context).size.width *
                                           0.45,
                                       decoration: BoxDecoration(
-//                                  color: Color(CommonStyle().blueColor),
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           color: Colors.green),

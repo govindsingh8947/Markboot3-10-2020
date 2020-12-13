@@ -1,3 +1,4 @@
+//import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -13,6 +14,7 @@ import 'internship_userlist_page.dart';
 class PostListPage extends StatefulWidget {
   String path;
   String title;
+
   PostListPage({this.title, this.path});
 
   @override
@@ -22,29 +24,30 @@ class PostListPage extends StatefulWidget {
 class _PostListPageState extends State<PostListPage> {
   List<DocumentSnapshot> snapshots;
   RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
-  void _onRefresh() async{
+  void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use loadFailed(),if no data return,use LoadNodata()
-      setState(() {
-
-      });
+    setState(() {});
     _refreshController.loadComplete();
   }
 
   init() async {
     try {
+      print(widget.path);
       snapshots = await CommonFunction().getPost(widget.path);
-      debugPrint("SSNNNNN $snapshots");
+
+      //print("Below the awawit");
+      //debugPrint("SSNNNNN $snapshots");
       setState(() {});
     } catch (e) {
       debugPrint("Exception : (init) -> $e");
@@ -86,6 +89,8 @@ class _PostListPageState extends State<PostListPage> {
                       crossAxisCount: 2,
                       childAspectRatio: 2 / 3,
                       children: snapshots.map((item) {
+                        //print("in here");
+                        //print(item);
                         return singleCard(item, context, "Admin");
                       }).toList(),
                     ),
@@ -126,9 +131,9 @@ class _PostListPageState extends State<PostListPage> {
   Widget singleCard(DocumentSnapshot snapshot, context, postType, {subtype}) {
     //print("snapi=${snapshot["submittedBy"][0]["companyName"]}");
     //if()
-    print("${snapshot.documentID} |");
-    print(snapshot.data);
-    print(snapshot.data["appliedBy"][0]["companyName"]);
+    //print("${snapshot.documentID} |");
+    //print(snapshot.data);
+    //print(snapshot.data["appliedBy"][0]["companyName"]);
 //   if( (snapshot["submittedBy"].where((item){
 //     if(item["status"]=="applied"){
 //       return true;
@@ -137,7 +142,7 @@ class _PostListPageState extends State<PostListPage> {
 //   })).length==0){
 //     return Text("");
 //   }
-
+    print("Inside here i am ");
     return Stack(
       children: <Widget>[
         Container(
@@ -165,7 +170,7 @@ class _PostListPageState extends State<PostListPage> {
                                   taskUserList:
                                       snapshot["submittedBy"] ?? new List(),
                                 )));
-                  } else {
+                  } else {  // for the gigs page
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -186,11 +191,29 @@ class _PostListPageState extends State<PostListPage> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                      snapshot["uploadWorkUri"] ?? ""))),
+                            borderRadius: BorderRadius.circular(10),
+
+                            /// Removed the image from here as per requested!!!
+                            // image: DecorationImage(
+                            //   fit: BoxFit.cover,
+                            //   // image: NetworkImage(
+                            //   //   widget.path.contains("Internship")
+                            //   //       ? snapshot.data["appliedBy"][0]
+                            //   //           ["uploadWorkUri"]
+                            //   //       : snapshot.data["submittedBy"][0]
+                            //   //           ["uploadWorkUri"],
+                            //   // ),
+                            // ),
+                          ),
+                          // child: CachedNetworkImage(
+                          //   placeholder: (context, url) => CircularProgressIndicator(),
+                          //   imageUrl: widget.path.contains("Internship")
+                          //       ? snapshot.data["appliedBy"][0]
+                          //   ["uploadWorkUri"]
+                          //       : snapshot.data["submittedBy"][0]
+                          //   ["uploadWorkUri"],
+                          //   fit: BoxFit.cover,
+                          // ),
                         ),
                       ),
                       Padding(
@@ -198,8 +221,9 @@ class _PostListPageState extends State<PostListPage> {
                             left: 4, right: 2, top: 2, bottom: 2),
                         child: Text(
                           widget.path.contains("Internship")
-                              ? snapshot.data["appliedBy"][0]["companyName"] ??""
-                              : snapshot["submittedBy"][0]["companyName"],
+                              ? snapshot.data["appliedBy"][0]["companyName"] ??
+                                  ""
+                              : snapshot.data["submittedBy"][0]["companyName"],
                           style: TextStyle(
                             fontSize: 14,
                           ),

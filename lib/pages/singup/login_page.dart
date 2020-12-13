@@ -44,20 +44,20 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.white,
-      body: Container(
-        // margin: EdgeInsets.only(top: 40),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        //    padding: EdgeInsets.symmetric(horizontal: 0,),
-        color: Color(CommonStyle().introBackgroundColor),
-        child: SingleChildScrollView(
-          child: Column(
+      body: SingleChildScrollView(   // Added this line of code for supporting the small devices
+        child: Container(
+          // margin: EdgeInsets.only(top: 40),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          //    padding: EdgeInsets.symmetric(horizontal: 0,),
+          color: Color(CommonStyle().introBackgroundColor),
+          child: Column(  // Removed single child Scroll View from here cause here it does not matter
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(
                 height: 70,
               ),
-              appLogo(),
+              Center(child: appLogo()),
               SizedBox(
                 height: 20,
               ),
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                   onPressed: () {
-                    FocusScope.of(context).unfocus();
+                    FocusScope.of(context).unfocus(); // closing the keyboard
                     userLogin();
                   },
                   child: Text(

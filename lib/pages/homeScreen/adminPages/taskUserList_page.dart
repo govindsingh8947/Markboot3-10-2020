@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'admin_homepage.dart';
 
+/// This is the page for the Gigs Page tasks
 class TaskUserListPage extends StatefulWidget {
   List taskUserList;
   String reward;
@@ -117,9 +118,9 @@ class _TaskUserListPageState extends State<TaskUserListPage>
 
   Widget taskUserCard(Map<String, dynamic> userData) {
     if (userData["status"] != "applied") {
-      return Text("");
+      return Text(" ");
     }
-    print(userData);
+    //print(userData);
     return Container(
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.only(top: 10),
@@ -174,6 +175,14 @@ class _TaskUserListPageState extends State<TaskUserListPage>
             userData["phoneNo"] ?? "",
             style: TextStyle(color: Colors.white, fontSize: 12),
           ),
+            userData["showUser1"] != null ?Text(
+            userData["showUser1"] ?? "",
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ): Container(),
+            userData["showUser1"] != null ?Text(
+            userData["showUser2"] ?? "",
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ) : Container(),
         ],
       ),
     );
@@ -407,18 +416,27 @@ class _TaskUserListPageState extends State<TaskUserListPage>
                     var c = await CommonFunction().getPost("Users");
                     print(c);
                     for (DocumentSnapshot docx in c) {
+
+                      print("Inside here ---------------------------------------");
                       if (t[t.indexOf(task)]["phoneNo"].toString() ==
                           docx.documentID.toString()) {
                         print(docx.data);
+                        print("in here ");
                         Map<String, dynamic> userData = docx.data;
-                        userData["approvedAmount"] =
-                            "${int.parse(userData["approvedAmount"] ?? "0") + int.parse(t[t.indexOf(task)]["reward"])}";
+                        int approvedAmountCustom=0;
+                        /// This is where the problem lied the type stored in the database was integer but then here it was assigned as String
+                        /// so I changed it
+                        approvedAmountCustom = approvedAmountCustom = userData["approvedAmount"];
+                        approvedAmountCustom += int.parse(t[t.indexOf(task)]["reward"]);
+                        //approvedAmountCustom = (int.parse(userData["approvedAmount"] ?? "0") + ;
+                        userData["approvedAmount"] =approvedAmountCustom;
+                        print(approvedAmountCustom);
+
 
                         await _firestore
                             .collection("Users")
                             .document(t[t.indexOf(task)]["phoneNo"])
                             .setData(userData, merge: true);
-////
                       }
                     }
                   }
@@ -455,8 +473,11 @@ class _TaskUserListPageState extends State<TaskUserListPage>
                           docx.documentID.toString()) {
                         print(docx.data);
                         Map<String, dynamic> userData = docx.data;
-                        userData["pendingAmount"] =
-                            "${int.parse(userData["pendingAmount"] ?? "0") + int.parse(t[t.indexOf(task)]["reward"])}";
+                        int pendingAmountCustom;
+                        pendingAmountCustom = userData["pendingAmount"];
+                        pendingAmountCustom += int.parse(t[t.indexOf(task)]["reward"]);
+                        //approvedAmountCustom += int.parse(t[t.indexOf(task)]["reward"]);
+                        userData["pendingAmount"] =pendingAmountCustom;
 
                         await _firestore
                             .collection("Users")

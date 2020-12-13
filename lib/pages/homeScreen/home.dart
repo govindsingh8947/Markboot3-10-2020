@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() => _currentIndex = index);
               },
               children: <Widget>[
-                HomeTab(),
+                HomeTab(),  // basically this is the home page of the app
                 GigsPageTab(),
                 OffersPageTab(),
                 InternshipPageTab(),
@@ -101,6 +101,8 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
+
+      // This is the bottom navigation bar of the home page
       bottomNavigationBar: Container(
           width: double.infinity,
           color: Colors.red,
@@ -121,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Home'),
                   icon: Image.asset(
                     "assets/icons/home.png",
-                    width: MediaQuery.of(context).size.width*0.05,
+                    width: MediaQuery.of(context).size.width * 0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -131,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Gigs'),
                   icon: Image.asset(
                     "assets/icons/gigs.png",
-                    width: MediaQuery.of(context).size.width*0.05,
+                    width: MediaQuery.of(context).size.width * 0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -142,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Offers'),
                   icon: Image.asset(
                     "assets/icons/offers.png",
-                    width: MediaQuery.of(context).size.width*0.055,
+                    width: MediaQuery.of(context).size.width * 0.055,
                     height: 28,
                     color: Colors.white,
                   )),
@@ -152,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Internship'),
                   icon: Image.asset(
                     "assets/icons/internship.png",
-                    width: MediaQuery.of(context).size.width*0.05,
+                    width: MediaQuery.of(context).size.width * 0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -162,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Tournament'),
                   icon: Image.asset(
                     "assets/icons/tourn.png",
-                    width: MediaQuery.of(context).size.width*0.05,
+                    width: MediaQuery.of(context).size.width * 0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -172,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Profile'),
                   icon: Image.asset(
                     "assets/icons/user.png",
-                    width:MediaQuery.of(context).size.width*0.05,
+                    width: MediaQuery.of(context).size.width * 0.05,
                     height: 20,
                     color: Colors.white,
                   )),
@@ -188,6 +190,8 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+
+// This is the home page of the app that is shown to the user
 class HomeTab extends StatefulWidget {
   @override
   _HomeTabState createState() => _HomeTabState();
@@ -209,29 +213,36 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   init() async {
     try {
       documentList_cash =
-          await CommonFunction().getPost("Posts/Offers/Cashbacks");
+          await CommonFunction().getPost("Posts/Offers/Cashbacks");  // cashback offers are fetched from the database
       documentList_50_50 =
-          await CommonFunction().getPost("Posts/Offers/50 on 500") ??
+          await CommonFunction().getPost("Posts/Offers/50 on 500") ??   // 50 on 500 offers are also fetched from the database
               new List();
 
       int i = 1;
       headerSwipeList = new List();
-      for (DocumentSnapshot snapshot in documentList_cash) {
+      for (DocumentSnapshot snapshot in documentList_cash) { // it contains 7 items
         print(documentList_cash.length);
         DocumentSnapshot snap = snapshot;
-       if(snapshot.data["isImportant"]){
-        headerSwipeList.add({"type": "Cashbacks", "docx": snap});
-        if (i == 4) break;
-        i++;
-      }}
+        if (snapshot.data["isImportant"]) {
+          headerSwipeList.add({"type": "Cashbacks", "docx": snap});
+
+          print("Above the headerSwipe List =================================");
+          print(headerSwipeList);
+          if (i == 4) break;
+          i++;
+        }
+      }
+
+      // Two documents will be added in this list initially
       for (DocumentSnapshot snapshot in documentList_50_50) {
         print(documentList_50_50.length);
         DocumentSnapshot snap = snapshot;
-        if(snapshot.data["isImportant"]){
-        headerSwipeList.add({"type": "50 on 50", "docx": snap});
-        if (i == 4) break;
-        i++;
-      }}
+        if (snapshot.data["isImportant"]) {
+          headerSwipeList.add({"type": "50 on 50", "docx": snap});
+          if (i == 4) break;
+          i++;
+        }
+      }
 
       setState(() {});
     } catch (e) {
@@ -255,7 +266,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           // backgroundColor: Color(CommonStyle().blueColor),
           backgroundColor: Color(0xff051094),
           title: Text(
-            "MarkBoot",
+            "MarkBoot", // this is where the app bar begins
           ),
         ),
         body: CustomScrollView(
@@ -273,11 +284,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 //                ),
 //              )
 //            ),
-
             SliverToBoxAdapter(child: swiperBody()),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 40,
+                height: 20,
               ),
             ),
 //
@@ -380,7 +390,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               image: DecorationImage(
                                   fit: BoxFit.fill,
                                   image: NetworkImage(headerSwipeList[index]
-                                      ["docx"]["offerPicUri"]))),
+                                      ["docx"]["offerPicUri"]),
+                              ),
+                          ),
                         ),
                       ),
                       Positioned(
@@ -403,6 +415,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   }
 }
 
+
+
+
+// This the grid thing here
 class RecentPageView extends StatefulWidget {
   @override
   _RecentPageViewState createState() => _RecentPageViewState();
@@ -438,6 +454,8 @@ class _RecentPageViewState extends State<RecentPageView> {
         if (len >= 4) break;
       }
       setState(() {});
+
+      // Only a maximum of 4 offers will be shown/ added to the list of offerSnapList
       QuerySnapshot offersQuerySnap = await Firestore.instance
           .collection("Posts")
           .document("Offers")
@@ -460,6 +478,10 @@ class _RecentPageViewState extends State<RecentPageView> {
         len++;
         if (len >= 4) break;
       }
+
+      /// There is no Tournament document so this is dead code at the moment
+      ///
+      /// !_____________________________________________________!
       QuerySnapshot tournamentQuerySnap = await Firestore.instance
           .collection("Posts")
           .document("Tournament")
@@ -515,8 +537,19 @@ class _RecentPageViewState extends State<RecentPageView> {
                 height: 10,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
+                  GestureDetector(
+                    onTap: () {
+                      if(activePageIndex != 0) {
+                        setState(() {
+                          activePageIndex = 0;
+                          _controller.jumpToPage(activePageIndex);
+                        });
+                      }
+
+                    },
+                    child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 4),
                       width: 70,
                       height: 25,
@@ -533,8 +566,23 @@ class _RecentPageViewState extends State<RecentPageView> {
                                 ? Colors.white
                                 : Color(0xff051094),
                             fontSize: 14),
-                      )),
-                  Container(
+                      ),
+                    ),
+                  ),
+
+
+                  // Changes ahead
+                  GestureDetector(
+                    onTap: () {
+                      if(activePageIndex != 1){
+                        setState(() {
+                          activePageIndex = 1;
+                          _controller.jumpToPage(activePageIndex);
+                        });
+                      }
+
+                    },
+                    child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 4),
                       width: 70,
                       height: 25,
@@ -551,43 +599,65 @@ class _RecentPageViewState extends State<RecentPageView> {
                                 ? Colors.white
                                 : Color(0xff051094),
                             fontSize: 14),
-                      )),
-                  Container(
-                      margin: EdgeInsets.symmetric(horizontal: 4),
-                      width: 70,
-                      height: 25,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: activePageIndex == 2
-                              ? Color(CommonStyle().lightYellowColor)
-                              : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Text(
-                        "Internship",
-                        style: TextStyle(
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if(activePageIndex != 2){
+                        setState(() {
+                          activePageIndex = 2;
+                          _controller.jumpToPage(activePageIndex);
+                        });
+                      }
+                    },
+                    child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 4),
+                        width: 70,
+                        height: 25,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
                             color: activePageIndex == 2
-                                ? Colors.white
-                                : Color(0xff051094),
-                            fontSize: 14),
-                      )),
-                  Container(
-                      margin: EdgeInsets.symmetric(horizontal: 4),
-                      width: 90,
-                      height: 25,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: activePageIndex == 3
-                              ? Color(CommonStyle().lightYellowColor)
-                              : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Text(
-                        "Tournament",
-                        style: TextStyle(
+                                ? Color(CommonStyle().lightYellowColor)
+                                : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Text(
+                          "Internship",
+                          style: TextStyle(
+                              color: activePageIndex == 2
+                                  ? Colors.white
+                                  : Color(0xff051094),
+                              fontSize: 14),
+                        )),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if(activePageIndex != 3){
+                        setState(() {
+                          activePageIndex = 3;
+                          _controller.jumpToPage(activePageIndex);
+                        });
+                      }
+                    },
+                    child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 4),
+                        width: 90,
+                        height: 25,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
                             color: activePageIndex == 3
-                                ? Colors.white
-                                : Color(0xff051094),
-                            fontSize: 14),
-                      )),
+                                ? Color(CommonStyle().lightYellowColor)
+                                : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Text(
+                          "Tournament",
+                          style: TextStyle(
+                              color: activePageIndex == 3
+                                  ? Colors.white
+                                  : Color(0xff051094),
+                              fontSize: 14),
+                        )),
+                  ),
                 ],
               )
             ],
@@ -628,23 +698,23 @@ class _RecentPageViewState extends State<RecentPageView> {
             return Container(
               decoration:
                   BoxDecoration(borderRadius: BorderRadius.circular(10)),
-              child: Card(
-                  // borderRadius: BorderRadius.circular(10),
-                  //color: Colors.transparent,
-
-                  child: InkWell(
+              child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TasksPageDetails(
-                                snapshot: gigsSnapList[index],
-                                type: "Gigs",
-                                subType: "Gigs",
-                                isDisabled: false,
-                              )));
-                },
-                child: Container(
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TasksPageDetails(
+                      snapshot: gigsSnapList[index],
+                      type: "Gigs",
+                      subType: "Tasks",
+                      isDisabled: false,
+                    ),
+                  ),
+                );
+              },
+                child: Card(
+                  elevation: 3,
+                  child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10)),
@@ -681,7 +751,7 @@ class _RecentPageViewState extends State<RecentPageView> {
                         child: Text(
                           gigsSnapList[index]["companyName"] ?? "",
                           style: TextStyle(
-                            //                  color: Color(CommonStyle().lightYellowColor),
+                            // color: Color(CommonStyle().lightYellowColor),
                             color: Colors.black,
                             fontSize: 13,
                           ),
@@ -690,7 +760,8 @@ class _RecentPageViewState extends State<RecentPageView> {
                     ],
                   ),
                 ),
-              )),
+                ),
+              ),
             );
           }),
     );
@@ -712,6 +783,7 @@ class _RecentPageViewState extends State<RecentPageView> {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: Card(
+                elevation: 3,
                   // color: Colors.transparent,
                   // borderRadius: BorderRadius.circular(10),
                   child: InkWell(
@@ -793,6 +865,7 @@ class _RecentPageViewState extends State<RecentPageView> {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: Card(
+                elevation: 3,
                   // color: Colors.transparent,
                   // borderRadius: BorderRadius.circular(10),
                   child: InkWell(
@@ -873,6 +946,7 @@ class _RecentPageViewState extends State<RecentPageView> {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: Card(
+                elevation: 3,
                   // color: Colors.transparent,
                   // borderRadius: BorderRadius.circular(10),
                   child: InkWell(
@@ -933,7 +1007,8 @@ class _RecentPageViewState extends State<RecentPageView> {
                 ),
               )),
             );
-          }),
+          },
+      ),
     );
   }
 }

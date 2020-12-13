@@ -20,7 +20,7 @@ class _SendEmailAdminState extends State<SendEmailAdmin> {
   FilePickerResult filePickerResult;
   TextEditingController subjectCont = TextEditingController();
   TextEditingController bodyCont = TextEditingController();
-  List<String> userEmailList = List<String>();
+  List<String> userEmailList = List<String>(); //so this contains the email ids of all the users in the database
   
   init() async {
    QuerySnapshot querySnapshot = await Firestore.instance.collection("Users").getDocuments(); 

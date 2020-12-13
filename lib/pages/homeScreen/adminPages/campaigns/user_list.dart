@@ -15,6 +15,7 @@ class user_list extends StatefulWidget {
   List taskUserList;
   String reward;
   String docId;
+
   user_list({this.taskUserList, this.reward, this.docId});
 
   @override
@@ -23,7 +24,7 @@ class user_list extends StatefulWidget {
 
 class _user_listState extends State<user_list> with WidgetsBindingObserver {
   Firestore _firestore = Firestore();
-
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   String _localPath;
   bool isShowDownloadBar = false;
 
@@ -56,6 +57,7 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
         //backgroundColor: Color(CommonStyle().backgroundColor),
         appBar: AppBar(
           backgroundColor: Color(0xff051094),
@@ -116,7 +118,7 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            width: MediaQuery.of(context).size.width*0.55,
+            width: MediaQuery.of(context).size.width * 0.55,
             height: 50,
             child: Text(userData["taskTitle"] ?? "",
                 maxLines: 2,
@@ -186,7 +188,7 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
   }
 
   approvedAmount(String userId, approveAmount, userPhoneNo, userData) async {
-    _showMyDialog(userId);
+    _showMyDialog(userId, userData);
 
     //    debugPrint("DOCID ${widget.docId}");
 //
@@ -265,9 +267,10 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
 //    }
   }
 
-  TextEditingController link = TextEditingController();
+  TextEditingController linkReferCode = TextEditingController();
+  TextEditingController linkEnter = TextEditingController();
 
-  Future<void> _showMyDialog(String userId) async {
+  Future<void> _showMyDialog(String userId, userData) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -279,9 +282,13 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
               children: <Widget>[
                 Text('Do want to Accept that product?'),
                 CommonWidget().commonTextField(
-                  controller: link,
-                  hintText: "Enter the link",
-                )
+                  controller: linkReferCode,
+                  hintText: "Enter the Refer code",
+                ),
+                CommonWidget().commonTextField(
+                    controller: linkEnter,
+                    hintText: "Enter the link",
+                ),
                 //Text('Would you like to approve of this message?'),
               ],
             ),
@@ -290,27 +297,73 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
             FlatButton(
               child: Text("Ongoing"),
               onPressed: () async {
-                for (var task in widget.taskUserList) {
-                  if (task["userId"] == userId) {
-                    print("Got it");
-                    print(widget.taskUserList.indexOf(task));
-                    var t = widget.taskUserList;
-                    setState(() {
-                      t[t.indexOf(task)]["status"] = "ongoing";
-                      t[t.indexOf(task)]["link"] = link.text.toString();
-                    });
-                    print(t);
-                    Map<String, dynamic> updatedPost = {"submittedBy": t};
-                    print(updatedPost);
-                    await _firestore
-                        .collection("Posts")
-                        .document("Gigs")
-                        .collection("Campaign Tasks")
-                        .document(widget.docId)
-                        .setData(updatedPost, merge: true);
+                if (linkReferCode.text.length == 6 || linkEnter.text.length >4) {
+                  for (var task in widget.taskUserList) {
+                    if (task["userId"] == userId) {
+                      print("Got it");
+                      print(widget.taskUserList.indexOf(task));
+                      var t = widget.taskUserList;
+                      setState(() {
+                        t[t.indexOf(task)]["status"] = "ongoing";
+                        t[t.indexOf(task)]["link"] =
+                            linkReferCode.text.toString();
+                        t[t.indexOf(task)]["linkToShow"] =
+                            linkEnter.text.toString(); // creating a new one
+                      });
+                      print(t);
+                      Map<String, dynamic> updatedPost = {"submittedBy": t};
+                      print(updatedPost);
+                      if(linkReferCode.text.length == 6) {
+                        var db = _firestore
+                            .collection("invitecodes")
+                            .document(linkReferCode.text.toString());
+                        await _firestore
+                            .collection("invitecodes")
+                            .document(linkReferCode.text.toString())
+                            .get()
+                            .then((value) async {
+                          if (value.exists) {
+                            scaffoldKey.currentState.showSnackBar(SnackBar(
+                              content: Text("This refer code is already taken"),
+                              duration: Duration(seconds: 1),
+                            ));
+                          } else {
+                            await _firestore
+                                .collection("Posts")
+                                .document("Gigs")
+                                .collection("Campaign Tasks")
+                                .document(widget.docId)
+                                .setData(updatedPost, merge: true);
+                            await db.setData({
+                              "invitedBy": userId,
+                              "invitedTo": [],
+                              "referCode": linkReferCode.text.toString(),
+                              "userEmail":userData["emailId"],
+                              "userPhone":userData["phoneNo"],
+                            });
+
+                          }
+                        });
+                      }
+                      else{
+                        print("Inside here ==================================");
+                        await _firestore
+                            .collection("Posts")
+                            .document("Gigs")
+                            .collection("Campaign Tasks")
+                            .document(widget.docId)
+                            .setData(updatedPost, merge: true);
+                      }
+
+                    }
                   }
+                  Navigator.pop(context);
+                } else {
+                  scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text("Please enter link or refer code"),
+                    duration: Duration(seconds: 1),
+                  ));
                 }
-                Navigator.pop(context);
               },
             ),
             FlatButton(
@@ -327,7 +380,8 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
                     var t = widget.taskUserList;
                     setState(() {
                       t[t.indexOf(task)]["status"] = "rejected";
-                      t[t.indexOf(task)]["link"] = link.text.toString();
+                      t[t.indexOf(task)]["link"] =
+                          linkReferCode.text.toString();
 
                       phone = task["phoneNo"];
                     });
@@ -343,9 +397,7 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
                   }
                 }
 //
-
 //
-
                 Navigator.of(context).pop();
               },
             ),

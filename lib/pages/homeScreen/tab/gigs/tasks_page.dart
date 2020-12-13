@@ -16,11 +16,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 
+
+// This is kinda like the more information page of the items displayed in the home page
 class TasksPageDetails extends StatefulWidget {
   DocumentSnapshot snapshot;
   String type;
   String subType;
-  bool isDisabled;
+  bool isDisabled; // This is false by default
   TasksPageDetails(
       {@required this.snapshot,
       this.type,
@@ -59,6 +61,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
   String emailId;
   String userId;
   TextEditingController collegeNameCont = TextEditingController();
+  TextEditingController showUser2 = TextEditingController();
+  TextEditingController showUser1 = TextEditingController();
   bool isGetCampaignCode = false;
   String referralCode;
   final key = new GlobalKey<ScaffoldState>();
@@ -70,7 +74,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
   String _localPath;
   String status;
   Color col;
-  String link;
+  String linkRefer;
+  String linkEnter;
   String ongoing;
   int userStatus=0;
   int maxStatus=0;
@@ -85,59 +90,75 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
     emailId = prefs.getString("userEmailId");
     userId = prefs.getString("userId");
     referralCode = prefs.getString("referralCode") ?? "";
-    print(name);
-    print(phoneNo);
+    //print(name);
+    //print(phoneNo);
     try {
       List tasks = await CommonFunction()
           .getPost("Posts/${widget.type}/${widget.subType}");
       print("Tasks =${tasks}");
       for (DocumentSnapshot doc in tasks) {
         if (widget.snapshot.documentID == doc.documentID) {
-          List users = doc.data["submittedBy"];
-          print("GOt it");
-          print(name);
-          for (var user in users) {
-            // print(user["userId"]);
+          List users = doc.data["submittedBy"];   // this will contain a map from the database with all the information
+          //print("GOt it");
+          print("Above the users list printing------------------------------");
+          print(users);
+          //print(name);
 
-            if (name == user["name"]) {
-              print("user find");
-              print(name);
-              print(user["name"]);
-              isApplied = true;
-              status = user["status"];
-              print(status);
-              if (widget.subType == "Tasks") {
-                if (status == "applied") {
-                  status = "Submitted";
-                  col = Color(0xff051094);
-                } else if (status == "rejected") {
-                  status = "Rejected";
-                  col = Colors.red;
+          /// Added this null safety feature !!!!!!!!!!!!! this won't actually run for the gigs section
+          if(users!=null){
+            print("Inside this ");
+            for (var user in users) {
+              // print(user["userId"]);
+              print("abbfbbgbg=================");
+
+              /// Here changed the name to phone number
+              /// Have to change the code over here find the new document verify the uid of the user using his phone
+              /// number
+              if (phoneNo == user["phoneNo"]) {
+                await
+                print("user find");
+                print(name);
+                print(user["name"]);
+                isApplied = true;
+                status = user["status"];
+                print(status);
+                if (widget.subType == "Tasks") {
+                  if (status == "applied") {
+                    status = "Submitted";
+                    col = Color(0xff051094);
+                  } else if (status == "rejected") {
+                    status = "Rejected";
+                    col = Colors.red;
+                  } else {
+                    status = "Accepted";
+                    col = Colors.green;
+                  }
                 } else {
-                  status = "Accepted";
-                  col = Colors.green;
-                }
-              } else {
-                if (status == "applied") {
-                  status = "Applied";
-                  col = Color(0xff051094);
-                } else if (status == "rejected") {
-                  status = "Rejected";
-                  col = Colors.red;
-                } else if (status == "ongoing") {
-                   var ref= await firestore.collection("/Posts/Gigs/Campaign Tasks").document("${widget.snapshot.documentID}").get();
-                   userStatus=user["UserStatus"];
-                  status = "ongoing";
-                  col = Colors.red;
-                  link = user["link"];
-                  print("${widget.snapshot.data["UserStatus"]}");
-                } else {
-                  status = "Accepted";
-                  col = Colors.green;
+                  if (status == "applied") {
+                    status = "Applied";
+                    col = Color(0xff051094);
+                  } else if (status == "rejected") {
+                    status = "Rejected";
+                    col = Colors.red;
+                  } else if (status == "ongoing") {
+                    //var ref= await firestore.collection("/Posts/Gigs/Campaign Tasks").document("${widget.snapshot.documentID}").get();
+                    userStatus = user["UserStatus"];
+                    status = "ongoing";
+                    col = Colors.red;
+                    linkRefer = user["link"];
+                    linkEnter = user["linkToShow"];
+                    print("link rfidbfbdibfbdbfdbfbdubfdbfg");
+                    print(linkEnter);
+                    //print("${widget.snapshot.data["UserStatus"]}");
+                  } else {
+                    status = "Accepted";
+                    col = Colors.green;
+                  }
                 }
               }
             }
           }
+
         }
       }
 
@@ -202,7 +223,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
 
   @override
   Widget build(BuildContext context) {
-    print("hello");
+    //print("hello");
     return SafeArea(
       child: Scaffold(
           key: key,
@@ -222,7 +243,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                         stretch: true,
                         expandedHeight: MediaQuery.of(context).size.height * 0.70,
                         flexibleSpace: FlexibleSpaceBar(
-                          title: Visibility(visible: widget.subType
+                          title: Visibility(visible: widget.subType  // this is actually never true
                               .toLowerCase()
                               .contains("campaign tasks") ??
                               false ,child: Text("$userStatus/${widget.snapshot.data["maxStatus"]}")),
@@ -279,6 +300,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                     Expanded(
                                       child: Text(""),
                                     ),
+
+                                    // This visibility will also be never shown then why is it here!!!
                                     Visibility(
                                       visible: widget.subType
                                               .toLowerCase()
@@ -400,6 +423,10 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                               SizedBox(
                                 height: 10,
                               ),
+
+
+
+                              /// This will only be visible for the tournament page when at the moment has no data
                               Visibility(
                                 visible: widget.subType
                                         .toLowerCase()
@@ -449,6 +476,9 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                               SizedBox(
                                 height: 10,
                               ),
+
+
+                              /// This will also be most probably never shown
                               Visibility(
                                 visible: widget.subType
                                         .toLowerCase()
@@ -536,6 +566,9 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                               SizedBox(
                                 height: 30,
                               ),
+
+
+                              /// This will also never be visible, it will be visible only in the case of tournament
                               Visibility(
                                 visible: widget.subType == "Tasks" ? true : false,
                                 child: isApplied == true
@@ -643,8 +676,13 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                         ],
                                       ),
                               ),
+
+
+
+                              /// I don't know what the person that made this login had in mind but i just removed the exclamation and
+                              /// this is working now
                               !(widget.subType == "Campaign Tasks")
-                                  ? Text("")
+                                  ? Text("")// this will be shown for all the other cases
                                   : isApplied == false
                                       ? Container(
                                           height: 50,
@@ -704,7 +742,22 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                                                   width:MediaQuery.of(context).size.
                                                                       width*0.6,
                                                                   child: Text(
-                                                                    link,
+                                                                    linkRefer.isNotEmpty ? "ggjg" : linkEnter,
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        //     color: Color(0xff051094)),
+                                                                        color: Color(
+                                                                            0xff051094)),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              SingleChildScrollView(
+                                                                scrollDirection:Axis.horizontal,
+                                                                child: Container(
+                                                                  width:MediaQuery.of(context).size.
+                                                                  width*0.6,
+                                                                  child: Text(
+                                                                    linkRefer.isNotEmpty ? linkRefer : "",
                                                                     style: TextStyle(
                                                                         fontSize: 15,
                                                                         //     color: Color(0xff051094)),
@@ -714,21 +767,33 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                                                 ),
                                                               )
                                                             ],
-                                                          ),GestureDetector(
+                                                          ),linkEnter != null?GestureDetector(
                                                             onTap: () {
                                                                Clipboard.setData(
                                                                    new ClipboardData(
                                                                        text:
-                                                                           link));
+                                                                           linkEnter));
                                                                Fluttertoast.showToast(msg: "copied link to clipboard");
                                                             },
                                                             child: Icon(
                                                                 Icons.content_copy),
-                                                          ),
-                                                          IconButton(icon: Icon(Icons.share_rounded), onPressed: () {Share.share(link,);})
+                                                          ) : linkRefer != null?GestureDetector(
+                                                            onTap: () {
+                                                              Clipboard.setData(
+                                                                  new ClipboardData(
+                                                                      text:
+                                                                      linkEnter));
+                                                              Fluttertoast.showToast(msg: "copied link to clipboard");
+                                                            },
+                                                            child: Icon(
+                                                                Icons.content_copy),
+                                                          ):Container(),
+                                                          IconButton(icon: Icon(Icons.share_rounded), onPressed: () {Share.share(linkRefer,);})
                                                         ],
                                                       )
-                                                    ])
+
+                                                    ],
+                                              )
                                                   : Text(""),
                                               Divider(
                                                 thickness: 5,
@@ -783,6 +848,26 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                           decoration: InputDecoration(hintText: "Email ID"),
                         ),
                       ),
+                      widget.snapshot["showUser1"] != null ? Container(
+                        height: animation != null ? 50 * animation?.value : 0,
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: TextField(
+                          controller: showUser1,
+                          onTap: () {},
+                          decoration: InputDecoration(hintText: widget.snapshot["showUser1"]),
+                        ),
+                      ) : Container(),
+
+                      widget.snapshot["showUser2"] != null ? Container(
+                        height: animation != null ? 50 * animation?.value : 0,
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: TextField(
+                          controller: showUser2,
+                          onTap: () {},
+                          decoration: InputDecoration(hintText: widget.snapshot["showUser2"]),
+                        ),
+                      ) : Container(),
+
                       SizedBox(
                         height: animation != null ? 20 * animation?.value : 0,
                       ),
@@ -809,7 +894,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                             FocusScope.of(context).unfocus();
                             if (collegeNameCont.text.isEmpty) {
                               Fluttertoast.showToast(
-                                  msg: "Enter email ID",
+                                  msg: "Enter all fields",
                                   backgroundColor: Colors.red,
                                   textColor: Colors.white);
                               return;
@@ -1210,6 +1295,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
         "status": "applied",
         "companyName": widget.snapshot["companyName"],
         "taskTitle": widget.snapshot["taskTitle"],
+        "linkToShow" : "",
       };
       print(map);
       widget.snapshot.data["submitedBy"] = map;
@@ -1234,6 +1320,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
 //            "submittedBy" : map
 //          };
       pendingTasksMap[widget.snapshot.documentID] = false;
+
+      /// Adding the task information to the users account
       await _firestore
           .collection("Users")
           .document(phoneNo)
@@ -1297,8 +1385,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
         });
       }
     }
-    if (present_absent != null) {
-    } else {}
+    // if (present_absent != null) {
+    // } else {}
 
     print(widget.snapshot.documentID);
     print("Posts/Gigs/Tasks/${widget.snapshot.documentID}");
@@ -1338,7 +1426,9 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
           "status": "applied",
           "companyName": widget.snapshot["companyName"],
           "taskTitle": widget.snapshot["taskTitle"],
-          "user email": collegeNameCont.text
+          "user email": collegeNameCont.text,
+          "showUser1":showUser1.text ?? " ",
+          "showUser2":showUser1.text ?? " ",
         };
         widget.snapshot.data["submitedBy"] = map;
         Map<String, dynamic> updatedPost;

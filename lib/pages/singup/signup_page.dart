@@ -191,7 +191,8 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: 10,
               ),
-              isLoading?CircularProgressIndicator():Center(
+              isLoading?CircularProgressIndicator()
+              :Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 30),
                   width: 220,
@@ -201,7 +202,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(60)),
                     onPressed: () {
-                      FocusScope.of(context).unfocus();
+                      FocusScope.of(context).unfocus();  // This is used to hide the keyboard once the signup button is pressed
                       signUp();
                     },
                     child: Text(
@@ -309,6 +310,8 @@ class _SignUpPageState extends State<SignUpPage> {
       String inviteCode = inviteCodeCont.text.trim().toString();
       String phoneNo =phoneCont.text.trim().toString();
       List<DocumentSnapshot> snaps =await CommonFunction().getPost("Users");
+
+      // This function is called always to check if the phone number user entered is not already registered
       for (DocumentSnapshot snap in snaps) {
         if(snap.documentID=="+91$phoneNo"){
           Fluttertoast.showToast(msg: "User already exists try log in");

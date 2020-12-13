@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class InternshipUserListPage extends StatefulWidget {
   List internshipUserList;
   String docId;
+
   InternshipUserListPage({this.internshipUserList, this.docId});
 
   @override
@@ -74,10 +75,11 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
                   horizontal: 10,
                 ),
                 child: ListView.builder(
-                    itemCount: widget.internshipUserList.length,
-                    itemBuilder: (context, index) {
-                      return taskUserCard(widget.internshipUserList[index]);
-                    }),
+                  itemCount: widget.internshipUserList.length,
+                  itemBuilder: (context, index) {
+                    return taskUserCard(widget.internshipUserList[index]);
+                  },
+                ),
               )
             : Center(
                 child: Container(
@@ -124,16 +126,14 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          width: MediaQuery.of(context).size.width*.60,
-          height: MediaQuery.of(context).size.height*0.055,
+          width: MediaQuery.of(context).size.width * .60,
+          height: MediaQuery.of(context).size.height * 0.055,
           child: Text(
             userData["taskTitle"] ?? "",
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
             style: TextStyle(
-                color: Colors.green,
-                fontSize: 15,
-                fontWeight: FontWeight.bold),
+                color: Colors.green, fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
         SizedBox(
@@ -164,7 +164,7 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
         children: [
           SizedBox(height: 10),
           Container(
-              width: 110,
+              width: 90,
               height: 30,
               child: RaisedButton(
                   color: Colors.white,
@@ -194,7 +194,10 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
                       SizedBox(
                         width: 2,
                       ),
-                      Icon(Icons.file_download),
+                      Icon(
+                        Icons.file_download,
+                        size: 12,
+                      ),
                     ],
                   ))),
           SizedBox(height: 20),
@@ -283,8 +286,8 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
         fileName: "Resume_$phoneNo",
         url: imgUri,
         savedDir: _localPath,
-        showNotification:
-            true, // show download progress in status bar (for Android)
+        showNotification: true,
+        // show download progress in status bar (for Android)
         openFileFromNotification:
             true, // click on notification to open downloaded file (for Android)
       );

@@ -187,6 +187,7 @@ class _PostListUIPageState extends State<PostListUIPage>
 
   Widget commonCard(var snapshot, context, postType,
       {subtype, disable = false, int cardColor = 0xff294073}) {
+    Size _size = MediaQuery.of(context).size;
     // print(snapshot.data);
     return
        Container(
@@ -232,7 +233,9 @@ class _PostListUIPageState extends State<PostListUIPage>
                                     children: [
                                       Center(
                                         child: Text(
+
                                           snapshot["companyName"] ?? "",
+                                          overflow: TextOverflow.clip,
                                           style: TextStyle(
                                             //                  color: Color(CommonStyle().lightYellowColor),
                                             color: Colors.black,
@@ -367,11 +370,12 @@ class _PostListUIPageState extends State<PostListUIPage>
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Center(
+                                      Container(
+                                        width:_size.width/2,
                                         child: Text(
                                           snapshot["taskTitle"] ?? "",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
+                                          overflow: TextOverflow.clip,
+                                          maxLines: 1,
                                           style: TextStyle(
                                               color: Colors.black54,
                                               fontSize: 13,

@@ -103,8 +103,8 @@ class _verifyState extends State<verify> {
                               borderRadius: BorderRadius.circular(10),
                               image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image:
-                                      NetworkImage(snapshot["imgUri"] ?? ""))),
+                                  image:  // Modified the code here to add the photo
+                                      NetworkImage(snapshot.data["submittedBy"][0]["imgUri"] ?? ""))),
                         ),
                       ),
                       Padding(

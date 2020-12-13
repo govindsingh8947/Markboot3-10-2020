@@ -4,6 +4,7 @@ import 'package:markBoot/pages/homeScreen/adminPages/camapign.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/campaigns/campaigns.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/payment_transact.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/post_list_page.dart';
+import 'package:markBoot/pages/homeScreen/adminPages/refer_earn_admin.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/send_emails.dart';
 import 'package:markBoot/pages/singup/intro_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'admin_post_ui.dart';
 import 'amountReqUser_page.dart';
 import 'offers_details_admin.dart';
+import 'refer_earn_admin.dart';
 
 class AdminHomePage extends StatefulWidget {
   @override
@@ -95,11 +97,15 @@ class _AdminHomePageState extends State<AdminHomePage> {
               SizedBox(
                 height: 30,
               ),
+
+              // title, function , path
               itemCard("Gigs", action, "Posts/Gigs/Tasks"),
               itemCard("Campaign", action, "Posts/Gigs/Campaign"),
               itemCard("Offers", action, "Posts/Offers/Cashbacks"),
               itemCard("Internship", action, "Posts/Internship/Tasks"),
-              itemCard("Tournament", action, "Posts/Tournament/Tasks")
+              itemCard("Tournament", action, "Posts/Tournament/Tasks"),
+              itemCard("Refer", action, "Refer"),
+              //itemCard("Refer Earn", action, "Posts/H"),
             ],
           ),
         ),
@@ -115,21 +121,32 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   action(String path, title) {
+
+    // This is for the offers page
     if (path.contains("Cashbacks")) {
       debugPrint("CCCCCCCCCCCCCCCCCCCCC");
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => offers()));
-    } else if (title.contains("Campaign")) {
+    }
+    else if(title.contains("Refer")){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ReferEarn()));
+    }
+
+    // This is for the Campaign page
+    else if (title.contains("Campaign")) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Campaigns()));
-      ;
-    } else {
+
+    }
+
+    // this will be called for the gigs, Internship and also for the Tournament page
+    else {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => PostListPage(
-                    path: path,
-                    title: title,
+                    path: path, // Posts/Gigs/Tasks
+                    title: title,  // Gigs for the gigs page
                   )));
     }
   }

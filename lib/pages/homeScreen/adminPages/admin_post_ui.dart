@@ -59,11 +59,14 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
   bool isShowTournamentUI = false;
   bool isImportant=false;
   bool isClickOfferPic=false;
+  //bool isShow
   TextEditingController questionCont = TextEditingController();
   TextEditingController option1Cont = TextEditingController();
   TextEditingController option2Cont = TextEditingController();
   TextEditingController option3Cont = TextEditingController();
   TextEditingController option4Cont = TextEditingController();
+  TextEditingController askPhoneCont = TextEditingController();
+  TextEditingController orderId = TextEditingController();
   bool isClickSamplePic = false;
 
   List<Map<String, String>> questionMapList = new List();
@@ -223,6 +226,20 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
                         controller: amountCont,
                         inputText: "Reward",
                         keyboardType: TextInputType.number))),
+            Visibility(
+                visible: 
+                isShowTasksUI,
+                child: Center(
+                  child: commonWidget.commonTextField(controller: askPhoneCont,
+                  inputText: "Enter the value you want to show user"),
+                )),
+            Visibility(
+                visible:
+                isShowTasksUI,
+                child: Center(
+                  child: commonWidget.commonTextField(controller: orderId,
+                      inputText: "Enter the value you want to show user "),
+                )),
             Visibility(
                 visible:
                     (isShowTasksUI || isShowCampaignUI || isShowCashbacksUI) ??
@@ -791,7 +808,9 @@ class _AddPostAdminPageState extends State<AddPostAdminPage> {
         "taskDesc": description,
         "reward": amount,
         "link": link,
-        "samplePicUri": samplePicUri
+        "samplePicUri": samplePicUri,
+        "showUser1":askPhoneCont.text.toString(),
+        "showUser2":orderId.text.toString(),
       };
       uploadData(postData);
     } else if (isShowCampaignUI == true) {

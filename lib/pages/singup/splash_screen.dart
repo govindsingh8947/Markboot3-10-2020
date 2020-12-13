@@ -17,7 +17,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';
 import 'signup_page.dart';
 
-class splash_screen extends StatefulWidget {
+
+// This page is shown to the user for 2 seconds only then the user is shifted to the IntroPage
+class     splash_screen extends StatefulWidget {
   @override
   _splash_screenState createState() => _splash_screenState();
 }
@@ -32,6 +34,8 @@ class _splash_screenState extends State<splash_screen> {
     "assets/icons/money.png",
     "assets/icons/purchase.png"
   ];
+
+  // This is used for sending the notifications to the user of the app
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   start() async {

@@ -15,6 +15,8 @@ import 'email_sign_up.dart';
 import 'login_page.dart';
 import 'signup_page.dart';
 
+
+// This is supposed to send notifications to the user but for some reason this is not working
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -69,16 +71,22 @@ class _IntroPageState extends State<IntroPage> {
     bool isLogin = prefs.getBool("isLogin") ?? false;
     bool isAdminLogin = prefs.getBool("isAdminLogin") ?? false;
 
+
+
+    // If the user is loged in then he will be directed to the homepage()
     if (isLogin) {
       Future.delayed(Duration(milliseconds: 500), () {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
       });
+      // If the admin was loged in then he will be sent to the adminhomePage()
     } else if (isAdminLogin) {
       Future.delayed(Duration(milliseconds: 500), () {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => AdminHomePage()));
       });
+
+      // Third case no one is loged in and we have to show the login signup page
     } else {
       isShowInitProgress = false;
       setState(() {});
@@ -198,7 +206,7 @@ class _IntroPageState extends State<IntroPage> {
     init();
     // TODO: implement initState
     super.initState();
-  }
+  }  // Call to the custom init function and some code about sending a notification
 
   @override
   Widget build(BuildContext context) {
@@ -223,6 +231,8 @@ class _IntroPageState extends State<IntroPage> {
                 ],
               ),
             )
+
+          // This code runs initially when the app starts and then instantly isShowInitProgress becomes false that means the above code runs
           : Center(
               child: Container(
                 width: 30,

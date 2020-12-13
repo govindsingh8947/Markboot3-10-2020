@@ -39,14 +39,14 @@ class CommonFunction {
       QuerySnapshot querySnapshot =  await _firestore.collection(path).getDocuments();
       //print(querySnapshot);
       for(DocumentSnapshot snapshot in querySnapshot.documents) {
-        print(snapshot.data);
+        //print(snapshot.data);
         //debugPrint("SnapshotNAME ${snapshot["task"]}");
         documents.add(snapshot);
       }
       return documents;
     }
     catch(e) {
-      debugPrint("Exception (getRecentPost) : ${e.toString()}");
+      //debugPrint("Exception (getRecentPost) : ${e.toString()}");
     }
   }
 
