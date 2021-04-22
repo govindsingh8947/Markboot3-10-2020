@@ -30,46 +30,48 @@ class _MoreSettingsPageState extends State<MoreSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        //   backgroundColor: Color(CommonStyle().appbarColor),
-        backgroundColor: Color(0xff051094),
-        title: Text(
-          "More",
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-      ),
-      backgroundColor: Colors.white,
-      body: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 30,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          //   backgroundColor: Color(CommonStyle().appbarColor),
+          backgroundColor: Color(0xff051094),
+          title: Text(
+            "More",
+            style: TextStyle(color: Colors.white, fontSize: 20),
           ),
-          customListTile(context,
-              action: aboutUs,
-              leadingIcon: "assets/icons/aboutus.png",
-              title: "About Us"),
-          customListTile(context,
-              action: contactUS,
-              leadingIcon: "assets/icons/contactus.png",
-              title: "Contact Us"),
-          customListTile(context,
-              action: privacyPolicy,
-              leadingIcon: "assets/icons/privacy.png",
-              title: "Privacy Policy"),
-          customListTile(context,
-              action: share,
-              leadingIcon: "assets/icons/share.png",
-              title: "Share"),
-          customListTile(context,
-              action: reportIssue,
-              leadingIcon: "assets/icons/issue.png",
-              title: "Report Issue"),
-          customListTile(context,
-              action: logout,
-              leadingIcon: "assets/icons/logout.png",
-              title: "Logout"),
-        ],
+        ),
+        backgroundColor: Colors.white,
+        body: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 30,
+            ),
+            customListTile(context,
+                action: aboutUs,
+                leadingIcon: "assets/icons/aboutus.png",
+                title: "About Us"),
+            customListTile(context,
+                action: contactUS,
+                leadingIcon: "assets/icons/contactus.png",
+                title: "Contact Us"),
+            customListTile(context,
+                action: privacyPolicy,
+                leadingIcon: "assets/icons/privacy.png",
+                title: "Privacy Policy"),
+            customListTile(context,
+                action: share,
+                leadingIcon: "assets/icons/share.png",
+                title: "Share"),
+            customListTile(context,
+                action: reportIssue,
+                leadingIcon: "assets/icons/issue.png",
+                title: "Report Issue"),
+            customListTile(context,
+                action: logout,
+                leadingIcon: "assets/icons/logout.png",
+                title: "Logout"),
+          ],
+        ),
       ),
     );
   }

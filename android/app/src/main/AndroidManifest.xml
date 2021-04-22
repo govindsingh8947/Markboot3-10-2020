@@ -17,6 +17,7 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="MarkBoot"
         android:icon="@mipmap/ic_launcher">
+
         <activity
             android:name="com.app.markboot.MainActivity"
             android:launchMode="singleTop"
@@ -66,6 +67,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+
 
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
             <intent-filter>

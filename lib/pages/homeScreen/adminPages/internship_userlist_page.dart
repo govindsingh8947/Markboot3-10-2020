@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -52,7 +52,6 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
   @override
   void initState() {
     init();
-    // TODO: implement initState
     super.initState();
   }
 
@@ -99,7 +98,7 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
     return Container(
       // height: 100,
       margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8), color: Color(0xff051094)),
       child: Column(
@@ -107,7 +106,7 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[leftWidget(userData), rightWidget(userData)],
           ),
           Text(
@@ -164,23 +163,24 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
         children: [
           SizedBox(height: 10),
           Container(
-              width: 90,
-              height: 30,
+              width: 110,
+              height: 40,
               child: RaisedButton(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8)),
                   onPressed: () {
-                    debugPrint("VVVV ${userData["isVerify"]}");
+                    // debugPrint("VVVV ${userData["isVerify"]}");
                     if (!(userData["isVerify"] == true ? true : false) ??
                         false) {
 //                internshipService(userData);
-                      debugPrint("UUUUSSEERRDATA $userData");
+//                       debugPrint("UUUUSSEERRDATA $userData");
                       downloadTaskImg(userData["resumeUri"] ?? "",
                           userData["phoneNo"] ?? "");
                     }
                   },
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
                         "Resume",
@@ -191,19 +191,16 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
                                 Colors.red,
                             fontSize: 15),
                       ),
-                      SizedBox(
-                        width: 2,
-                      ),
                       Icon(
                         Icons.file_download,
-                        size: 12,
+                        size: 18,
                       ),
                     ],
                   ))),
           SizedBox(height: 20),
           Container(
-              width: 90,
-              height: 30,
+              width: 110,
+              height: 40,
               child: RaisedButton(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -218,6 +215,7 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
                     _showMyDialog(userData);
                   },
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
                         "Verify",
@@ -228,8 +226,7 @@ class _InternshipUserListPageState extends State<InternshipUserListPage>
                                 Colors.red,
                             fontSize: 15),
                       ),
-//                      SizedBox(width: 2,),
-//                      Icon(Icons.file_download),
+                      Icon(CupertinoIcons.check_mark_circled),
                     ],
                   ))),
         ],

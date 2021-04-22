@@ -141,8 +141,7 @@ class CommonWidget {
                 });
 
                 // This will run when the user is navigated from the gigs page
-              }
-              else {
+              } else {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -152,7 +151,7 @@ class CommonWidget {
                               subType: subtype,
                               isDisabled: disable,
                             ))).then((value) {
-                  print("hello");
+                  print('this is $postType');
                   if (value == true) {}
                 });
               }
@@ -169,14 +168,14 @@ class CommonWidget {
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.all(8),
-                            width: MediaQuery.of(context).size.width*0.2,
-                            height: MediaQuery.of(context).size.width*0.2,
+                            width: MediaQuery.of(context).size.width * 0.2,
+                            height: MediaQuery.of(context).size.width * 0.2,
                             decoration: BoxDecoration(
                                 //  color: Color(0xff051094),
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
                                   fit: BoxFit.fill,
-                                     scale: 3,
+                                  scale: 3,
                                   image: NetworkImage(
                                     snapshot["logoUri"].toString(),
                                   ),
@@ -202,8 +201,11 @@ class CommonWidget {
                                       ),
                                     ),
                                     Container(
-                                      width: MediaQuery.of(context).size.width*.60,
-                                      height: MediaQuery.of(context).size.height*0.06,
+                                      width: MediaQuery.of(context).size.width *
+                                          .60,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.06,
                                       child: Text(
                                         snapshot["taskTitle"] ?? "",
                                         overflow: TextOverflow.ellipsis,
@@ -302,7 +304,7 @@ class CommonWidget {
                 : Card(
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height*0.3,
+                      height: MediaQuery.of(context).size.height * 0.3,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
@@ -311,8 +313,8 @@ class CommonWidget {
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.all(8),
-                            width: MediaQuery.of(context).size.width*0.2,
-                            height: MediaQuery.of(context).size.width*0.2,
+                            width: MediaQuery.of(context).size.width * 0.2,
+                            height: MediaQuery.of(context).size.width * 0.2,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
@@ -331,8 +333,11 @@ class CommonWidget {
                                   children: [
                                     // snapshot["taskTitle"] ?? "",
                                     Container(
-                                      width: MediaQuery.of(context).size.width*.60,
-                                      height: MediaQuery.of(context).size.height*0.058,
+                                      width: MediaQuery.of(context).size.width *
+                                          .60,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.058,
                                       child: Text(
                                         snapshot["taskTitle"] ?? "",
                                         overflow: TextOverflow.ellipsis,
@@ -360,7 +365,8 @@ class CommonWidget {
                                   ],
                                 ),
                                 Visibility(
-                                  visible: (postType.contains("Internship")|| postType.contains("Offers"))
+                                  visible: (postType.contains("Internship") ||
+                                          postType.contains("Offers"))
                                       ? false
                                       : true,
                                   child: Padding(
@@ -387,7 +393,8 @@ class CommonWidget {
                                             ),
                                             Text(
                                               (postType.contains("Offers")
-                                                      ? snapshot["cashbackAmount"]
+                                                      ? snapshot[
+                                                          "cashbackAmount"]
                                                       : snapshot["reward"]) ??
                                                   "0",
                                               style: TextStyle(

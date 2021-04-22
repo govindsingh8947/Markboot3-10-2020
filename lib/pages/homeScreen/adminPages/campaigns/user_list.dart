@@ -1,9 +1,6 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
@@ -50,7 +47,6 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
   @override
   void initState() {
     init();
-    // TODO: implement initState
     super.initState();
   }
 
@@ -58,7 +54,6 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
-        //backgroundColor: Color(CommonStyle().backgroundColor),
         appBar: AppBar(
           backgroundColor: Color(0xff051094),
           title: Text(
@@ -77,6 +72,7 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
                 child: ListView.builder(
                     itemCount: widget.taskUserList.length,
                     itemBuilder: (context, index) {
+                      print(widget.taskUserList[index]);
                       return taskUserCard(widget.taskUserList[index]);
                     }),
               )
@@ -93,11 +89,10 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
 
   Widget taskUserCard(Map<String, dynamic> userData) {
     if (userData["status"] != "applied") {
-      return Text("");
+      return Container();
     }
     print(userData);
     return Container(
-      //height: 100,
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -172,99 +167,12 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
             ),
           ),
         ),
-        // Container(
-        //     child: IconButton(
-        //   onPressed: () {
-        //     downloadTaskImg(userData["uploadWorkUri"]);
-        //   },
-        //   icon: Icon(
-        //     Icons.file_download,
-        //     size: 20,
-        //     color: Colors.white,
-        //   ),
-        // ))
       ],
     );
   }
 
   approvedAmount(String userId, approveAmount, userPhoneNo, userData) async {
     _showMyDialog(userId, userData);
-
-    //    debugPrint("DOCID ${widget.docId}");
-//
-//    try{
-//      bool isApproved= false;
-//     QuerySnapshot querySnapshot = await Firestore.instance.collection("Users").getDocuments();
-//     DocumentSnapshot userDocumentSnapshot;
-//
-//     if(querySnapshot!=null) {
-//       for(DocumentSnapshot snapshot in querySnapshot.documents){
-//         if(snapshot.data["userId"] == userId) {
-//           userDocumentSnapshot = snapshot;
-//           break;
-//         }
-//       }
-//
-//       if(userDocumentSnapshot !=null){
-//         String pendingAmount = userDocumentSnapshot.data["pendingAmount"]??"0";
-//         debugPrint("PendingAmount : $pendingAmount");
-//         String approvedAmount = userDocumentSnapshot.data["approvedAmount"]??"0";
-//         if(int.parse(pendingAmount) > 0) {
-//           pendingAmount = (int.parse(pendingAmount)-int.parse(approvedAmount)).toString();
-//           approvedAmount = (int.parse(approvedAmount)+int.parse(approveAmount)).toString();
-//           debugPrint("RemainPendingAmount $pendingAmount");
-//           -if(int.parse(pendingAmount)<0){
-//              Fluttertoast.showToast(msg: "try again or contact to admin",
-//              backgroundColor: Colors.red,textColor: Colors.white
-//              );
-//           }
-//           else {
-//             isApproved = true;
-//             Firestore.instance.collection("Users").document(userPhoneNo).setData({
-//               "approvedAmount" : approvedAmount,
-//               "pendingAmount" : pendingAmount
-//             },
-//                 merge: true
-//             );
-//           }
-//           if(isApproved == true) {
-//             widget.taskUserList.remove(userData);
-//             Firestore.instance.collection("Posts").document("Gigs").collection("Tasks").document(widget.docId).
-//    setData({
-//               "submittedBy" : widget.taskUserList
-//             },
-//             merge: true
-//             );
-//             Fluttertoast.showToast(msg: "approved successfully",
-//             backgroundColor: Colors.green,textColor: Colors.white
-//             );
-//             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-//               builder: (context)=>AdminHomePage()
-//             ), (route) => false);
-//           }
-//         }
-//         else {
-//           Fluttertoast.showToast(msg: "please contact to admin or try again",
-//           backgroundColor: Colors.red,textColor: Colors.white
-//           );
-//         }
-//       }
-//       else {
-//         Fluttertoast.showToast(msg: "Getting some error,try again or contact to admin",
-//         textColor: Colors.white,backgroundColor: Colors.red
-//         );
-//       }
-//     }
-//
-//
-//    }
-//    catch(e) {
-//      print(e);
-//      Fluttertoast.showToast(msg: "Please try again",
-//      backgroundColor: Colors.red,
-//        textColor: Colors.white
-//      );
-//    }
   }
 
   TextEditingController linkReferCode = TextEditingController();
@@ -283,11 +191,7 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
                 Text('Do want to Accept that product?'),
                 CommonWidget().commonTextField(
                   controller: linkReferCode,
-                  hintText: "Enter the Refer code",
-                ),
-                CommonWidget().commonTextField(
-                    controller: linkEnter,
-                    hintText: "Enter the link",
+                  hintText: "Enter the link",
                 ),
                 //Text('Would you like to approve of this message?'),
               ],
@@ -297,23 +201,17 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
             FlatButton(
               child: Text("Ongoing"),
               onPressed: () async {
-                if (linkReferCode.text.length == 6 || linkEnter.text.length >4) {
+                FocusScope.of(context).unfocus();
+                if (linkReferCode.text.length != 0) {
                   for (var task in widget.taskUserList) {
                     if (task["userId"] == userId) {
                       print("Got it");
                       print(widget.taskUserList.indexOf(task));
                       var t = widget.taskUserList;
-                      setState(() {
-                        t[t.indexOf(task)]["status"] = "ongoing";
-                        t[t.indexOf(task)]["link"] =
-                            linkReferCode.text.toString();
-                        t[t.indexOf(task)]["linkToShow"] =
-                            linkEnter.text.toString(); // creating a new one
-                      });
                       print(t);
                       Map<String, dynamic> updatedPost = {"submittedBy": t};
                       print(updatedPost);
-                      if(linkReferCode.text.length == 6) {
+                      if (linkReferCode.text.length >= 6) {
                         var db = _firestore
                             .collection("invitecodes")
                             .document(linkReferCode.text.toString());
@@ -323,11 +221,16 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
                             .get()
                             .then((value) async {
                           if (value.exists) {
-                            scaffoldKey.currentState.showSnackBar(SnackBar(
-                              content: Text("This refer code is already taken"),
-                              duration: Duration(seconds: 1),
-                            ));
+                            Fluttertoast.showToast(
+                                msg: 'This refer code is already taken');
                           } else {
+                            CommonFunction().showProgressDialog(
+                                isShowDialog: true, context: (context));
+                            setState(() {
+                              t[t.indexOf(task)]["status"] = "ongoing";
+                              t[t.indexOf(task)]["link"] =
+                                  linkReferCode.text.toString();
+                            });
                             await _firestore
                                 .collection("Posts")
                                 .document("Gigs")
@@ -338,29 +241,21 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
                               "invitedBy": userId,
                               "invitedTo": [],
                               "referCode": linkReferCode.text.toString(),
-                              "userEmail":userData["emailId"],
-                              "userPhone":userData["phoneNo"],
+                              "userEmail": userData["emailId"],
+                              "userPhone": userData["phoneNo"],
                             });
-
+                            Navigator.pop(context);
                           }
                         });
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: 'Please enter correct code');
                       }
-                      else{
-                        print("Inside here ==================================");
-                        await _firestore
-                            .collection("Posts")
-                            .document("Gigs")
-                            .collection("Campaign Tasks")
-                            .document(widget.docId)
-                            .setData(updatedPost, merge: true);
-                      }
-
                     }
                   }
-                  Navigator.pop(context);
                 } else {
                   scaffoldKey.currentState.showSnackBar(SnackBar(
-                    content: Text("Please enter link or refer code"),
+                    content: Text("Please enter refer code"),
                     duration: Duration(seconds: 1),
                   ));
                 }
@@ -396,8 +291,6 @@ class _user_listState extends State<user_list> with WidgetsBindingObserver {
                         .setData(updatedPost, merge: true);
                   }
                 }
-//
-//
                 Navigator.of(context).pop();
               },
             ),

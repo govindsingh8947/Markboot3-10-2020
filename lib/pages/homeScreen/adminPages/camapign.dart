@@ -1,10 +1,5 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
@@ -28,17 +23,8 @@ class _CampaignState extends State<Campaign> {
   TextEditingController user_email = TextEditingController();
   TextEditingController user_phone = TextEditingController();
   TextEditingController user_reward = TextEditingController();
-//  TextEditingController  = TextEditingController();
   TextEditingController descrip = TextEditingController();
-//  TextEditingController cashbackLinkCont = TextEditingController();
-//  TextEditingController salaryCont = TextEditingController();
-//  TextEditingController locationCont = TextEditingController();
-//  TextEditingController durationCont = TextEditingController();
-//  TextEditingController categoryCont = TextEditingController();
-//  TextEditingController designationCont = TextEditingController();
-//  TextEditingController startDateCont = TextEditingController();
-//  TextEditingController applyByCont = TextEditingController();
-//  TextEditingController skillsReqCont = TextEditingController();
+
 //
   init() {}
 
@@ -116,22 +102,12 @@ class _CampaignState extends State<Campaign> {
                     borderRadius: BorderRadius.circular(8)),
                 onPressed: () async {
                   FocusScope.of(context).unfocus();
-//                  checkTaskService();
                   String company = com_name.text.trim().toString();
                   String name = user_name.text.trim().toString();
                   String phone = user_phone.text.trim().toString();
                   String email = user_email.text.trim().toString();
                   String reward = user_reward.text.trim().toString();
                   String desc = descrip.toString();
-
-//                  String company="google";
-//                  String name="ashish";
-//                  String phone="8532956668";
-//                  String reward="20";
-//                  String desc="nmndmnsd";
-//                  String email="ashish@gmail.com";
-//                  print(company.length);
-//                  print(company.isEmpty);
 
                   if (company.isEmpty ||
                       name.isEmpty ||
@@ -146,17 +122,9 @@ class _CampaignState extends State<Campaign> {
                     List<DocumentSnapshot> campaigns =
                         await CommonFunction().getPost("Posts/Gigs/Campaign");
 
-                    //  print(users);
-                    //print(campaigns);
-
                     DocumentSnapshot use;
                     DocumentSnapshot campaign;
                     for (var user in users) {
-//                      print(user.documentID.toString()=="+91${phone}");
-                      // print(user.data);
-//                      print(user.data["emailId"]);
-                      //                    print(email);
-                      //                  print("\n");
                       if (user.documentID.toString() == "+91${phone}" &&
                           user.data["name"] == name &&
                           user.data["emailId"] == email) {
@@ -176,9 +144,7 @@ class _CampaignState extends State<Campaign> {
                         setState(() {
                           campaign = cam;
                         });
-                      }
-
-                      else if (use != null && campaign != null) {
+                      } else if (use != null && campaign != null) {
                         print("found");
                         _showMyDialog(use, campaign);
                       } else {
@@ -186,8 +152,6 @@ class _CampaignState extends State<Campaign> {
                       }
                     }
                   }
-
-//                   _showMyDialog();
                 },
                 child: Text(
                   "Submit",

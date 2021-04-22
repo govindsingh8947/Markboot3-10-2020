@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
@@ -67,18 +68,20 @@ class _UserProfileTabState extends State<UserProfileTab>
     internshipList = userData["internshipList"] ?? new Map();
     offersList = userData["offersList"] ?? new Map();
     tournamentList = userData["tournamentList"] ?? new Map();
-    approvedAmount = userData["approvedAmount"].toString();   // this is Approved amount fetched from the databse
+    approvedAmount = userData["approvedAmount"]
+        .toString(); // this is Approved amount fetched from the databse
     pendingAmount = userData["pendingAmount"].toString() ?? "0";
     isShowInitBar = false;
     setState(() {});
   }
+
   @override
   void initState() {
     init();
     initAnim();
-    // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -88,7 +91,11 @@ class _UserProfileTabState extends State<UserProfileTab>
           body: isShowInitBar == true
               ? Container(
                   child: Center(
-                    child: CircularProgressIndicator(),
+                    child: LoadingFlipping.circle(
+                      borderColor: Colors.blue,
+                      size: 50,
+                      borderSize: 5,
+                    ),
                   ),
                 )
               : GestureDetector(
@@ -100,16 +107,11 @@ class _UserProfileTabState extends State<UserProfileTab>
                   child: Stack(
                     children: [
                       Container(
-                          height: MediaQuery.of(context).size.height*0.3,
+                          height: MediaQuery.of(context).size.height * 0.3,
                           padding:
                               EdgeInsets.only(left: 20, top: 30, right: 20),
                           decoration: BoxDecoration(
                             color: Color(0xff051094),
-                            // color: Color(CommonStyle().blueColor),
-//                    borderRadius: BorderRadius.only(
-//                      bottomLeft: Radius.circular(30),
-//                      bottomRight: Radius.circular(30),
-//                    )
                           ),
                           child: Column(
                             children: [
@@ -149,9 +151,9 @@ class _UserProfileTabState extends State<UserProfileTab>
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 15),
                                       ),
-                                   SizedBox(
-                                      height: 2,
-                                     ),
+                                      SizedBox(
+                                        height: 2,
+                                      ),
                                       Text(
                                         phoneNo ?? "",
                                         style: TextStyle(
@@ -171,7 +173,8 @@ class _UserProfileTabState extends State<UserProfileTab>
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Container(
-                                height: MediaQuery.of(context).size.height*0.2,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
                                 padding: EdgeInsets.only(top: 30, right: 20),
                                 child: Column(
                                   children: [
@@ -266,8 +269,16 @@ class _UserProfileTabState extends State<UserProfileTab>
                                                 children: <Widget>[
                                                   Image.asset(
                                                     "assets/icons/bank.png",
-                                                    width: MediaQuery.of(context).size.width*0.04,
-                                                    height: MediaQuery.of(context).size.height*0.04,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.04,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.04,
                                                   ),
                                                   SizedBox(
                                                     width: 1,
@@ -323,8 +334,16 @@ class _UserProfileTabState extends State<UserProfileTab>
                                                 children: <Widget>[
                                                   Image.asset(
                                                     "assets/icons/bank.png",
-                                                    width: MediaQuery.of(context).size.width*0.04,
-                                                    height: MediaQuery.of(context).size.height*0.04,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.04,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.04,
                                                   ),
                                                   SizedBox(
                                                     width: 1,
@@ -354,7 +373,9 @@ class _UserProfileTabState extends State<UserProfileTab>
                                         MainAxisAlignment.spaceAround,
                                     children: [
                                       Container(
-                                        height: MediaQuery.of(context).size.height*0.07,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.07,
                                         //padding: EdgeInsets.symmetric(horizontal: 30),
                                         width:
                                             MediaQuery.of(context).size.width *
@@ -384,7 +405,9 @@ class _UserProfileTabState extends State<UserProfileTab>
                                       ),
                                       Container(
                                         //padding: EdgeInsets.symmetric(horizontal: 30),
-                                        height: MediaQuery.of(context).size.height*0.07,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.07,
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.45,
@@ -461,13 +484,6 @@ class _UserProfileTabState extends State<UserProfileTab>
                                               fontSize: 22,
                                               fontWeight: FontWeight.bold),
                                         ),
-//                                  Text(offersList.length.toString(),
-//                                    style: TextStyle(
-//                                        color: Colors.white,
-//                                        fontSize: 22,
-//                                        fontWeight: FontWeight.bold
-//                                    ),
-//                                  ),
                                       ],
                                     ),
                                   ),
@@ -482,18 +498,6 @@ class _UserProfileTabState extends State<UserProfileTab>
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      // Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //         builder: (context) =>
-                                      //             PostListUIPage(
-                                      //                 docMap: pendingTasks,
-                                      //                 path: "Posts/Gigs/Tasks",
-                                      //                 type: "Gigs",
-                                      //                 subType: "Tasks",
-                                      //                 campaignMap:
-                                      //                     campaignList)));
-
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (context) {
                                         return applied_gigs();
@@ -560,13 +564,6 @@ class _UserProfileTabState extends State<UserProfileTab>
                                                 fontSize: 22,
                                                 fontWeight: FontWeight.bold),
                                           ),
-//                                  Text(internshipList.length.toString(),
-//                                    style: TextStyle(
-//                                        color: Colors.white,
-//                                        fontSize: 22,
-//                                        fontWeight: FontWeight.bold
-//                                    ),
-//                                  ),
                                         ],
                                       ),
                                     ),
@@ -576,201 +573,6 @@ class _UserProfileTabState extends State<UserProfileTab>
                               SizedBox(
                                 height: 10,
                               ),
-//                  GestureDetector(
-//                    onTap: (){
-//                    },
-//                    child: Container(
-//                      margin: EdgeInsets.symmetric(horizontal: 15),
-//                      width: MediaQuery.of(context).size.width,
-//                      decoration: BoxDecoration(
-//                          color: Color(CommonStyle().blueColor),
-//                          borderRadius: BorderRadius.circular(10)
-//                      ),
-//                      height: 200,
-//                      child: Column(
-//                        mainAxisSize: MainAxisSize.max,
-//                        mainAxisAlignment: MainAxisAlignment.center,
-//                        children: <Widget>[
-//                          Text("Current Money",
-//                            style: TextStyle(
-//                                color: Colors.green,
-//                                fontSize: 22,
-//                                fontWeight: FontWeight.bold
-//                            ),
-//                          ),
-//                          Row(
-//                            children: <Widget>[
-//
-//                            ],
-//                          )
-//                        ],
-//                      ),
-//                    ),
-//                  ),
-//                        SizedBox(
-//                          height: 10,
-//                        ),
-//                        GestureDetector(
-//                          onTap: (){
-//                            Navigator.push(context, MaterialPageRoute(
-//                                builder: (context) => PostListUIPage(docMap: pendingTasks,
-//                                    path: "Posts/Gigs/Tasks",type: "Gigs",subType: "Tasks",
-//                                    campaignMap : campaignList
-//                                )
-//                            ));
-//                          },
-//                          child: Container(
-//                            margin: EdgeInsets.symmetric(horizontal: 15),
-//                            width: MediaQuery.of(context).size.width,
-//                            decoration: BoxDecoration(
-//                                color: Color(CommonStyle().blueColor),
-//                                borderRadius: BorderRadius.circular(10)
-//                            ),
-//                            height: 200,
-//                            child: Column(
-//                              mainAxisSize: MainAxisSize.max,
-//                              mainAxisAlignment: MainAxisAlignment.center,
-//                              children: <Widget>[
-//                                Text("Gigs",
-//                                  style: TextStyle(
-//                                      color: Colors.white,
-//                                      fontSize: 22,
-//                                      fontWeight: FontWeight.bold
-//                                  ),
-//                                ),
-////                                Text(pendingTasks.length.toString() ?? "",
-////                                  style: TextStyle(
-////                                      color: Colors.white,
-////                                      fontSize: 28,
-////                                      fontWeight: FontWeight.bold
-////                                  ),
-//                                //),
-//                              ],
-//                            ),
-//                          ),
-//                        ),
-//                        SizedBox(
-//                          height: 10,
-//                        ),
-////                        GestureDetector(
-////                          onTap: (){
-////                            Navigator.push(context, MaterialPageRoute(
-////                                builder: (context) => GeneralTab()
-////                            ));
-////                          },
-////                          child: Container(
-////                            margin: EdgeInsets.symmetric(horizontal: 15),
-////                            width: MediaQuery.of(context).size.width,
-////                            decoration: BoxDecoration(
-////                                color: Color(CommonStyle().blueColor),
-////                                borderRadius: BorderRadius.circular(10)
-////                            ),
-////                            height: 200,
-////                            child: Column(
-////                              mainAxisSize: MainAxisSize.max,
-////                              mainAxisAlignment: MainAxisAlignment.center,
-////                              children: <Widget>[
-////                                Text("General",
-////                                  style: TextStyle(
-////                                      color: Colors.white,
-////                                      fontSize: 22,
-////                                      fontWeight: FontWeight.bold
-////                                  ),
-////                                ),
-////                                Text(offersList.length.toString(),
-////                                  style: TextStyle(
-////                                      color: Colors.white,
-////                                      fontSize: 22,
-////                                      fontWeight: FontWeight.bold
-////                                  ),
-////                                ),
-////                              ],
-////                            ),
-////                          ),
-////                        ),
-//                        SizedBox(
-//                          height: 10,
-//                        ),
-//                        GestureDetector(
-//                          onTap: (){
-//                            Navigator.push(context, MaterialPageRoute(
-//                                builder: (context) => PostListUIPage(docMap: internshipList,
-//                                  path: "Posts/Internship/Tasks",type: "Internship",subType: "Tasks",
-//                                )
-//                            ));
-//                          },
-//                          child: Container(
-//                            margin: EdgeInsets.symmetric(horizontal: 15),
-//                            width: MediaQuery.of(context).size.width,
-//                            decoration: BoxDecoration(
-//                                color: Color(CommonStyle().blueColor),
-//                                borderRadius: BorderRadius.circular(10)
-//                            ),
-//                            height: 200,
-//                            child: Column(
-//                              mainAxisSize: MainAxisSize.max,
-//                              mainAxisAlignment: MainAxisAlignment.center,
-//                              children: <Widget>[
-//                                Text("Internship",
-//                                  style: TextStyle(
-//                                      color: Colors.white,
-//                                      fontSize: 22,
-//                                      fontWeight: FontWeight.bold
-//                                  ),
-//                                ),
-//                                Text(internshipList.length.toString(),
-//                                  style: TextStyle(
-//                                      color: Colors.white,
-//                                      fontSize: 22,
-//                                      fontWeight: FontWeight.bold
-//                                  ),
-//                                ),
-//                              ],
-//                            ),
-//                          ),
-//                        ),
-//                        SizedBox(
-//                          height: 10,
-//                        ),
-////                        GestureDetector(
-////                          onTap: (){
-////                            Navigator.push(context, MaterialPageRoute(
-////                                builder: (context) => TournamentPageTab(
-////                                  isRedirectFromProfile: true,docList: tournamentList,
-////                                )
-////                            ));
-////                          },
-////                          child: Container(
-////                            margin: EdgeInsets.symmetric(horizontal: 15),
-////                            width: MediaQuery.of(context).size.width,
-////                            decoration: BoxDecoration(
-////                                color: Color(CommonStyle().blueColor),
-////                                borderRadius: BorderRadius.circular(10)
-////                            ),
-////                            height: 200,
-////                            child: Column(
-////                              mainAxisSize: MainAxisSize.max,
-////                              mainAxisAlignment: MainAxisAlignment.center,
-////                              children: <Widget>[
-////                                Text("Tournament",
-////                                  style: TextStyle(
-////                                      color: Colors.white,
-////                                      fontSize: 22,
-////                                      fontWeight: FontWeight.bold
-////                                  ),
-////                                ),
-////                                Text(tournamentList.length.toString(),
-////                                  style: TextStyle(
-////                                      color: Colors.white,
-////                                      fontSize: 22,
-////                                      fontWeight: FontWeight.bold
-////                                  ),
-////                                ),
-////                              ],
-////                            ),
-////                          ),
-////                        ),
-//                        SizedBox(height: 50,),
                             ],
                           ),
                         ),
@@ -944,7 +746,6 @@ class _UserProfileTabState extends State<UserProfileTab>
       }
       isShowDialog = true;
       showProgressDialog();
-      debugPrint("DDD");
       Map<String, String> userData = {
         "name": name,
       };
@@ -988,9 +789,11 @@ class _UserProfileTabState extends State<UserProfileTab>
           builder: (context) {
             return Center(
               child: Container(
-                width: 30,
-                height: 30,
-                child: CircularProgressIndicator(),
+                child: LoadingFlipping.circle(
+                  borderColor: Colors.blue,
+                  size: 50,
+                  borderSize: 5,
+                ),
               ),
             );
           });

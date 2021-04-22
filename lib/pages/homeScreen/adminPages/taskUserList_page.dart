@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +9,6 @@ import 'package:markBoot/common/style.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'admin_homepage.dart';
 
 /// This is the page for the Gigs Page tasks
 class TaskUserListPage extends StatefulWidget {
@@ -30,24 +28,23 @@ class _TaskUserListPageState extends State<TaskUserListPage>
   String _localPath;
   bool isShowDownloadBar = false;
   RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
-  void _onRefresh() async{
+  void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use loadFailed(),if no data return,use LoadNodata()
-      setState(() {
-
-      });
+    setState(() {});
     _refreshController.loadComplete();
   }
+
   Future<String> _findLocalPath() async {
     final directory = await getExternalStorageDirectory();
     return directory.path;
@@ -88,12 +85,12 @@ class _TaskUserListPageState extends State<TaskUserListPage>
         backgroundColor: Color(CommonStyle().backgroundColor),
         body: widget.taskUserList.length > 0
             ? SmartRefresher(
-          enablePullDown: true,
-          header: WaterDropHeader(),
-          controller: _refreshController,
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
-              child: Container(
+                enablePullDown: true,
+                header: WaterDropHeader(),
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                onLoading: _onLoading,
+                child: Container(
                   margin: EdgeInsets.only(top: 10),
                   padding: EdgeInsets.symmetric(
                     horizontal: 10,
@@ -104,7 +101,7 @@ class _TaskUserListPageState extends State<TaskUserListPage>
                         return taskUserCard(widget.taskUserList[index]);
                       }),
                 ),
-            )
+              )
             : Center(
                 child: Container(
                   height: 30,
@@ -118,9 +115,8 @@ class _TaskUserListPageState extends State<TaskUserListPage>
 
   Widget taskUserCard(Map<String, dynamic> userData) {
     if (userData["status"] != "applied") {
-      return Text(" ");
+      return Container();
     }
-    //print(userData);
     return Container(
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.only(top: 10),
@@ -150,7 +146,7 @@ class _TaskUserListPageState extends State<TaskUserListPage>
 
   Widget leftWidget(Map<String, dynamic> userData) {
     return Container(
-      width: MediaQuery.of(context).size.width*0.4,
+      width: MediaQuery.of(context).size.width * 0.4,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,14 +171,18 @@ class _TaskUserListPageState extends State<TaskUserListPage>
             userData["phoneNo"] ?? "",
             style: TextStyle(color: Colors.white, fontSize: 12),
           ),
-            userData["showUser1"] != null ?Text(
-            userData["showUser1"] ?? "",
-            style: TextStyle(color: Colors.white, fontSize: 12),
-          ): Container(),
-            userData["showUser1"] != null ?Text(
-            userData["showUser2"] ?? "",
-            style: TextStyle(color: Colors.white, fontSize: 12),
-          ) : Container(),
+          userData["showUser1"] != null
+              ? Text(
+                  userData["showUser1"] ?? "",
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                )
+              : Container(),
+          userData["showUser1"] != null
+              ? Text(
+                  userData["showUser2"] ?? "",
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                )
+              : Container(),
         ],
       ),
     );
@@ -192,7 +192,7 @@ class _TaskUserListPageState extends State<TaskUserListPage>
     return Column(
       children: <Widget>[
         Container(
-          width: MediaQuery.of(context).size.width*0.4,
+          width: MediaQuery.of(context).size.width * 0.4,
           height: 50,
           child: RaisedButton(
             onPressed: () {
@@ -381,7 +381,7 @@ class _TaskUserListPageState extends State<TaskUserListPage>
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('AlertDialog Title'),
+          title: Text('AlertDialog'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -397,6 +397,7 @@ class _TaskUserListPageState extends State<TaskUserListPage>
                 //_pending_approved(userId);
                 // Navigator.pop(context);
                 for (var task in widget.taskUserList) {
+                  // print(userId);
                   if (task["userId"] == userId) {
                     print("Got it");
                     print(widget.taskUserList.indexOf(task));
@@ -416,22 +417,24 @@ class _TaskUserListPageState extends State<TaskUserListPage>
                     var c = await CommonFunction().getPost("Users");
                     print(c);
                     for (DocumentSnapshot docx in c) {
-
-                      print("Inside here ---------------------------------------");
+                      print(
+                          "Inside here ---------------------------------------");
                       if (t[t.indexOf(task)]["phoneNo"].toString() ==
                           docx.documentID.toString()) {
                         print(docx.data);
                         print("in here ");
                         Map<String, dynamic> userData = docx.data;
-                        int approvedAmountCustom=0;
-                        /// This is where the problem lied the type stored in the database was integer but then here it was assigned as String
-                        /// so I changed it
-                        approvedAmountCustom = approvedAmountCustom = userData["approvedAmount"];
-                        approvedAmountCustom += int.parse(t[t.indexOf(task)]["reward"]);
-                        //approvedAmountCustom = (int.parse(userData["approvedAmount"] ?? "0") + ;
-                        userData["approvedAmount"] =approvedAmountCustom;
-                        print(approvedAmountCustom);
+                        int approvedAmountCustom = 0;
 
+                        // This is where the problem lied the type stored in the database was integer but then here it was assigned as String
+                        // so I changed it
+                        approvedAmountCustom =
+                            approvedAmountCustom = userData["approvedAmount"];
+                        approvedAmountCustom +=
+                            int.parse(t[t.indexOf(task)]["reward"]);
+                        //approvedAmountCustom = (int.parse(userData["approvedAmount"] ?? "0") + ;
+                        userData["approvedAmount"] = approvedAmountCustom;
+                        print(approvedAmountCustom);
 
                         await _firestore
                             .collection("Users")
@@ -475,9 +478,10 @@ class _TaskUserListPageState extends State<TaskUserListPage>
                         Map<String, dynamic> userData = docx.data;
                         int pendingAmountCustom;
                         pendingAmountCustom = userData["pendingAmount"];
-                        pendingAmountCustom += int.parse(t[t.indexOf(task)]["reward"]);
+                        pendingAmountCustom +=
+                            int.parse(t[t.indexOf(task)]["reward"]);
                         //approvedAmountCustom += int.parse(t[t.indexOf(task)]["reward"]);
-                        userData["pendingAmount"] =pendingAmountCustom;
+                        userData["pendingAmount"] = pendingAmountCustom;
 
                         await _firestore
                             .collection("Users")

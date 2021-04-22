@@ -105,8 +105,8 @@ class _InternshipPageDetailsState extends State<InternshipPageDetails>
         }
       }
 
-      print(isApplied);
-      print(status);
+      // print(isApplied);
+      // print(status);
       // DocumentSnapshot snapshot =
       //     await _firestore.collection("Users").document(phoneNo).get();
       // userData = snapshot.data;
@@ -138,254 +138,92 @@ class _InternshipPageDetailsState extends State<InternshipPageDetails>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: <Widget>[
-            CustomScrollView(
-              slivers: <Widget>[
-                SliverAppBar(
-                    backgroundColor: Colors.transparent,
-                    stretch: true,
-                    expandedHeight: MediaQuery.of(context).size.height * 0.70,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Hero(
-                        tag: "img",
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white38,
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image:
-                                      NetworkImage(widget.snapshot["imgUri"]))),
+    return SafeArea(
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Stack(
+            children: <Widget>[
+              CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                      backgroundColor: Colors.transparent,
+                      stretch: true,
+                      expandedHeight: MediaQuery.of(context).size.height * 0.70,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Hero(
+                          tag: "img",
                           child: Container(
-                            margin: EdgeInsets.only(
-                              left: 20,
-                              right: 50,
-                              top: 60,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  child: Text(widget.snapshot["taskTitle"]??"",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    CircleAvatar(
-                                      radius: 25,
-                                      backgroundImage: NetworkImage(
-                                          widget.snapshot["logoUri"]),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(widget.snapshot["companyName"]??"",
+                            decoration: BoxDecoration(
+                                color: Colors.white38,
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(
+                                        widget.snapshot["imgUri"]))),
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                left: 20,
+                                right: 50,
+                                top: 60,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    child: Text(
+                                      widget.snapshot["taskTitle"] ?? "",
                                       style: TextStyle(
-                                          fontSize: 15,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.w500,
-                                          color: Colors.white
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      CircleAvatar(
+                                        radius: 25,
+                                        backgroundImage: NetworkImage(
+                                            widget.snapshot["logoUri"]),
                                       ),
-                                    )
-                                  ],
-                                )
-                              ],
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        widget.snapshot["companyName"] ?? "",
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
+                          placeholderBuilder: (context, size, widget) {
+                            return Container(
+                              height: 150.0,
+                              width: 150.0,
+                              child: CircularProgressIndicator(),
+                            );
+                          },
                         ),
-                        placeholderBuilder: (context, size, widget) {
-                          return Container(
-                            height: 150.0,
-                            width: 150.0,
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      ),
-                    )),
-                SliverPadding(
-                    padding: const EdgeInsets.all(20),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate(
-                        [
-                          Container(
-                              margin: EdgeInsets.only(top: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    "Title",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        // color: Color(
-                                        //     CommonStyle().lightYellowColor),
-                                        color: Colors.black),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    widget.snapshot["taskTitle"] ?? "",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        //     color: Color(0xff051094)),
-                                        color: Colors.black54),
-                                  )
-                                ],
-                              )),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                              margin: EdgeInsets.only(top: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    "Company Name",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        // color: Color(
-                                        //     CommonStyle().lightYellowColor),
-                                        color: Colors.black),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    widget.snapshot["companyName"] ?? "",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        //     color: Color(0xff051094)),
-                                        color: Colors.black54),
-                                  )
-                                ],
-                              )),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                  child: singleItem("Location",
-                                      widget.snapshot["location"] ?? "")),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                  child: singleItem("Duration",
-                                      widget.snapshot["duration"] ?? "")),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                  child: singleItem("Category",
-                                      widget.snapshot["category"] ?? "")),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                  child: singleItem("Designation",
-                                      widget.snapshot["designation"] ?? "")),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                  child: singleItem("Start Date",
-                                      widget.snapshot["startDate"] ?? "")),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                  child: singleItem("Apply By",
-                                      widget.snapshot["applyBy"] ?? "")),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                  child: singleItem("Skill Required",
-                                      widget.snapshot["skillReq"] ?? "")),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                  child: singleItem("Description",
-                                      widget.snapshot["taskDesc"] ?? "",
-                                      crossAlign: CrossAxisAlignment.start)),
-                            ],
-                          ),
-                          // SizedBox(
-                          //   height: 30,
-                          // ),
-                          Container(
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text(
-                              "Stipend",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  // color:
-                                  //     Color(CommonStyle().lightYellowColor),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.only(top: 8),
-                              child: Row(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/icons/bank.png",
-                                    width: 15,
-                                    height: 15,
-                                    color: Color(0xff051094),
-                                  ),
-                                  Text(
-                                    widget.snapshot["salary"] ?? "",
-                                    style: GoogleFonts.lato(
-                                        fontSize: 15, color: Color(0xff051094)),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          isApplied == true
-                              ? Container(
-                                  //margin: EdgeInsets.only(top: 8),
-                                  child: Column(
+                      )),
+                  SliverPadding(
+                      padding: const EdgeInsets.all(20),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate(
+                          [
+                            Container(
+                                margin: EdgeInsets.only(top: 8),
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Divider(
-                                      thickness: 5,
-                                    ),
                                     Text(
-                                      "Status",
+                                      "Title",
                                       style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -397,121 +235,290 @@ class _InternshipPageDetailsState extends State<InternshipPageDetails>
                                       height: 5,
                                     ),
                                     Text(
-                                      status,
+                                      widget.snapshot["taskTitle"] ?? "",
                                       style: TextStyle(
                                           fontSize: 15,
                                           //     color: Color(0xff051094)),
-                                          color: col),
+                                          color: Colors.black54),
                                     )
                                   ],
-                                ))
-                              : Container(
-                                  height: 50,
-                                  child: RaisedButton(
-                                    color: Color(0xff051094),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)),
-                                    onPressed: () {
-                                      if (isApplied == false) {
-                                        if (animationController.isCompleted) {
-                                          animationController.reverse();
-                                        } else {
-                                          animationController.forward();
-                                        }
-//                                  applyPostService();
-                                      }
-                                    },
-                                    child: Text(
-                                      isApplied == true
-                                          ? "Applied Already"
-                                          : "APPLY",
+                                )),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                                margin: EdgeInsets.only(top: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      "Company Name",
                                       style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          // color: Color(
+                                          //     CommonStyle().lightYellowColor),
+                                          color: Colors.black),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      widget.snapshot["companyName"] ?? "",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          //     color: Color(0xff051094)),
+                                          color: Colors.black54),
+                                    )
+                                  ],
+                                )),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: singleItem("Location",
+                                        widget.snapshot["location"] ?? "")),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                    child: singleItem("Duration",
+                                        widget.snapshot["duration"] ?? "")),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: singleItem("Category",
+                                        widget.snapshot["category"] ?? "")),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                    child: singleItem("Designation",
+                                        widget.snapshot["designation"] ?? "")),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: singleItem("Start Date",
+                                        widget.snapshot["startDate"] ?? "")),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                    child: singleItem("Apply By",
+                                        widget.snapshot["applyBy"] ?? "")),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: singleItem("Skill Required",
+                                        widget.snapshot["skillReq"] ?? "")),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: singleItem("Description",
+                                        widget.snapshot["taskDesc"] ?? "",
+                                        crossAlign: CrossAxisAlignment.start)),
+                              ],
+                            ),
+                            // SizedBox(
+                            //   height: 30,
+                            // ),
+                            Container(
+                              margin: EdgeInsets.only(top: 30),
+                              child: Text(
+                                "Stipend",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    // color:
+                                    //     Color(CommonStyle().lightYellowColor),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Container(
+                                margin: EdgeInsets.only(top: 8),
+                                child: Row(
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/icons/bank.png",
+                                      width: 15,
+                                      height: 15,
+                                      color: Color(0xff051094),
+                                    ),
+                                    Text(
+                                      widget.snapshot["salary"] ?? "",
+                                      style: GoogleFonts.lato(
+                                          fontSize: 15,
+                                          color: Color(0xff051094)),
+                                    ),
+                                  ],
+                                )),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            isApplied == true
+                                ? Container(
+                                    //margin: EdgeInsets.only(top: 8),
+                                    child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Divider(
+                                        thickness: 5,
+                                      ),
+                                      Text(
+                                        "Status",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            // color: Color(
+                                            //     CommonStyle().lightYellowColor),
+                                            color: Colors.black),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        status,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            //     color: Color(0xff051094)),
+                                            color: col),
+                                      )
+                                    ],
+                                  ))
+                                : Container(
+                                    height: 50,
+                                    child: RaisedButton(
+                                      color: Color(0xff051094),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      onPressed: () {
+                                        if (isApplied == false) {
+                                          if (animationController.isCompleted) {
+                                            animationController.reverse();
+                                          } else {
+                                            animationController.forward();
+                                          }
+//                                  applyPostService();
+                                        }
+                                      },
+                                      child: Text(
+                                        isApplied == true
+                                            ? "Applied Already"
+                                            : "APPLY",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   ),
-                                ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                        ],
+                            SizedBox(
+                              height: 30,
+                            ),
+                          ],
+                        ),
+                      )),
+                ],
+              ),
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: animation != null
+                      ? MediaQuery.of(context).size.height *
+                          0.5 *
+                          animation.value
+                      : 0,
+                  color: Colors.white,
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: animation != null ? 50 * animation?.value : 0,
                       ),
-                    )),
-              ],
-            ),
-            Positioned(
-              bottom: 0,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: animation != null
-                    ? MediaQuery.of(context).size.height * 0.5 * animation.value
-                    : 0,
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: animation != null ? 50 * animation?.value : 0,
-                    ),
-                    Container(
-                      height: animation != null ? 50 * animation?.value : 0,
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: TextField(
-                        controller: emailCont,
-                        onTap: () {},
-                        decoration: InputDecoration(hintText: "Email"),
-                      ),
-                    ),
-                    SizedBox(
-                      height: animation != null ? 20 * animation?.value : 0,
-                    ),
-                    GestureDetector(
-                        onTap: () {
-                          getFile();
-                        },
-                        child: Text("upload Resume Doc/pdf file")),
-                    SizedBox(
-                      height: animation != null ? 40 * animation.value : 0,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 60),
-                      height: 50 * animation.value,
-                      width: MediaQuery.of(context).size.width,
-                      child: RaisedButton(
-                        color: Color(0xff051094),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        onPressed: () {
-                          debugPrint("Pressed");
-                          FocusScope.of(context).unfocus();
-                          if (emailCont.text.isEmpty) {
-                            Fluttertoast.showToast(
-                                msg: "Enter email",
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white);
-                            return;
-                          } else if (resumeFile == null) {
-                            Fluttertoast.showToast(
-                                msg: "Upload resume",
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white);
-                            return;
-                          } else {
-                            applyPostService();
-                          }
-                        },
-                        child: Text(
-                          "Submit",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                      Container(
+                        height: animation != null ? 50 * animation?.value : 0,
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: TextField(
+                          controller: emailCont,
+                          onTap: () {},
+                          decoration: InputDecoration(hintText: "Email"),
                         ),
                       ),
-                    )
-                  ],
+                      SizedBox(
+                        height: animation != null ? 20 * animation?.value : 0,
+                      ),
+                      GestureDetector(
+                          onTap: () {
+                            getFile();
+                          },
+                          child: Text("upload Resume Doc/pdf file")),
+                      SizedBox(
+                        height: animation != null ? 40 * animation.value : 0,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 60),
+                        height: 50 * animation.value,
+                        width: MediaQuery.of(context).size.width,
+                        child: RaisedButton(
+                          color: Color(0xff051094),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          onPressed: () {
+                            debugPrint("Pressed");
+                            FocusScope.of(context).unfocus();
+                            if (emailCont.text.isEmpty) {
+                              Fluttertoast.showToast(
+                                  msg: "Enter email",
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white);
+                              return;
+                            } else if (resumeFile == null) {
+                              Fluttertoast.showToast(
+                                  msg: "Upload resume",
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white);
+                              return;
+                            } else {
+                              applyPostService();
+                            }
+                          },
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
-        ));
+              )
+            ],
+          )),
+    );
   }
 
   Widget singleItem(title, desc, {crossAlign = CrossAxisAlignment.center}) {
@@ -580,7 +587,7 @@ class _InternshipPageDetailsState extends State<InternshipPageDetails>
         allowedExtensions: ['pdf', 'doc'],
         allowMultiple: false,
       );
-      if(result != null) {
+      if (result != null) {
         resumeFile = File(result.files.single.path);
         Fluttertoast.showToast(msg: "Uploaded File ${result.names[0]}");
       }

@@ -1,15 +1,8 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:markBoot/common/commonFunc.dart';
-import 'package:markBoot/common/style.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/campaigns/OngoingDetailScreen.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ongoing extends StatefulWidget {
@@ -24,7 +17,7 @@ class _ongoingState extends State<ongoing> with WidgetsBindingObserver {
   String _localPath;
   bool isShowDownloadBar = false;
   List maps = [];
-  bool flag=false;
+  bool flag = false;
   Future<String> _findLocalPath() async {
     final directory = await getExternalStorageDirectory();
     return directory.path;
@@ -40,35 +33,35 @@ class _ongoingState extends State<ongoing> with WidgetsBindingObserver {
         if (r["status"] == "ongoing") {
           demos.add(r);
           setState(() {
-            flag=true;
+            flag = true;
           });
         }
       }
     }
     maps = demos;
     print(maps.length);
-    if(maps.isEmpty){
+    if (maps.isEmpty) {
       setState(() {
-        flag=false;
+        flag = false;
       });
     }
   }
-  RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
 
-  void _onRefresh() async{
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use loadFailed(),if no data return,use LoadNodata()
-      setState(() {
-      });
+    setState(() {});
     _refreshController.loadComplete();
   }
 
@@ -76,22 +69,21 @@ class _ongoingState extends State<ongoing> with WidgetsBindingObserver {
   void initState() {
     init();
     // TODO: implement initState
-    setState(() {
-    });
+    setState(() {});
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return
-         SmartRefresher(
+    return SmartRefresher(
       enablePullDown: true,
       header: WaterDropHeader(),
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        onLoading: _onLoading,
-          child: flag?Center(
-            child: Container(
+      controller: _refreshController,
+      onRefresh: _onRefresh,
+      onLoading: _onLoading,
+      child: flag
+          ? Center(
+              child: Container(
                 margin: EdgeInsets.only(top: 10),
                 padding: EdgeInsets.symmetric(
                   horizontal: 10,
@@ -102,17 +94,19 @@ class _ongoingState extends State<ongoing> with WidgetsBindingObserver {
                       return taskUserCard(maps[index]);
                     }),
               ),
-          ):Center(
-           child: Container(
-           height: 30,
-           child: Text(
-             "No user found",
-             style: TextStyle(color: Colors.black, fontSize: 20),
-           ),
-         ),
-    ),
-        );
+            )
+          : Center(
+              child: Container(
+                height: 30,
+                child: Text(
+                  "No user found",
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
+              ),
+            ),
+    );
   }
+
   Widget taskUserCard(Map<String, dynamic> userData) {
     // if (userData["status"] != "applied") {
     //   return Text("");
@@ -141,14 +135,12 @@ class _ongoingState extends State<ongoing> with WidgetsBindingObserver {
             context,
             MaterialPageRoute(
                 builder: (context) => OngoingDetailScreen(
-                    phone: userData["phone"],
-                    name: userData["name"],
-                    email: userData["emailId"],
-                    task:userData["taskTitle"],
-                    company: userData["companyName"],
-                )
-            )
-        );
+                      phone: userData["phone"],
+                      name: userData["name"],
+                      email: userData["emailId"],
+                      task: userData["taskTitle"],
+                      company: userData["companyName"],
+                    )));
       },
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 15),

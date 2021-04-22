@@ -49,5 +49,7 @@
     <orderEntry type="module" module-name="firebase_messaging" />
     <orderEntry type="module" module-name="debug" />
     <orderEntry type="module" module-name="release" />
+    <orderEntry type="library" name="Dart SDK" level="project" />
+    <orderEntry type="library" name="Dart Packages" level="project" />
   </component>
 </module>

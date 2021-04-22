@@ -8,14 +8,14 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:markBoot/common/commonFunc.dart';
-import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
-
 
 // This is kinda like the more information page of the items displayed in the home page
 class TasksPageDetails extends StatefulWidget {
@@ -29,17 +29,20 @@ class TasksPageDetails extends StatefulWidget {
       this.subType,
       this.isDisabled = false});
   @override
-  _TasksPageDetailsState createState() => _TasksPageDetailsState();
+  _TasksPageDetailsState createState() => _TasksPageDetailsState(type, subType);
 }
 
 class _TasksPageDetailsState extends State<TasksPageDetails>
     with SingleTickerProviderStateMixin {
+  String type, subtype;
+  int currentStepNumber = 0;
+  _TasksPageDetailsState(this.type, this.subtype);
   Firestore _firestore = Firestore();
   String phoneNo;
   SharedPreferences prefs;
   Map<String, dynamic> userData;
   bool isApplied = false;
-  List<String> pendingPostList=[];
+  List<String> pendingPostList = [];
   List<int> textColors = [0xff00E676, 0xffEEFF41, 0xffE0E0E0, 0xffffffff];
   List<int> colors = [
     0xff11232D,
@@ -54,7 +57,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
 
   // Animation ------------------
   AnimationController animationController;
-  bool isCampaign=false;
+  bool isCampaign = false;
   Animation animation;
   File _workedImgFile;
   String name;
@@ -63,6 +66,10 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
   TextEditingController collegeNameCont = TextEditingController();
   TextEditingController showUser2 = TextEditingController();
   TextEditingController showUser1 = TextEditingController();
+  TextEditingController Username = TextEditingController();
+  TextEditingController Phone_number = TextEditingController();
+  TextEditingController code = TextEditingController();
+  TextEditingController OrderId = TextEditingController();
   bool isGetCampaignCode = false;
   String referralCode;
   final key = new GlobalKey<ScaffoldState>();
@@ -75,14 +82,13 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
   String status;
   Color col;
   String linkRefer;
-  String linkEnter;
   String ongoing;
-  int userStatus=0;
-  int maxStatus=0;
-  Firestore firestore=Firestore.instance;
+  int userStatus = 0;
+  int maxStatus = 0;
+  Firestore firestore = Firestore.instance;
+  List<String> statusList = [];
   Future<void> init() async {
     print("hello+${widget.snapshot.data}");
-    // print();
     print("Posts/${widget.type}/${widget.subType}");
     prefs = await SharedPreferences.getInstance();
     name = prefs.getString("userName");
@@ -90,103 +96,71 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
     emailId = prefs.getString("userEmailId");
     userId = prefs.getString("userId");
     referralCode = prefs.getString("referralCode") ?? "";
-    //print(name);
-    //print(phoneNo);
+    print(widget.snapshot["requiredField"]);
     try {
       List tasks = await CommonFunction()
           .getPost("Posts/${widget.type}/${widget.subType}");
       print("Tasks =${tasks}");
       for (DocumentSnapshot doc in tasks) {
         if (widget.snapshot.documentID == doc.documentID) {
-          List users = doc.data["submittedBy"];   // this will contain a map from the database with all the information
-          //print("GOt it");
+          List users = doc.data[
+              "submittedBy"]; // this will contain a map from the database with all the information
           print("Above the users list printing------------------------------");
           print(users);
-          //print(name);
 
           /// Added this null safety feature !!!!!!!!!!!!! this won't actually run for the gigs section
-          if(users!=null){
+          if (users != null) {
             print("Inside this ");
             for (var user in users) {
-              // print(user["userId"]);
-              print("abbfbbgbg=================");
-
               /// Here changed the name to phone number
               /// Have to change the code over here find the new document verify the uid of the user using his phone
               /// number
               if (phoneNo == user["phoneNo"]) {
-                await
-                print("user find");
-                print(name);
-                print(user["name"]);
                 isApplied = true;
                 status = user["status"];
-                print(status);
                 if (widget.subType == "Tasks") {
+                  statusList = ['Submitted', 'Accepted'];
                   if (status == "applied") {
                     status = "Submitted";
+                    currentStepNumber = 0;
                     col = Color(0xff051094);
                   } else if (status == "rejected") {
                     status = "Rejected";
+                    statusList = ['Submitted', 'Rejected'];
                     col = Colors.red;
                   } else {
+                    statusList = ['Submitted', 'Accepted'];
                     status = "Accepted";
                     col = Colors.green;
                   }
                 } else {
+                  statusList = ['Applied', 'On Going', 'Completed'];
                   if (status == "applied") {
                     status = "Applied";
+                    currentStepNumber = 0;
                     col = Color(0xff051094);
                   } else if (status == "rejected") {
+                    statusList = ['Applied', 'Rejected'];
                     status = "Rejected";
                     col = Colors.red;
                   } else if (status == "ongoing") {
-                    //var ref= await firestore.collection("/Posts/Gigs/Campaign Tasks").document("${widget.snapshot.documentID}").get();
                     userStatus = user["UserStatus"];
                     status = "ongoing";
+                    currentStepNumber = 1;
                     col = Colors.red;
                     linkRefer = user["link"];
-                    linkEnter = user["linkToShow"];
-                    print("link rfidbfbdibfbdbfdbfbdubfdbfg");
-                    print(linkEnter);
-                    //print("${widget.snapshot.data["UserStatus"]}");
                   } else {
                     status = "Accepted";
+                    currentStepNumber = 2;
+                    userStatus = user["UserStatus"];
                     col = Colors.green;
                   }
                 }
               }
             }
           }
-
         }
       }
-
-      print(isApplied);
-      print(status);
-
-      // pendingPostList =
-      //     prefs.getStringList("pendingTasks") ?? new List<String>();
-      // if (pendingPostList.contains(widget.snapshot.documentID.toString())) {
-      //   isApplied = true;
-      //   setState(() {});
-      // }
-      // phoneNo = prefs.getString("userPhoneNo") ?? "";
-      // DocumentSnapshot snapshot =
-      //     await _firestore.collection("Users").document(phoneNo).get();
-      // userData = snapshot.data;
-      // referredUser = userData["referredUser"] ?? "0";
-      // pendingTasksMap = userData["pendingTasks"] ?? new Map();
-      // debugPrint("PEndingTask $pendingTasksMap");
-      // if (pendingTasksMap.containsKey(widget.snapshot.documentID)) {
-      //   isApplied = true;
-      // }
-      // referralCode = userData["referralCode"] ?? "";
-      // campaignList = userData["campaignList"] ?? new Map();
-      // if (campaignList.containsKey(widget.snapshot.documentID)) {
-      //   isGetCampaignCode = true;
-      // }
-      // debugPrint("DATA $userData");
       _localPath =
           (await _findLocalPath()) + Platform.pathSeparator + 'Download';
 
@@ -206,6 +180,15 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
     return directory.path;
   }
 
+  _requestPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+
+    final info = statuses[Permission.storage].toString();
+    print('permission   $info');
+  }
+
   @override
   void initState() {
     animationController =
@@ -216,8 +199,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
         setState(() {});
       });
     init();
-
-    // TODO: implement initState
     super.initState();
   }
 
@@ -241,16 +222,21 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                     SliverAppBar(
                         backgroundColor: Colors.transparent,
                         stretch: true,
-                        expandedHeight: MediaQuery.of(context).size.height * 0.70,
+                        expandedHeight:
+                            MediaQuery.of(context).size.height * 0.70,
                         flexibleSpace: FlexibleSpaceBar(
-                          title: Visibility(visible: widget.subType  // this is actually never true
-                              .toLowerCase()
-                              .contains("campaign tasks") ??
-                              false ,child: Text("$userStatus/${widget.snapshot.data["maxStatus"]}")),
+                          title: Visibility(
+                              visible:
+                                  widget.subType // this is actually never true
+                                          .toLowerCase()
+                                          .contains("campaign tasks") ??
+                                      false,
+                              child: Text(
+                                  "$userStatus/${widget.snapshot.data["maxStatus"]}")),
                           background: Hero(
                             tag: "img",
                             child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 30),
+                              padding: EdgeInsets.symmetric(vertical: 30),
                               decoration: BoxDecoration(
                                   color: Colors.white38,
                                   image: DecorationImage(
@@ -262,13 +248,17 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Container(
-                                      margin: EdgeInsets.only(left: 20,right: 10,top: 15,),
-                                      child: Text(widget.snapshot["taskTitle"]??"",
+                                      margin: EdgeInsets.only(
+                                        left: 20,
+                                        right: 10,
+                                        top: 15,
+                                      ),
+                                      child: Text(
+                                        widget.snapshot["taskTitle"] ?? "",
                                         style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.white
-                                        ),
+                                            color: Colors.white),
                                       ),
                                     ),
                                     SizedBox(
@@ -287,12 +277,13 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                           SizedBox(
                                             width: 10,
                                           ),
-                                          Text(widget.snapshot["companyName"]??"",
+                                          Text(
+                                            widget.snapshot["companyName"] ??
+                                                "",
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w500,
-                                                color: Colors.white
-                                            ),
+                                                color: Colors.white),
                                           )
                                         ],
                                       ),
@@ -310,7 +301,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                       child: Container(
                                         height: 80,
                                         padding: EdgeInsets.only(left: 20),
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         decoration: BoxDecoration(
                                           color: Colors.white10,
                                         ),
@@ -319,30 +311,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                               MainAxisAlignment.center,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            // Text(
-                                            //   "PROGRESS",
-                                            //   style: TextStyle(
-                                            //       color: Colors.yellowAccent),
-                                            // ),
-                                            // Row(
-                                            //   children: <Widget>[
-                                            //     Text(
-                                            //       "$referredUser/",
-                                            //       style: TextStyle(
-                                            //         fontSize: 28,
-                                            //         color: Colors.black,
-                                            //       ),
-                                            //     ),
-                                            //     Text(
-                                            //       "20",
-                                            //       style: TextStyle(
-                                            //           color: Colors.black,
-                                            //           fontSize: 15),
-                                            //     )
-                                            //   ],
-                                            // )
-                                          ],
+                                          children: <Widget>[],
                                         ),
                                       ),
                                     )
@@ -354,7 +323,10 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                               return Container(
                                 height: 150.0,
                                 width: 150.0,
-                                child: CircularProgressIndicator(),
+                                child: LoadingFlipping.circle(
+                                  borderColor: Colors.blue,
+                                  borderSize: 5,
+                                ),
                               );
                             },
                           ),
@@ -367,7 +339,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                               Container(
                                   margin: EdgeInsets.only(top: 8),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
                                         "Title",
@@ -396,7 +369,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                               Container(
                                   margin: EdgeInsets.only(top: 8),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
                                         "Company Name ",
@@ -424,8 +398,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                 height: 10,
                               ),
 
-
-
                               /// This will only be visible for the tournament page when at the moment has no data
                               Visibility(
                                 visible: widget.subType
@@ -439,12 +411,12 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Visibility(
-                                          visible:  !widget.subType
+                                          visible: !widget.subType
                                               .toLowerCase()
                                               .contains("campaign"),
                                           child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 "Task",
@@ -460,7 +432,8 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                                 height: 5,
                                               ),
                                               Text(
-                                                widget.snapshot["taskDesc"] ?? "",
+                                                widget.snapshot["taskDesc"] ??
+                                                    "",
                                                 style: TextStyle(
                                                     fontSize: 15,
                                                     // color: Color(0xff051094)
@@ -469,14 +442,12 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                             ],
                                           ),
                                         ),
-
                                       ],
                                     )),
                               ),
                               SizedBox(
                                 height: 10,
                               ),
-
 
                               /// This will also be most probably never shown
                               Visibility(
@@ -513,102 +484,118 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                       ],
                                     )),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(top: 30),
-                                child: Text(
-                                  "REWARD",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      // color:
-                                      //     Color(CommonStyle().lightYellowColor),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
+                              SizedBox(
+                                height: 5,
+                              ),
+
+                              Padding(
+                                padding: EdgeInsets.only(top: 10, bottom: 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        "Reward",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Container(
+                                        child: Row(
+                                      children: <Widget>[
+                                        Image.asset(
+                                          "assets/icons/bank.png",
+                                          width: 15,
+                                          height: 15,
+                                          color: Color(0xff051094),
+                                        ),
+                                        Text(
+                                          widget.snapshot["reward"] ?? "",
+                                          style: GoogleFonts.lato(
+                                              fontSize: 20,
+                                              color: Color(0xff051094)),
+                                        ),
+                                      ],
+                                    )),
+                                  ],
                                 ),
                               ),
-                              Container(
-                                  margin: EdgeInsets.only(top: 8),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Image.asset(
-                                        "assets/icons/bank.png",
-                                        width: 15,
-                                        height: 15,
-                                        color: Color(0xff051094),
-                                      ),
-                                      Text(
-                                        widget.snapshot["reward"] ?? "",
-                                        style: GoogleFonts.lato(
-                                            fontSize: 15,
-                                            color: Color(0xff051094)),
-                                      ),
-                                    ],
-                                  )),
+
                               SizedBox(
                                 height: 10,
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  downloadTaskImg(
-                                      widget.snapshot["samplePicUri"]);
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 8, bottom: 8, right: 8),
-                                  child: GestureDetector(
-                                    child: Text(
-                                      "See Sample Picture",
-                                      style: TextStyle(
-                                          color: Color(0xff051094), fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 30,
-                              ),
-
+                              (status != "Applied" &&
+                                      status != "Accepted" &&
+                                      status != "rejected" &&
+                                      status != "Submitted" &&
+                                      status != "ongoing" &&
+                                      !widget.subType
+                                          .toLowerCase()
+                                          .contains("campaign"))
+                                  ? GestureDetector(
+                                      onTap: () async {
+                                        _requestPermission();
+                                        downloadTaskImg(
+                                            widget.snapshot["samplePicUri"]);
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: 20, right: 8),
+                                        child: GestureDetector(
+                                          child: Text(
+                                            "See Sample Picture",
+                                            style: TextStyle(
+                                                color: Color(0xff051094),
+                                                fontSize: 18),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                              // SizedBox(
+                              //   height: 30,
+                              // ),
 
                               /// This will also never be visible, it will be visible only in the case of tournament
                               Visibility(
-                                visible: widget.subType == "Tasks" ? true : false,
+                                visible:
+                                    widget.subType == "Tasks" ? true : false,
                                 child: isApplied == true
-                                    ? Container(
-                                        //margin: EdgeInsets.only(top: 8),
-                                        child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Divider(
-                                            thickness: 5,
-                                          ),
-                                          Text(
-                                            "Status",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                // color: Color(
-                                                //     CommonStyle().lightYellowColor),
-                                                color: Colors.black),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            status,
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                //     color: Color(0xff051094)),
-                                                color: col),
-                                          )
-                                        ],
-                                      ))
+                                    ? Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Status",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  // color: Color(
+                                                  //     CommonStyle().lightYellowColor),
+                                                  color: Colors.black),
+                                            ),
+                                            Text(
+                                              status,
+                                              style: TextStyle(
+                                                  fontSize: 20, color: col),
+                                            )
+                                          ],
+                                        ),
+                                      )
                                     : Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
                                           Container(
-                                            width:
-                                                MediaQuery.of(context).size.width,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
                                             height: 50,
@@ -636,19 +623,18 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                             height: 10,
                                           ),
                                           Container(
-                                            width:
-                                                MediaQuery.of(context).size.width,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
                                             height: 50,
                                             child: RaisedButton(
-                                              //color: Colors.blueAccent,
                                               color: Color(0xff051094),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(8)),
                                               onPressed: () {
-
                                                 if (!widget.isDisabled) {
                                                   if (isApplied == false) {
                                                     if (animationController
@@ -659,7 +645,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                                       animationController
                                                           .forward();
                                                     }
-
                                                   }
                                                 }
                                               },
@@ -677,12 +662,11 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                       ),
                               ),
 
-
-
                               /// I don't know what the person that made this login had in mind but i just removed the exclamation and
                               /// this is working now
                               !(widget.subType == "Campaign Tasks")
-                                  ? Text("")// this will be shown for all the other cases
+                                  ? Text(
+                                      "") // this will be shown for all the other cases
                                   : isApplied == false
                                       ? Container(
                                           height: 50,
@@ -704,122 +688,119 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                                           ),
                                         )
                                       : Container(
-                                            child: Column(
+                                          padding: EdgeInsets.only(bottom: 20),
+                                          child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               status == "ongoing"
-                                                  ? Column(children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Column(
-                                                            children: [
-                                                                SingleChildScrollView(
-                                                                  scrollDirection:Axis.horizontal,
-                                                                  child: Text(
-                                                                    "Link",
-                                                                    style: TextStyle(
-                                                                        fontSize: 20,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        // color: Color(
-                                                                        //     CommonStyle().lightYellowColor),
-                                                                        color: Colors
-                                                                            .black),
-                                                                  ),
+                                                  ? Column(
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  "Link:  ",
+                                                                  style: TextStyle(
+                                                                      fontSize: 20,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      // color: Color(
+                                                                      //     CommonStyle().lightYellowColor),
+                                                                      color: Colors.black),
                                                                 ),
-
-                                                              SizedBox(
-                                                                height: 5,
+                                                              ],
+                                                            ),
+                                                            (linkRefer != "" ||
+                                                                    linkRefer !=
+                                                                        null)
+                                                                ? Expanded(
+                                                                    child: SingleChildScrollView(
+                                                                        scrollDirection: Axis.horizontal,
+                                                                        child: Text(
+                                                                          linkRefer,
+                                                                          style: TextStyle(
+                                                                              fontSize: 18,
+                                                                              //     color: Color(0xff051094)),
+                                                                              color: Color(0xff051094)),
+                                                                        )),
+                                                                  )
+                                                                : Container(),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 10),
+                                                              child: Row(
+                                                                children: [
+                                                                  (linkRefer !=
+                                                                              "" ||
+                                                                          linkRefer !=
+                                                                              null)
+                                                                      ? GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            Clipboard.setData(new ClipboardData(text: linkRefer));
+                                                                            Fluttertoast.showToast(msg: "copied link to clipboard");
+                                                                          },
+                                                                          child:
+                                                                              Icon(Icons.content_copy),
+                                                                        )
+                                                                      : Container(),
+                                                                  IconButton(
+                                                                      icon: Icon(
+                                                                          Icons
+                                                                              .share_rounded),
+                                                                      onPressed:
+                                                                          () {
+                                                                        Share
+                                                                            .share(
+                                                                          linkRefer,
+                                                                        );
+                                                                      })
+                                                                ],
                                                               ),
-                                                              SingleChildScrollView(
-                                                                scrollDirection:Axis.horizontal,
-                                                                child: Container(
-                                                                  width:MediaQuery.of(context).size.
-                                                                      width*0.6,
-                                                                  child: Text(
-                                                                    linkRefer.isNotEmpty ? "ggjg" : linkEnter,
-                                                                    style: TextStyle(
-                                                                        fontSize: 15,
-                                                                        //     color: Color(0xff051094)),
-                                                                        color: Color(
-                                                                            0xff051094)),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SingleChildScrollView(
-                                                                scrollDirection:Axis.horizontal,
-                                                                child: Container(
-                                                                  width:MediaQuery.of(context).size.
-                                                                  width*0.6,
-                                                                  child: Text(
-                                                                    linkRefer.isNotEmpty ? linkRefer : "",
-                                                                    style: TextStyle(
-                                                                        fontSize: 15,
-                                                                        //     color: Color(0xff051094)),
-                                                                        color: Color(
-                                                                            0xff051094)),
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),linkEnter != null?GestureDetector(
-                                                            onTap: () {
-                                                               Clipboard.setData(
-                                                                   new ClipboardData(
-                                                                       text:
-                                                                           linkEnter));
-                                                               Fluttertoast.showToast(msg: "copied link to clipboard");
-                                                            },
-                                                            child: Icon(
-                                                                Icons.content_copy),
-                                                          ) : linkRefer != null?GestureDetector(
-                                                            onTap: () {
-                                                              Clipboard.setData(
-                                                                  new ClipboardData(
-                                                                      text:
-                                                                      linkEnter));
-                                                              Fluttertoast.showToast(msg: "copied link to clipboard");
-                                                            },
-                                                            child: Icon(
-                                                                Icons.content_copy),
-                                                          ):Container(),
-                                                          IconButton(icon: Icon(Icons.share_rounded), onPressed: () {Share.share(linkRefer,);})
-                                                        ],
-                                                      )
-
-                                                    ],
-                                              )
-                                                  : Text(""),
+                                                            )
+                                                          ],
+                                                        )
+                                                      ],
+                                                    )
+                                                  : Container(),
                                               Divider(
                                                 thickness: 5,
                                               ),
-                                              Text(
-                                                "Status",
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    // color: Color(
-                                                    //     CommonStyle().lightYellowColor),
-                                                    color: Colors.black),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 10),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Status",
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          // color: Color(
+                                                          //     CommonStyle().lightYellowColor),
+                                                          color: Colors.black),
+                                                    ),
+                                                    Text(
+                                                      status,
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: col),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Text(
-                                                status,
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    //     color: Color(0xff051094)),
-                                                    color: col),
-                                              )
                                             ],
                                           )),
-
                             ],
                           ),
                         )),
@@ -831,84 +812,137 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: animation != null
-                      ? MediaQuery.of(context).size.height * 0.5 * animation.value
+                      ? MediaQuery.of(context).size.height *
+                          0.5 *
+                          animation.value
                       : 0,
                   color: Colors.white,
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: animation != null ? 50 * animation?.value : 0,
-                      ),
-                      Container(
-                        height: animation != null ? 50 * animation?.value : 0,
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: TextField(
-                          controller: collegeNameCont,
-                          onTap: () {},
-                          decoration: InputDecoration(hintText: "Email ID"),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: animation != null ? 50 * animation?.value : 0,
                         ),
-                      ),
-                      widget.snapshot["showUser1"] != null ? Container(
-                        height: animation != null ? 50 * animation?.value : 0,
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: TextField(
-                          controller: showUser1,
-                          onTap: () {},
-                          decoration: InputDecoration(hintText: widget.snapshot["showUser1"]),
-                        ),
-                      ) : Container(),
-
-                      widget.snapshot["showUser2"] != null ? Container(
-                        height: animation != null ? 50 * animation?.value : 0,
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: TextField(
-                          controller: showUser2,
-                          onTap: () {},
-                          decoration: InputDecoration(hintText: widget.snapshot["showUser2"]),
-                        ),
-                      ) : Container(),
-
-                      SizedBox(
-                        height: animation != null ? 20 * animation?.value : 0,
-                      ),
-                      GestureDetector(
-                          onTap: () {
-                            showPickImageDialog(_workedImgFile);
-                          },
-                          child: showCamera(_workedImgFile)),
-                      SizedBox(
-                        height: animation != null ? 40 * animation.value : 0,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 60),
-                        height: 50 * animation.value,
-                        width: MediaQuery.of(context).size.width,
-                        child: RaisedButton(
-                          //color: Color(CommonStyle().blueColor),
-                          color: Color(0xff051094),
-
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                          onPressed: () {
-                            debugPrint("Pressed");
-                            FocusScope.of(context).unfocus();
-                            if (collegeNameCont.text.isEmpty) {
-                              Fluttertoast.showToast(
-                                  msg: "Enter all fields",
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white);
-                              return;
-                            } else {
-                              applyPostService();
-                            }
-                          },
-                          child: Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                        Container(
+                          height: animation != null ? 50 * animation?.value : 0,
+                          padding: EdgeInsets.symmetric(horizontal: 40),
+                          child: TextField(
+                            controller: collegeNameCont,
+                            onTap: () {},
+                            decoration: InputDecoration(hintText: "Email Id"),
                           ),
                         ),
-                      )
-                    ],
+                        widget.snapshot["requiredField"].contains("Username")
+                            ? Container(
+                                height: animation != null
+                                    ? 50 * animation?.value
+                                    : 0,
+                                padding: EdgeInsets.symmetric(horizontal: 40),
+                                child: TextField(
+                                  controller: Username,
+                                  onTap: () {},
+                                  decoration:
+                                      InputDecoration(hintText: "Username"),
+                                ),
+                              )
+                            : Container(),
+                        widget.snapshot["requiredField"]
+                                .contains("Phone Number")
+                            ? Container(
+                                height: animation != null
+                                    ? 50 * animation?.value
+                                    : 0,
+                                padding: EdgeInsets.symmetric(horizontal: 40),
+                                child: TextField(
+                                  controller: Phone_number,
+                                  onTap: () {},
+                                  decoration:
+                                      InputDecoration(hintText: "Phone Number"),
+                                ),
+                              )
+                            : Container(),
+                        widget.snapshot["requiredField"].contains("code")
+                            ? Container(
+                                height: animation != null
+                                    ? 50 * animation?.value
+                                    : 0,
+                                padding: EdgeInsets.symmetric(horizontal: 40),
+                                child: TextField(
+                                  controller: code,
+                                  onTap: () {},
+                                  decoration: InputDecoration(hintText: "code"),
+                                ),
+                              )
+                            : Container(),
+                        widget.snapshot["requiredField"].contains("Order Id")
+                            ? Container(
+                                height: animation != null
+                                    ? 50 * animation?.value
+                                    : 0,
+                                padding: EdgeInsets.symmetric(horizontal: 40),
+                                child: TextField(
+                                  controller: OrderId,
+                                  onTap: () {},
+                                  decoration:
+                                      InputDecoration(hintText: "Order Id"),
+                                ),
+                              )
+                            : Container(),
+                        SizedBox(
+                          height: animation != null ? 20 * animation?.value : 0,
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              showPickImageDialog(_workedImgFile);
+                            },
+                            child: showCamera(_workedImgFile)),
+                        SizedBox(
+                          height: animation != null ? 40 * animation.value : 0,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 60),
+                          height: 50 * animation.value,
+                          width: MediaQuery.of(context).size.width,
+                          child: RaisedButton(
+                            //color: Color(CommonStyle().blueColor),
+                            color: Color(0xff051094),
+
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                            onPressed: () {
+                              debugPrint("Pressed");
+                              FocusScope.of(context).unfocus();
+                              if (collegeNameCont.text.isEmpty ||
+                                  (widget.snapshot["requiredField"]
+                                          .contains("Username") &&
+                                      Username.text.length == 0) ||
+                                  (widget.snapshot["requiredField"]
+                                          .contains("Phone Number") &&
+                                      Phone_number.text.length == 0) ||
+                                  (widget.snapshot["requiredField"]
+                                          .contains("code") &&
+                                      code.text.length == 0) ||
+                                  (widget.snapshot["requiredField"]
+                                          .contains("Order Id") &&
+                                      OrderId.text.length == 0)) {
+                                Fluttertoast.showToast(
+                                    msg: "Enter all fields",
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white);
+                                return;
+                              } else {
+                                applyPostService();
+                              }
+                            },
+                            child: Text(
+                              "Submit",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -1035,7 +1069,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
                 onPressed: () {
-                  debugPrint("PPPPPP");
+                  // debugPrint("PPPPPP");
                   _launchURL(widget.snapshot["link"] ?? "");
                 },
                 child: Text(
@@ -1124,7 +1158,34 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
 
   Future<void> downloadTaskImg(imgUri) async {
     try {
-      // Saved with this method.
+      final taskId = await FlutterDownloader.enqueue(
+        url: imgUri,
+        savedDir: _localPath,
+        showNotification:
+            true, // show download progress in status bar (for Android)
+        openFileFromNotification: true,
+        // click on notification to open downloaded file (for Android)
+      );
+      // print(taskId);
+      if (taskId != null && taskId.isNotEmpty) {
+        Fluttertoast.showToast(
+            msg: "Downloading...",
+            backgroundColor: Colors.green,
+            textColor: Colors.white);
+      } else {
+        downloadTaskImgSecond(imgUri);
+        Fluttertoast.showToast(
+            msg: "Download failed. Tyring Again",
+            backgroundColor: Colors.green,
+            textColor: Colors.white);
+      }
+    } on PlatformException catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> downloadTaskImgSecond(imgUri) async {
+    try {
       final taskId = await FlutterDownloader.enqueue(
         url: imgUri,
         savedDir: _localPath,
@@ -1133,6 +1194,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
         openFileFromNotification:
             true, // click on notification to open downloaded file (for Android)
       );
+      print(taskId);
       if (taskId != null && taskId.isNotEmpty) {
         Fluttertoast.showToast(
             msg: "Downloading...",
@@ -1140,7 +1202,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
             textColor: Colors.white);
       } else {
         Fluttertoast.showToast(
-            msg: "Download failed",
+            msg: "Download failed. Try again later!",
             backgroundColor: Colors.green,
             textColor: Colors.white);
       }
@@ -1180,7 +1242,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
           .whenComplete(() {
         isApplied = true;
         pendingPostList.add(widget.snapshot.documentID.toString());
-        debugPrint("PPPPPPPPPPPPPPP $pendingTaskList");
         prefs.setStringList("pendingTasks", pendingPostList);
         prefs.setString("referralCode", referralCode);
         isGetCampaignCode = true;
@@ -1275,27 +1336,22 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
       CommonFunction().showProgressDialog(isShowDialog: true, context: context);
 
       // update post data
-      Map<String, String> map = new Map<String, String>();
-      // s// }
-
-      // String workedImgFileUri = await uploadToStorage(_workedImgFile);
-      // debugPrint("IIIIIIIIIIIIIMMMMMMMMMMMM $workedImgFileUri");
-      // if (workedImgFileUri != null) {
+      Map<String, dynamic> map = new Map<String, dynamic>();
       map = {
         "name": name,
         "emailId": emailId,
         "phoneNo": phoneNo,
         "userId": userId,
-        //   "uploadWorkUri": workedImgFileUri,
         "imgUri": widget.snapshot["imgUri"],
         "logoUri": widget.snapshot["logoUri"],
+        "UserStatus": 0,
+        "maxStatus": widget.snapshot["maxStatus"],
         "target": widget.snapshot["target"],
         "taskDesc": widget.snapshot["taskDesc"],
         "reward": widget.snapshot["reward"] ?? "",
         "status": "applied",
         "companyName": widget.snapshot["companyName"],
         "taskTitle": widget.snapshot["taskTitle"],
-        "linkToShow" : "",
       };
       print(map);
       widget.snapshot.data["submitedBy"] = map;
@@ -1306,8 +1362,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
         setState(() {
           updatedPost = {"submittedBy": m};
         });
-        print("Data =$m");
-        print("%${updatedPost}");
       } else {
         setState(() {
           updatedPost = {
@@ -1315,10 +1369,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
           };
         });
       }
-      print("%${updatedPost}");
-//          Map<String,dynamic> updatedPost = {
-//            "submittedBy" : map
-//          };
       pendingTasksMap[widget.snapshot.documentID] = false;
 
       /// Adding the task information to the users account
@@ -1333,28 +1383,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
           .document(widget.snapshot.documentID)
           .setData(updatedPost, merge: true);
       pendingPostList.add(widget.snapshot.documentID.toString());
-      debugPrint("PPPPPPPPPPPPPPP $pendingTaskList");
       prefs.setStringList("pendingTasks", pendingPostList);
-      // } else {
-      //   isSubmitted = false;
-      // }
-
-////      String pendigAmount = userData["pendingAmount"] ?? "0";
-////      pendigAmount = (int.parse(pendigAmount??"0") + int.parse(widget.snapshot["reward"]??"0")).toString() ;
-////      userData["pendingAmount"] = pendigAmount;
-////      if(isSubmitted == true) {
-////        await  _firestore.collection("Users").document(phoneNo).setData(userData,merge: true)
-////            .whenComplete(() {
-////          isApplied = true;
-////          pendingPostList.add(widget.snapshot.documentID.toString());
-////          prefs.setStringList("pendingPost", pendingPostList);
-////        })
-////            .catchError((error){
-////              isSubmitted = false;
-////
-////        });
-////      }
-//
       if (isSubmitted == true) {
         Fluttertoast.showToast(
             msg: "Submitted successfully",
@@ -1376,7 +1405,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
   Future<void> applyPostService() async {
     List<DocumentSnapshot> d =
         await CommonFunction().getPost("Posts/Gigs/Tasks");
-    print("d =${d}");
     DocumentSnapshot present_absent = null;
     for (DocumentSnapshot snapshot in d) {
       if (snapshot.documentID == widget.snapshot.documentID) {
@@ -1385,20 +1413,12 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
         });
       }
     }
-    // if (present_absent != null) {
-    // } else {}
-
-    print(widget.snapshot.documentID);
-    print("Posts/Gigs/Tasks/${widget.snapshot.documentID}");
     try {
       bool isSubmitted = true;
       CommonFunction().showProgressDialog(isShowDialog: true, context: context);
-
-      // update post data
       Map<String, String> map = new Map<String, String>();
       List userTaskList =
           widget.snapshot["submittedBy"] ?? new List<Map<String, String>>();
-      debugPrint("USERRR $userTaskList");
       for (var item in userTaskList) {
         map = ({
           "name": item["name"] ?? "",
@@ -1408,9 +1428,7 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
           "phoneNo": item["phoneNo"] ?? "",
         });
       }
-
       String workedImgFileUri = await uploadToStorage(_workedImgFile);
-      debugPrint("IIIIIIIIIIIIIMMMMMMMMMMMM $workedImgFileUri");
       if (workedImgFileUri != null) {
         map = {
           "name": name,
@@ -1420,16 +1438,29 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
           "uploadWorkUri": workedImgFileUri,
           "imgUri": widget.snapshot["imgUri"],
           "logoUri": widget.snapshot["logoUri"],
-          //"target": widget.snapshot["target"],
           "taskDesc": widget.snapshot["taskDesc"],
           "reward": widget.snapshot["reward"] ?? "",
           "status": "applied",
           "companyName": widget.snapshot["companyName"],
           "taskTitle": widget.snapshot["taskTitle"],
           "user email": collegeNameCont.text,
-          "showUser1":showUser1.text ?? " ",
-          "showUser2":showUser1.text ?? " ",
         };
+        for (var required in widget.snapshot["requiredField"]) {
+          // print(required);
+          if (required == "Username") {
+            map["Username"] = Username.text.trim().toString();
+          }
+          if (required == "Phone Number") {
+            map["Phone Number"] = Phone_number.text.trim().toString();
+          }
+          if (required == "code") {
+            map["code"] = code.text.trim().toString();
+          }
+          if (required == "Order Id") {
+            map["Order Id"] = OrderId.text.trim().toString();
+          }
+        }
+        print(map);
         widget.snapshot.data["submitedBy"] = map;
         Map<String, dynamic> updatedPost;
         if (present_absent != null) {
@@ -1438,8 +1469,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
           setState(() {
             updatedPost = {"submittedBy": m};
           });
-          print("Data =$m");
-          print("%${updatedPost}");
         } else {
           setState(() {
             updatedPost = {
@@ -1447,10 +1476,6 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
             };
           });
         }
-        print("%${updatedPost}");
-//          Map<String,dynamic> updatedPost = {
-//            "submittedBy" : map
-//          };
         pendingTasksMap[widget.snapshot.documentID] = false;
         await _firestore
             .collection("Users")
@@ -1463,31 +1488,13 @@ class _TasksPageDetailsState extends State<TasksPageDetails>
             .document(widget.snapshot.documentID)
             .setData(updatedPost, merge: true);
         pendingPostList.add(widget.snapshot.documentID.toString());
-        debugPrint("PPPPPPPPPPPPPPP $pendingTaskList");
         prefs.setStringList("pendingTasks", pendingPostList);
         setState(() {
-          isSubmitted=true;
+          isSubmitted = true;
         });
       } else {
         isSubmitted = false;
       }
-
-////      String pendigAmount = userData["pendingAmount"] ?? "0";
-////      pendigAmount = (int.parse(pendigAmount??"0") + int.parse(widget.snapshot["reward"]??"0")).toString() ;
-////      userData["pendingAmount"] = pendigAmount;
-////      if(isSubmitted == true) {
-////        await  _firestore.collection("Users").document(phoneNo).setData(userData,merge: true)
-////            .whenComplete(() {
-////          isApplied = true;
-////          pendingPostList.add(widget.snapshot.documentID.toString());
-////          prefs.setStringList("pendingPost", pendingPostList);
-////        })
-////            .catchError((error){
-////              isSubmitted = false;
-////
-////        });
-////      }
-//
       if (isSubmitted == true) {
         Fluttertoast.showToast(
             msg: "Submitted successfully",

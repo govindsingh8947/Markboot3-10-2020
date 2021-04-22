@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:markBoot/common/bottom_bar_nav.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
@@ -13,8 +13,7 @@ import 'package:markBoot/pages/homeScreen/tab/internship/internship_tab.dart';
 import 'package:markBoot/pages/homeScreen/tab/offers/cashbacks_page.dart';
 import 'package:markBoot/pages/homeScreen/tab/offers/offers_page_tab.dart';
 import 'package:markBoot/pages/homeScreen/tab/tournament/tournament_tab.dart';
-
-import 'tab/profile/settings_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'tab/profile/user_profile_tab.dart';
 import 'tab/tournament/tournament_details_page.dart';
 
@@ -38,14 +37,24 @@ class _HomePageState extends State<HomePage> {
 
   init() async {
     documentList = await commonFunction.getPost("Posts/Offers/Cashback");
-    debugPrint("DocumentSNAP $documentList");
+    // debugPrint("DocumentSNAP $documentList");
     setState(() {});
+  }
+
+  _requestPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+
+    final info = statuses[Permission.storage].toString();
+    print('permission   $info');
   }
 
   @override
   void initState() {
     init();
     super.initState();
+    _requestPermission();
     _pageController = PageController();
     _offset = 0;
     _scrollController = ScrollController()
@@ -59,7 +68,7 @@ class _HomePageState extends State<HomePage> {
           _oldOffset = offset;
           _offset = -_delta;
         });
-        debugPrint("OFFSET $_offset");
+        // debugPrint("OFFSET $_offset");
       });
   }
 
@@ -73,123 +82,124 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      //backgroundColor: Color(CommonStyle().darkBlueColor),
-      backgroundColor: Color(0xff051094),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SizedBox.expand(
-            child: PageView(
-              physics: NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              onPageChanged: (index) {
-                currentIndex = index;
-                if (currentIndex != 0) {
-                  _offset = 0;
-                }
-                setState(() => _currentIndex = index);
-              },
-              children: <Widget>[
-                HomeTab(),  // basically this is the home page of the app
-                GigsPageTab(),
-                OffersPageTab(),
-                InternshipPageTab(),
-                TournamentPageTab(),
-                UserProfileTab(),
-              ],
-            ),
-          );
-        },
-      ),
+    return SafeArea(
+      child: Scaffold(
+        //backgroundColor: Color(CommonStyle().darkBlueColor),
+        backgroundColor: Color(0xff051094),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return SizedBox.expand(
+              child: PageView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                onPageChanged: (index) {
+                  currentIndex = index;
+                  if (currentIndex != 0) {
+                    _offset = 0;
+                  }
+                  setState(() => _currentIndex = index);
+                },
+                children: <Widget>[
+                  HomeTab(), // basically this is the home page of the app
+                  GigsPageTab(),
+                  OffersPageTab(),
+                  InternshipPageTab(),
+                  TournamentPageTab(),
+                  UserProfileTab(),
+                ],
+              ),
+            );
+          },
+        ),
 
-      // This is the bottom navigation bar of the home page
-      bottomNavigationBar: Container(
-          width: double.infinity,
-          color: Colors.red,
-          height: _offset + 56,
-          child: BottomNavyBar(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            backgroundColor: Color(0xff051094),
-            selectedIndex: _currentIndex,
-            onItemSelected: (index) {
-              setState(() => _currentIndex = index);
-              _pageController.jumpToPage(index);
-            },
-            items: <BottomNavyBarItem>[
-              BottomNavyBarItem(
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.white,
-                  textAlign: TextAlign.start,
-                  title: Text('Home'),
-                  icon: Image.asset(
-                    "assets/icons/home.png",
-                    width: MediaQuery.of(context).size.width * 0.05,
-                    height: 20,
-                    color: Colors.white,
-                  )),
-              BottomNavyBarItem(
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.white,
-                  title: Text('Gigs'),
-                  icon: Image.asset(
-                    "assets/icons/gigs.png",
-                    width: MediaQuery.of(context).size.width * 0.05,
-                    height: 20,
-                    color: Colors.white,
-                  )),
+        // This is the bottom navigation bar of the home page
+        bottomNavigationBar: Container(
+            width: double.infinity,
+            color: Colors.red,
+            height: _offset + 56,
+            child: BottomNavyBar(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              backgroundColor: Color(0xff051094),
+              selectedIndex: _currentIndex,
+              onItemSelected: (index) {
+                setState(() => _currentIndex = index);
+                _pageController.jumpToPage(index);
+              },
+              items: <BottomNavyBarItem>[
+                BottomNavyBarItem(
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.white,
+                    textAlign: TextAlign.start,
+                    title: Text('Home'),
+                    icon: Image.asset(
+                      "assets/icons/home.png",
+                      width: MediaQuery.of(context).size.width * 0.05,
+                      height: 20,
+                      color: Colors.white,
+                    )),
+                BottomNavyBarItem(
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.white,
+                    title: Text('Gigs'),
+                    icon: Image.asset(
+                      "assets/icons/gigs.png",
+                      width: MediaQuery.of(context).size.width * 0.05,
+                      height: 20,
+                      color: Colors.white,
+                    )),
 //              home,gigs,offers,internship, tournament,profile
-              BottomNavyBarItem(
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.white,
-                  title: Text('Offers'),
-                  icon: Image.asset(
-                    "assets/icons/offers.png",
-                    width: MediaQuery.of(context).size.width * 0.055,
-                    height: 28,
-                    color: Colors.white,
-                  )),
-              BottomNavyBarItem(
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.white,
-                  title: Text('Internship'),
-                  icon: Image.asset(
-                    "assets/icons/internship.png",
-                    width: MediaQuery.of(context).size.width * 0.05,
-                    height: 20,
-                    color: Colors.white,
-                  )),
-              BottomNavyBarItem(
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.white,
-                  title: Text('Tournament'),
-                  icon: Image.asset(
-                    "assets/icons/tourn.png",
-                    width: MediaQuery.of(context).size.width * 0.05,
-                    height: 20,
-                    color: Colors.white,
-                  )),
-              BottomNavyBarItem(
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.white,
-                  title: Text('Profile'),
-                  icon: Image.asset(
-                    "assets/icons/user.png",
-                    width: MediaQuery.of(context).size.width * 0.05,
-                    height: 20,
-                    color: Colors.white,
-                  )),
-            ],
-          )),
+                BottomNavyBarItem(
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.white,
+                    title: Text('Offers'),
+                    icon: Image.asset(
+                      "assets/icons/offers.png",
+                      width: MediaQuery.of(context).size.width * 0.055,
+                      height: 28,
+                      color: Colors.white,
+                    )),
+                BottomNavyBarItem(
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.white,
+                    title: Text('Internship'),
+                    icon: Image.asset(
+                      "assets/icons/internship.png",
+                      width: MediaQuery.of(context).size.width * 0.05,
+                      height: 20,
+                      color: Colors.white,
+                    )),
+                BottomNavyBarItem(
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.white,
+                    title: Text('Tournament'),
+                    icon: Image.asset(
+                      "assets/icons/tourn.png",
+                      width: MediaQuery.of(context).size.width * 0.05,
+                      height: 20,
+                      color: Colors.white,
+                    )),
+                BottomNavyBarItem(
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.white,
+                    title: Text('Profile'),
+                    icon: Image.asset(
+                      "assets/icons/user.png",
+                      width: MediaQuery.of(context).size.width * 0.05,
+                      height: 20,
+                      color: Colors.white,
+                    )),
+              ],
+            )),
+      ),
     );
   }
 
   Future<void> _onRefresh() async {
     documentList = await commonFunction.getPost("Posts/Offers/Cashbacks");
-    debugPrint("REFRESHSNAP $documentList");
+    // debugPrint("REFRESHSNAP $documentList");
     return;
   }
 }
-
 
 // This is the home page of the app that is shown to the user
 class HomeTab extends StatefulWidget {
@@ -212,22 +222,25 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   init() async {
     try {
-      documentList_cash =
-          await CommonFunction().getPost("Posts/Offers/Cashbacks");  // cashback offers are fetched from the database
-      documentList_50_50 =
-          await CommonFunction().getPost("Posts/Offers/50 on 500") ??   // 50 on 500 offers are also fetched from the database
-              new List();
+      documentList_cash = await CommonFunction().getPost(
+          "Posts/Offers/Cashbacks"); // cashback offers are fetched from the database
+      documentList_50_50 = await CommonFunction().getPost(
+              "Posts/Offers/50 on 500") ?? // 50 on 500 offers are also fetched from the database
+          new List();
 
       int i = 1;
       headerSwipeList = new List();
-      for (DocumentSnapshot snapshot in documentList_cash) { // it contains 7 items
-        print(documentList_cash.length);
+      for (DocumentSnapshot snapshot in documentList_cash) {
+        // it contains 7 items
+        // print(documentList_cash.length);
         DocumentSnapshot snap = snapshot;
-        if (snapshot.data["isImportant"]) {
+        if (snapshot.data["isImportant"] != null &&
+            snapshot.data["isImportant"] == true) {
+          print(snapshot.documentID);
           headerSwipeList.add({"type": "Cashbacks", "docx": snap});
 
-          print("Above the headerSwipe List =================================");
-          print(headerSwipeList);
+          // print("Above the headerSwipe List =================================");
+          // print(headerSwipeList);
           if (i == 4) break;
           i++;
         }
@@ -235,9 +248,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
       // Two documents will be added in this list initially
       for (DocumentSnapshot snapshot in documentList_50_50) {
-        print(documentList_50_50.length);
+        // print('doclist50_50');
+        // print(documentList_50_50.length);
         DocumentSnapshot snap = snapshot;
-        if (snapshot.data["isImportant"]) {
+        if (snapshot.data["isImportant"] != null &&
+            snapshot.data["isImportant"] == true) {
           headerSwipeList.add({"type": "50 on 50", "docx": snap});
           if (i == 4) break;
           i++;
@@ -290,51 +305,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 height: 20,
               ),
             ),
-//
-//            documentList != null && documentList.length > 0 ?
-//            SliverPadding(
-//              padding: const EdgeInsets.all(20),
-//              sliver: SliverGrid.count(
-//                crossAxisSpacing: 10,
-//                mainAxisSpacing: 10,
-//                crossAxisCount: 2,
-//                childAspectRatio: 2 / 3,
-//                children: documentList.map((item) {
-//                  return CommonWidget().commonCard(
-//                      item, context, "Gigs", subtype: "Tasks");
-//                }).toList(),
-//              ),
-//            ) :
-//            (
-//                documentList == null ?
-//                SliverToBoxAdapter(
-//                    child: Container(
-//                      margin: EdgeInsets.only(top: 0),
-////                      child: Center(
-////                        child: Container(
-////                            width: 30,
-////                            height: 30,
-////                            child: CircularProgressIndicator()),
-////                      ),
-//                    )
-//                )
-//                    : SliverToBoxAdapter(
-//                  child: Container(
-//                    margin: EdgeInsets.only(top: 250),
-//                    child: Center(
-//                      child: Container(
-//                        child: Text("No Data Found",
-//                          style: TextStyle(
-//                              color: Colors.white,
-//                              fontWeight: FontWeight.bold,
-//                              fontSize: 18
-//                          ),
-//                        ),
-//                      ),
-//                    ),
-//                  ),
-//                )
-//            ),
             SliverToBoxAdapter(
               child: Container(height: 750, child: RecentPageView()),
             )
@@ -351,9 +321,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 margin: EdgeInsets.only(top: 0),
                 child: Center(
                   child: Container(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator()),
+                      child: LoadingFlipping.circle(
+                    borderColor: Colors.blue,
+                    size: 50,
+                    borderSize: 5,
+                  )),
                 ),
               )
             : Swiper(
@@ -372,7 +344,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
-                          print(headerSwipeList[index]["type"]);
+                          // print(headerSwipeList[index]["type"]);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -386,12 +358,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(headerSwipeList[index]
-                                      ["docx"]["offerPicUri"]),
-                              ),
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: NetworkImage(
+                                  headerSwipeList[index]["docx"]["offerUri"]),
+                            ),
                           ),
                         ),
                       ),
@@ -414,9 +386,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
               ));
   }
 }
-
-
-
 
 // This the grid thing here
 class RecentPageView extends StatefulWidget {
@@ -541,13 +510,12 @@ class _RecentPageViewState extends State<RecentPageView> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
-                      if(activePageIndex != 0) {
+                      if (activePageIndex != 0) {
                         setState(() {
                           activePageIndex = 0;
                           _controller.jumpToPage(activePageIndex);
                         });
                       }
-
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 4),
@@ -570,17 +538,15 @@ class _RecentPageViewState extends State<RecentPageView> {
                     ),
                   ),
 
-
                   // Changes ahead
                   GestureDetector(
                     onTap: () {
-                      if(activePageIndex != 1){
+                      if (activePageIndex != 1) {
                         setState(() {
                           activePageIndex = 1;
                           _controller.jumpToPage(activePageIndex);
                         });
                       }
-
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 4),
@@ -604,7 +570,7 @@ class _RecentPageViewState extends State<RecentPageView> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      if(activePageIndex != 2){
+                      if (activePageIndex != 2) {
                         setState(() {
                           activePageIndex = 2;
                           _controller.jumpToPage(activePageIndex);
@@ -632,7 +598,7 @@ class _RecentPageViewState extends State<RecentPageView> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      if(activePageIndex != 3){
+                      if (activePageIndex != 3) {
                         setState(() {
                           activePageIndex = 3;
                           _controller.jumpToPage(activePageIndex);
@@ -667,7 +633,8 @@ class _RecentPageViewState extends State<RecentPageView> {
           child: PageView(
             onPageChanged: (index) {
               activePageIndex = index;
-              debugPrint("Index $index");
+              // debugPrint("Index $index");
+
               setState(() {});
             },
             controller: _controller,
@@ -700,66 +667,66 @@ class _RecentPageViewState extends State<RecentPageView> {
                   BoxDecoration(borderRadius: BorderRadius.circular(10)),
               child: InkWell(
                 onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TasksPageDetails(
-                      snapshot: gigsSnapList[index],
-                      type: "Gigs",
-                      subType: "Tasks",
-                      isDisabled: false,
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TasksPageDetails(
+                        snapshot: gigsSnapList[index],
+                        type: "Gigs",
+                        subType: "Tasks",
+                        isDisabled: false,
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
                 child: Card(
                   elevation: 3,
                   child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                      gigsSnapList[index]["logoUri"]))),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 4, right: 2, top: 2, bottom: 2),
-                        child: Text(
-                          gigsSnapList[index]["taskTitle"] ?? "",
-                          overflow: TextOverflow.clip,
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        height: 60,
-                        child: Text(
-                          gigsSnapList[index]["companyName"] ?? "",
-                          style: TextStyle(
-                            // color: Color(CommonStyle().lightYellowColor),
-                            color: Colors.black,
-                            fontSize: 13,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(
+                                        gigsSnapList[index]["logoUri"]))),
                           ),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 4, right: 2, top: 2, bottom: 2),
+                          child: Text(
+                            gigsSnapList[index]["taskTitle"] ?? "",
+                            overflow: TextOverflow.clip,
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          height: 60,
+                          child: Text(
+                            gigsSnapList[index]["companyName"] ?? "",
+                            style: TextStyle(
+                              // color: Color(CommonStyle().lightYellowColor),
+                              color: Colors.black,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 ),
               ),
             );
@@ -783,67 +750,67 @@ class _RecentPageViewState extends State<RecentPageView> {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: Card(
-                elevation: 3,
+                  elevation: 3,
                   // color: Colors.transparent,
                   // borderRadius: BorderRadius.circular(10),
                   child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CashbacksPageDetails(
-                                snapshot: offersSnapList[index],
-                                type: "Offers",
-                                subType: "Cashbacks",
-                              )));
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                      offersSnapList[index]["logoUri"]))),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 4, right: 2, top: 2, bottom: 2),
-                        child: Text(
-                          offersSnapList[index]["taskTitle"] ?? "",
-                          overflow: TextOverflow.clip,
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        height: 60,
-                        child: Text(
-                          offersSnapList[index]["companyName"] ?? "",
-                          style: TextStyle(
-                            //                  color: Color(CommonStyle().lightYellowColor),
-                            color: Colors.black,
-                            fontSize: 13,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CashbacksPageDetails(
+                                    snapshot: offersSnapList[index],
+                                    type: "Offers",
+                                    subType: "Cashbacks",
+                                  )));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(
+                                          offersSnapList[index]["logoUri"]))),
+                            ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 4, right: 2, top: 2, bottom: 2),
+                            child: Text(
+                              offersSnapList[index]["taskTitle"] ?? "",
+                              overflow: TextOverflow.clip,
+                              maxLines: 1,
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            height: 60,
+                            child: Text(
+                              offersSnapList[index]["companyName"] ?? "",
+                              style: TextStyle(
+                                //                  color: Color(CommonStyle().lightYellowColor),
+                                color: Colors.black,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              )),
+                    ),
+                  )),
             );
           }),
     );
@@ -865,66 +832,67 @@ class _RecentPageViewState extends State<RecentPageView> {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: Card(
-                elevation: 3,
+                  elevation: 3,
                   // color: Colors.transparent,
                   // borderRadius: BorderRadius.circular(10),
                   child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InternshipPageDetails(
-                              snapshot: internshipSnapList[index],
-                              type: "Internship",
-                              subType: "Internship")));
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                      internshipSnapList[index]["logoUri"]))),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 4, right: 2, top: 2, bottom: 2),
-                        child: Text(
-                          internshipSnapList[index]["taskTitle"] ?? "",
-                          overflow: TextOverflow.clip,
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        height: 60,
-                        child: Text(
-                          internshipSnapList[index]["companyName"] ?? "",
-                          style: TextStyle(
-                            //                  color: Color(CommonStyle().lightYellowColor),
-                            color: Colors.black,
-                            fontSize: 13,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InternshipPageDetails(
+                                  snapshot: internshipSnapList[index],
+                                  type: "Internship",
+                                  subType: "Internship")));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(
+                                          internshipSnapList[index]
+                                              ["logoUri"]))),
+                            ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 4, right: 2, top: 2, bottom: 2),
+                            child: Text(
+                              internshipSnapList[index]["taskTitle"] ?? "",
+                              overflow: TextOverflow.clip,
+                              maxLines: 1,
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            height: 60,
+                            child: Text(
+                              internshipSnapList[index]["companyName"] ?? "",
+                              style: TextStyle(
+                                //                  color: Color(CommonStyle().lightYellowColor),
+                                color: Colors.black,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              )),
+                    ),
+                  )),
             );
           }),
     );
@@ -934,80 +902,80 @@ class _RecentPageViewState extends State<RecentPageView> {
     return Padding(
       padding: EdgeInsets.all(20),
       child: GridView.builder(
-          itemCount: tournamentSnapList.length,
-          primary: false,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-              childAspectRatio: 2 / 3),
-          itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              child: Card(
+        itemCount: tournamentSnapList.length,
+        primary: false,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 2 / 3),
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            child: Card(
                 elevation: 3,
-                  // color: Colors.transparent,
-                  // borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TournamentDetailsPage(
-                              snapshot: tournamentSnapList[index],
-                              type: "Gigs",
-                              subType: "Tasks")));
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                      tournamentSnapList[index]["logoUri"]))),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 4, right: 2, top: 2, bottom: 2),
-                        child: Text(
-                          tournamentSnapList[index]["taskTitle"] ?? "",
-                          overflow: TextOverflow.clip,
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        height: 60,
-                        child: Text(
-                          tournamentSnapList[index]["companyName"] ?? "",
-                          style: TextStyle(
-                            //                  color: Color(CommonStyle().lightYellowColor),
-                            color: Colors.black,
-                            fontSize: 13,
+                // color: Colors.transparent,
+                // borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TournamentDetailsPage(
+                                snapshot: tournamentSnapList[index],
+                                type: "Gigs",
+                                subType: "Tasks")));
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(
+                                        tournamentSnapList[index]["logoUri"]))),
                           ),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 4, right: 2, top: 2, bottom: 2),
+                          child: Text(
+                            tournamentSnapList[index]["taskTitle"] ?? "",
+                            overflow: TextOverflow.clip,
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          height: 60,
+                          child: Text(
+                            tournamentSnapList[index]["companyName"] ?? "",
+                            style: TextStyle(
+                              //                  color: Color(CommonStyle().lightYellowColor),
+                              color: Colors.black,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              )),
-            );
-          },
+                )),
+          );
+        },
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
@@ -11,6 +12,7 @@ class GigsPageTab extends StatefulWidget {
 
 class _GigsPageTabState extends State<GigsPageTab>
     with SingleTickerProviderStateMixin {
+  int iscomplete = 1;
   List<DocumentSnapshot> taskDocumentList;
   List<DocumentSnapshot> campaignDocumentList;
   TabController _tabController;
@@ -42,55 +44,67 @@ class _GigsPageTabState extends State<GigsPageTab>
     } catch (e) {
       debugPrint("Exception : (init)-> $e");
     }
+    setState(() {
+      iscomplete = 0;
+    });
   }
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     init();
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-            //  backgroundColor: Color(CommonStyle().blueColor),
-            backgroundColor: Color(0xff051094),
-            title: Text(
-              "Gigs",
-            ),
-            bottom: TabBar(
-              labelColor: Color(0xff051094),
-              unselectedLabelColor: Colors.white,
-              //indicatorSize: TabBarIndicatorSize.label,
-              indicatorSize: TabBarIndicatorSize.label,
+    return SafeArea(
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+              //  backgroundColor: Color(CommonStyle().blueColor),
+              backgroundColor: Color(0xff051094),
+              title: Text(
+                "Gigs",
+              ),
+              bottom: TabBar(
+                labelColor: Color(0xff051094),
+                unselectedLabelColor: Colors.white,
+                //indicatorSize: TabBarIndicatorSize.label,
+                indicatorSize: TabBarIndicatorSize.label,
 
-              indicator: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8))),
-              controller: _tabController,
-              tabs: <Widget>[
-                Container(
-                  width: 150,
-                  child: Tab(
-                    child: Text("Gigs"),
+                indicator: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8))),
+                controller: _tabController,
+                tabs: <Widget>[
+                  Container(
+                    width: 150,
+                    child: Tab(
+                      child: Text("Gigs"),
+                    ),
                   ),
-                ),
-                Container(
-                  width: 150,
-                  child: Tab(child: Text("Campaigns")),
-                ),
-              ],
-            )),
-        body: TabBarView(
-          controller: _tabController,
-          children: <Widget>[taskWidget(), campaignsWidget()],
-        ));
+                  Container(
+                    width: 150,
+                    child: Tab(child: Text("Campaigns")),
+                  ),
+                ],
+              )),
+          body: iscomplete == 1
+              ? Center(
+                  child: LoadingFlipping.circle(
+                    borderColor: Colors.blue,
+                    size: 50,
+                    borderSize: 5,
+                  ),
+                )
+              : TabBarView(
+                  controller: _tabController,
+                  children: <Widget>[taskWidget(), campaignsWidget()],
+                )),
+    );
   }
 
   campaignsWidget() {
@@ -122,9 +136,11 @@ class _GigsPageTabState extends State<GigsPageTab>
                       margin: EdgeInsets.only(top: 50),
                       child: Center(
                         child: Container(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator()),
+                            child: LoadingFlipping.circle(
+                          borderColor: Colors.blue,
+                          size: 50,
+                          borderSize: 5,
+                        )),
                       ),
                     ))
                   : SliverToBoxAdapter(
@@ -178,9 +194,11 @@ class _GigsPageTabState extends State<GigsPageTab>
                       margin: EdgeInsets.only(top: 50),
                       child: Center(
                         child: Container(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator()),
+                            child: LoadingFlipping.circle(
+                          borderColor: Colors.blue,
+                          size: 50,
+                          borderSize: 5,
+                        )),
                       ),
                     ))
                   : SliverToBoxAdapter(

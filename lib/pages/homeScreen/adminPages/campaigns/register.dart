@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
@@ -138,27 +134,27 @@ class _registerState extends State<register> {
                     }
                   }
                   print("finding campaigns");
-                  if(campaigns.isEmpty){
+                  if (campaigns.isEmpty) {
                     Fluttertoast.showToast(msg: "Campaigns is empty");
-                  }
-                  else{
-                  for (var cam in campaigns) {
-                    print(cam.data["companyName"]);
-                    if (cam.data["companyName"].toString() == company) {
-                      print(" campaign Got it");
-                      setState(() {
-                        campaign = cam;
-                      });
-                      break;
+                  } else {
+                    for (var cam in campaigns) {
+                      print(cam.data["companyName"]);
+                      if (cam.data["companyName"].toString() == company) {
+                        print(" campaign Got it");
+                        setState(() {
+                          campaign = cam;
+                        });
+                        break;
+                      }
                     }
-                  }
                     if (use != null && campaign != null) {
                       print("found");
                       _showMyDialog(use, campaign);
                     } else {
                       print("Data not Found");
                     }
-                }}
+                  }
+                }
 
 //                    _showMyDialog();
               },
@@ -255,11 +251,19 @@ class _registerState extends State<register> {
     setState(() {
       print(user_reward.text);
       if (status == "pending") {
-        firestoreInstance.collection("Users").document(user.documentID).updateData({"pendingAmount":u["pendingAmount"]+int.parse(user_reward.text)});
-      }
-      else if (status == "approved") {
-        firestoreInstance.collection("Users").document(user.documentID).updateData({"approvedAmount":u["approvedAmount"]+int.parse(user_reward.text)});
-
+        firestoreInstance
+            .collection("Users")
+            .document(user.documentID)
+            .updateData({
+          "pendingAmount": u["pendingAmount"] + int.parse(user_reward.text)
+        });
+      } else if (status == "approved") {
+        firestoreInstance
+            .collection("Users")
+            .document(user.documentID)
+            .updateData({
+          "approvedAmount": u["approvedAmount"] + int.parse(user_reward.text)
+        });
       }
       //    var users_cam = u["campaignList"];
 //      print(null);
@@ -321,7 +325,7 @@ class _registerState extends State<register> {
         "logoUri": campaign.data["logoUri"],
         "target": campaign.data["target"],
         "taskDesc": campaign.data["taskDesc"],
-        "taskStatus":status=="approved"?campaign.data["maxStatus"]:0,
+        "taskStatus": status == "approved" ? campaign.data["maxStatus"] : 0,
       });
     } else {
       userr = [];
@@ -340,8 +344,8 @@ class _registerState extends State<register> {
         "logoUri": campaign.data["logoUri"],
         "target": campaign.data["target"],
         "taskDesc": campaign.data["taskDesc"],
-        "UserStatus":status=="approved"?campaign.data["maxStatus"]:0,
-        "maxStatus":campaign.data["maxStatus"],
+        "UserStatus": status == "approved" ? campaign.data["maxStatus"] : 0,
+        "maxStatus": campaign.data["maxStatus"],
       });
     }
     print(userr);

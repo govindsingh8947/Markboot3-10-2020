@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/style.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/admin_homepage.dart';
@@ -14,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'email_sign_up.dart';
 import 'login_page.dart';
 import 'signup_page.dart';
-
 
 // This is supposed to send notifications to the user but for some reason this is not working
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -70,8 +70,6 @@ class _IntroPageState extends State<IntroPage> {
     prefs = await SharedPreferences.getInstance();
     bool isLogin = prefs.getBool("isLogin") ?? false;
     bool isAdminLogin = prefs.getBool("isAdminLogin") ?? false;
-
-
 
     // If the user is loged in then he will be directed to the homepage()
     if (isLogin) {
@@ -204,9 +202,8 @@ class _IntroPageState extends State<IntroPage> {
     });
 
     init();
-    // TODO: implement initState
     super.initState();
-  }  // Call to the custom init function and some code about sending a notification
+  } // Call to the custom init function and some code about sending a notification
 
   @override
   Widget build(BuildContext context) {
@@ -237,7 +234,11 @@ class _IntroPageState extends State<IntroPage> {
               child: Container(
                 width: 30,
                 height: 30,
-                child: CircularProgressIndicator(),
+                child: LoadingFlipping.circle(
+                  borderColor: Colors.blue,
+                  size: 50,
+                  borderSize: 5,
+                ),
               ),
             ),
     );
@@ -248,7 +249,7 @@ class _IntroPageState extends State<IntroPage> {
       //   color: Colors.blue,
       //padding: EdgeInsets.all(8),
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height*0.09,
+      height: MediaQuery.of(context).size.height * 0.09,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -285,11 +286,11 @@ class _IntroPageState extends State<IntroPage> {
                 activeSize: 13.0,
                 size: 10)),
         itemWidth: 150,
-        itemHeight: MediaQuery.of(context).size.height*0.28,
+        itemHeight: MediaQuery.of(context).size.height * 0.28,
         itemBuilder: (BuildContext context, int index) {
           return Container(
             width: 100,
-            height: MediaQuery.of(context).size.height*0.28,
+            height: MediaQuery.of(context).size.height * 0.28,
             padding: EdgeInsets.all(50),
             margin: EdgeInsets.only(left: 30, right: 30, bottom: 40),
             child: ClipOval(
@@ -313,7 +314,7 @@ class _IntroPageState extends State<IntroPage> {
           Center(
             child: Container(
               width: 200,
-              height: MediaQuery.of(context).size.height*0.05,
+              height: MediaQuery.of(context).size.height * 0.05,
               child: RaisedButton(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -339,7 +340,7 @@ class _IntroPageState extends State<IntroPage> {
           ),
           Container(
             width: 200,
-            height: MediaQuery.of(context).size.height*0.05,
+            height: MediaQuery.of(context).size.height * 0.05,
             child: RaisedButton(
               color: Color(CommonStyle().lightYellowColor),
               shape: RoundedRectangleBorder(
@@ -363,5 +364,4 @@ class _IntroPageState extends State<IntroPage> {
       ),
     );
   }
-
 }

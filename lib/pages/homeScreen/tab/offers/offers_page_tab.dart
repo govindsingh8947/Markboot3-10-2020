@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:markBoot/common/commonFunc.dart';
 import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
@@ -16,6 +17,7 @@ class OffersPageTab extends StatefulWidget {
 
 class _OffersPageTabState extends State<OffersPageTab>
     with SingleTickerProviderStateMixin {
+  int iscomplete = 1;
   List<DocumentSnapshot> cashbackDocumentList;
   List<DocumentSnapshot> on500DocumentList;
   List<DocumentSnapshot> couponsDocumentList;
@@ -107,13 +109,15 @@ class _OffersPageTabState extends State<OffersPageTab>
     } catch (e) {
       debugPrint("Exception : (init)-> $e");
     }
+    setState(() {
+      iscomplete = 0;
+    });
   }
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     init();
-    // TODO: implement initState
     super.initState();
   }
 
@@ -157,68 +161,86 @@ class _OffersPageTabState extends State<OffersPageTab>
 //                ),
               ],
             )),
-        body: TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            cashbackWidget(),
-            on500Widget(),
-            //  couponsWidget(),
-          ],
-        ));
+        body: iscomplete == 1
+            ? Center(
+                child: LoadingFlipping.circle(
+                  borderColor: Colors.blue,
+                  size: 50,
+                  borderSize: 5,
+                ),
+              )
+            : TabBarView(
+                controller: _tabController,
+                children: <Widget>[
+                  cashbackWidget(),
+                  on500Widget(),
+                  //  couponsWidget(),
+                ],
+              ));
   }
 
   cashbackWidget() {
     int index = 0;
     return RefreshIndicator(
       onRefresh: _onCashbackRefresh,
-      child: cashbackDocumentList != null && cashbackDocumentList.length > 0?CustomScrollView(
-        primary: false,
-        slivers: <Widget>[
-          cashbackDocumentList != null && cashbackDocumentList.length > 0
-              ? SliverPadding(
-                  padding: const EdgeInsets.all(10),
-                  sliver: SliverGrid.count(
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 1,
-                    childAspectRatio: 3,
-                    children: cashbackDocumentList.map((item) {
-                      index++;
-                      return CommonWidget().commonCard(item, context, "Offers",
-                          subtype: "Cashbacks",
-                          cardColor: cardColor[(index - 1) % 4]);
-                    }).toList(),
-                  ),
-                )
-              : (cashbackDocumentList == null
-                  ? SliverToBoxAdapter(
-                      child: Container(
-                      margin: EdgeInsets.only(top: 50),
-                      child: Center(
-                        child: Container(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator()),
-                      ),
-                    ))
-                  : SliverToBoxAdapter(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height - 200,
-                        child: Center(
-                          child: Container(
-                            child: Text(
-                              "No Data Found",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
-                            ),
-                          ),
+      child: cashbackDocumentList != null && cashbackDocumentList.length > 0
+          ? CustomScrollView(
+              primary: false,
+              slivers: <Widget>[
+                cashbackDocumentList != null && cashbackDocumentList.length > 0
+                    ? SliverPadding(
+                        padding: const EdgeInsets.all(10),
+                        sliver: SliverGrid.count(
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          crossAxisCount: 1,
+                          childAspectRatio: 3,
+                          children: cashbackDocumentList.map((item) {
+                            index++;
+                            return CommonWidget().commonCard(
+                                item, context, "Offers",
+                                subtype: "Cashbacks",
+                                cardColor: cardColor[(index - 1) % 4]);
+                          }).toList(),
                         ),
-                      ),
-                    )),
-        ],
-      ):Center(child: Text("Data Not Found",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),),
+                      )
+                    : (cashbackDocumentList == null
+                        ? SliverToBoxAdapter(
+                            child: Container(
+                            margin: EdgeInsets.only(top: 50),
+                            child: Center(
+                              child: Container(
+                                  child: LoadingFlipping.circle(
+                                borderColor: Colors.blue,
+                                size: 50,
+                                borderSize: 5,
+                              )),
+                            ),
+                          ))
+                        : SliverToBoxAdapter(
+                            child: Container(
+                              height: MediaQuery.of(context).size.height - 200,
+                              child: Center(
+                                child: Container(
+                                  child: Text(
+                                    "No Data Found",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )),
+              ],
+            )
+          : Center(
+              child: Text(
+                "Data Not Found",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ),
     );
   }
 
@@ -251,9 +273,11 @@ class _OffersPageTabState extends State<OffersPageTab>
                       margin: EdgeInsets.only(top: 50),
                       child: Center(
                         child: Container(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator()),
+                            child: LoadingFlipping.circle(
+                          borderColor: Colors.blue,
+                          size: 50,
+                          borderSize: 5,
+                        )),
                       ),
                     ))
                   : SliverToBoxAdapter(
@@ -306,9 +330,11 @@ class _OffersPageTabState extends State<OffersPageTab>
                       margin: EdgeInsets.only(top: 50),
                       child: Center(
                         child: Container(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator()),
+                            child: LoadingFlipping.circle(
+                          borderColor: Colors.blue,
+                          size: 50,
+                          borderSize: 5,
+                        )),
                       ),
                     ))
                   : SliverToBoxAdapter(

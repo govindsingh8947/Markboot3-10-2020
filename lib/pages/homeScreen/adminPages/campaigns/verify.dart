@@ -1,14 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:markBoot/common/commonFunc.dart';
-import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/campaigns/user_list.dart';
-import 'package:markBoot/pages/homeScreen/adminPages/internship_userlist_page.dart';
-import 'package:markBoot/pages/homeScreen/adminPages/taskUserList_page.dart';
-import 'package:markBoot/pages/homeScreen/adminPages/tournament_admin_page.dart';
 
 class verify extends StatefulWidget {
   String path;
@@ -20,15 +15,14 @@ class verify extends StatefulWidget {
 }
 
 class _verifyState extends State<verify> {
-  List<DocumentSnapshot> snapshots=[];
+  List<DocumentSnapshot> snapshots = [];
 
   init() async {
     try {
       print(widget.path);
       snapshots = await CommonFunction().getPost(widget.path);
-      debugPrint("SSNNNNN $snapshots");
       setState(() {});
-      print("len"+"${snapshots.length.toString()}");
+      print("len" + "${snapshots.length.toString()}");
     } catch (e) {
       debugPrint(e.message);
     }
@@ -37,16 +31,16 @@ class _verifyState extends State<verify> {
   @override
   void initState() {
     init();
-    // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    return  snapshots.length!=0
+    return snapshots.length != 0
         ? CustomScrollView(
-      primary: false,
-      slivers: <Widget>[
-        SliverPadding(
+            primary: false,
+            slivers: <Widget>[
+              SliverPadding(
                 padding: const EdgeInsets.all(20),
                 sliver: SliverGrid.count(
                   crossAxisSpacing: 10,
@@ -58,19 +52,26 @@ class _verifyState extends State<verify> {
                   }).toList(),
                 ),
               )
-
-      ],
-    ):Center(child: Text("Data Not found",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),);
+            ],
+          )
+        : Center(
+            child: Text(
+              "Data Not found",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          );
   }
+
   Widget singleCard(DocumentSnapshot snapshot, context, postType, {subtype}) {
-   if( (snapshot["submittedBy"].where((item){
-     if(item["status"]=="applied" || item["status"]=="pending"){
-       return true;
-     }
-     return false;
-   })).length==0){
-     return Text("");
-   }
+    if ((snapshot["submittedBy"].where((item) {
+          if (item["status"] == "applied" || item["status"] == "pending") {
+            return true;
+          }
+          return false;
+        })).length ==
+        0) {
+      return Container();
+    }
     return Stack(
       children: <Widget>[
         Container(
@@ -103,8 +104,10 @@ class _verifyState extends State<verify> {
                               borderRadius: BorderRadius.circular(10),
                               image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image:  // Modified the code here to add the photo
-                                      NetworkImage(snapshot.data["submittedBy"][0]["imgUri"] ?? ""))),
+                                  image: // Modified the code here to add the photo
+                                      NetworkImage(snapshot.data["submittedBy"]
+                                              [0]["imgUri"] ??
+                                          ""))),
                         ),
                       ),
                       Padding(

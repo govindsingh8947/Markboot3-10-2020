@@ -211,25 +211,37 @@ class _EmailSignupState extends State<EmailSignup> {
     );
   }
 
-  signupWithEmail()async {
-    try{
+  signupWithEmail() async {
+    try {
       final String email = emailCont.text.trim();
       final String pass = passCont.text.trim();
-      AuthResult authResult = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: pass);
+      AuthResult authResult = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: pass);
       debugPrint("AUTH RESULT ${authResult.user}");
-      if(authResult.user!=null && authResult.user.isEmailVerified == false) {
-        await authResult.user.sendEmailVerification();
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-          builder: (context) => SignUpPage(user: authResult.user,pass: pass,)
-        ), (route) => false);
+      // if(authResult.user!=null && authResult.user.isEmailVerified == false) {
+      //   await authResult.user.sendEmailVerification();
+      //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+      //     builder: (context) => SignUpPage(user: authResult.user,pass: pass,)
+      //   ), (route) => false);
+      // }
+      if (authResult.user != null) {
+        // await authResult.user.sendEmailVerification();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SignUpPage(
+                      user: authResult.user,
+                      pass: pass,
+                    )),
+            (route) => false);
       }
-    }
-    catch(e) {
+    } catch (e) {
       debugPrint("Exception:(signupWithEmail) -> $e");
-      if(e.toString().contains("ERROR_EMAIL_ALREADY_IN_USE")) {
-        BotToast.showText(text: "The email address is already in use by another account",contentColor: Colors.red);
+      if (e.toString().contains("ERROR_EMAIL_ALREADY_IN_USE")) {
+        BotToast.showText(
+            text: "The email address is already in use by another account",
+            contentColor: Colors.red);
       }
     }
   }
-
 }

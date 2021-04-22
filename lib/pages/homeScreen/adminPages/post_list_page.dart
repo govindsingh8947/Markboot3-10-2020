@@ -1,10 +1,8 @@
-//import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:markBoot/common/commonFunc.dart';
-import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/taskUserList_page.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/tournament_admin_page.dart';
@@ -45,9 +43,6 @@ class _PostListPageState extends State<PostListPage> {
     try {
       print(widget.path);
       snapshots = await CommonFunction().getPost(widget.path);
-
-      //print("Below the awawit");
-      //debugPrint("SSNNNNN $snapshots");
       setState(() {});
     } catch (e) {
       debugPrint("Exception : (init) -> $e");
@@ -103,7 +98,10 @@ class _PostListPageState extends State<PostListPage> {
                           child: Container(
                               width: 30,
                               height: 30,
-                              child: CircularProgressIndicator()),
+                              child: LoadingFlipping.circle(
+                                borderColor: Colors.blue,
+                                borderSize: 5,
+                              )),
                         ),
                       ))
                     : SliverToBoxAdapter(
@@ -129,19 +127,6 @@ class _PostListPageState extends State<PostListPage> {
   }
 
   Widget singleCard(DocumentSnapshot snapshot, context, postType, {subtype}) {
-    //print("snapi=${snapshot["submittedBy"][0]["companyName"]}");
-    //if()
-    //print("${snapshot.documentID} |");
-    //print(snapshot.data);
-    //print(snapshot.data["appliedBy"][0]["companyName"]);
-//   if( (snapshot["submittedBy"].where((item){
-//     if(item["status"]=="applied"){
-//       return true;
-//     }
-//     return false;
-//   })).length==0){
-//     return Text("");
-//   }
     print("Inside here i am ");
     return Stack(
       children: <Widget>[
@@ -170,7 +155,8 @@ class _PostListPageState extends State<PostListPage> {
                                   taskUserList:
                                       snapshot["submittedBy"] ?? new List(),
                                 )));
-                  } else {  // for the gigs page
+                  } else {
+                    // for the gigs page
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -192,28 +178,7 @@ class _PostListPageState extends State<PostListPage> {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-
-                            /// Removed the image from here as per requested!!!
-                            // image: DecorationImage(
-                            //   fit: BoxFit.cover,
-                            //   // image: NetworkImage(
-                            //   //   widget.path.contains("Internship")
-                            //   //       ? snapshot.data["appliedBy"][0]
-                            //   //           ["uploadWorkUri"]
-                            //   //       : snapshot.data["submittedBy"][0]
-                            //   //           ["uploadWorkUri"],
-                            //   // ),
-                            // ),
                           ),
-                          // child: CachedNetworkImage(
-                          //   placeholder: (context, url) => CircularProgressIndicator(),
-                          //   imageUrl: widget.path.contains("Internship")
-                          //       ? snapshot.data["appliedBy"][0]
-                          //   ["uploadWorkUri"]
-                          //       : snapshot.data["submittedBy"][0]
-                          //   ["uploadWorkUri"],
-                          //   fit: BoxFit.cover,
-                          // ),
                         ),
                       ),
                       Padding(

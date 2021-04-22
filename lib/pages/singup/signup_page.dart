@@ -8,7 +8,6 @@ import 'package:markBoot/common/common_widget.dart';
 import 'package:markBoot/common/style.dart';
 import 'package:markBoot/pages/homeScreen/home.dart';
 import 'package:markBoot/pages/singup/verification_confirm.dart';
-import 'package:markBoot/pages/singup/verification_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login_page.dart';
@@ -16,14 +15,14 @@ import 'login_page.dart';
 class SignUpPage extends StatefulWidget {
   FirebaseUser user;
   String pass;
-  SignUpPage({this.user,this.pass});
+  SignUpPage({this.user, this.pass});
 
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  bool isEmail=true;
+  bool isEmail = true;
   TextEditingController nameCont = TextEditingController();
   TextEditingController pass2Cont = TextEditingController();
   TextEditingController emailCont = TextEditingController();
@@ -33,7 +32,7 @@ class _SignUpPageState extends State<SignUpPage> {
   SharedPreferences prefs;
   CommonFunction commonFunction = CommonFunction();
   CommonWidget commonWidget = CommonWidget();
-  var isLoading=false;
+  var isLoading = false;
   // Firebase
   Firestore _firestore = Firestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -109,48 +108,7 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: 10,
               ),
-             Container(
-                   margin: EdgeInsets.only(left: 30, right: 30),
-                   padding: EdgeInsets.only(left: 10, right: 10),
-                   decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(30),
-                     color: Colors.white,
-                   ),
-                   child: TextField(
-                     controller: emailCont,
-                     //textAlign: TextAlign.center,
-                     decoration: InputDecoration(
-                       hintText: isEmail?"Email Id":"Phone No.",
-                       border: InputBorder.none,
-                       contentPadding: EdgeInsets.only(left: 10),
-                       icon: Icon(Icons.email),
-                     ),
-                   )),
-               SizedBox(
-                 height: 10,
-               ),
-               isEmail?Container(
-                   margin: EdgeInsets.only(left: 30, right: 30),
-                   padding: EdgeInsets.only(left: 10, right: 10),
-                   decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(30),
-                     color: Colors.white,
-                   ),
-                   child: TextField(
-                     obscureText: true,
-                     controller: passCont,
-                     //textAlign: TextAlign.center,
-                     decoration: InputDecoration(
-                       hintText: "Enter Password",
-                       border: InputBorder.none,
-                       contentPadding: EdgeInsets.only(left: 10),
-                       icon: Icon(Icons.lock_outline),
-                     ),
-                   )):SizedBox(),
-              SizedBox(
-                height: 10,
-              ),
-              isEmail?Container(
+              Container(
                   margin: EdgeInsets.only(left: 30, right: 30),
                   padding: EdgeInsets.only(left: 10, right: 10),
                   decoration: BoxDecoration(
@@ -158,16 +116,61 @@ class _SignUpPageState extends State<SignUpPage> {
                     color: Colors.white,
                   ),
                   child: TextField(
-                    obscureText: true,
-                    controller: pass2Cont,
+                    controller: emailCont,
                     //textAlign: TextAlign.center,
                     decoration: InputDecoration(
-                      hintText: "Re-enter Password",
+                      hintText: isEmail ? "Email Id" : "Phone No.",
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(left: 10),
-                      icon: Icon(Icons.lock_outline),
+                      icon: Icon(Icons.email),
                     ),
-                  )):SizedBox(),
+                  )),
+              SizedBox(
+                height: 10,
+              ),
+              isEmail
+                  ? Container(
+                      margin: EdgeInsets.only(left: 30, right: 30),
+                      padding: EdgeInsets.only(left: 10, right: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.white,
+                      ),
+                      child: TextField(
+                        obscureText: true,
+                        controller: passCont,
+                        //textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: "Enter Password",
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(left: 10),
+                          icon: Icon(Icons.lock_outline),
+                        ),
+                      ))
+                  : SizedBox(),
+              SizedBox(
+                height: 10,
+              ),
+              isEmail
+                  ? Container(
+                      margin: EdgeInsets.only(left: 30, right: 30),
+                      padding: EdgeInsets.only(left: 10, right: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.white,
+                      ),
+                      child: TextField(
+                        obscureText: true,
+                        controller: pass2Cont,
+                        //textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: "Re-enter Password",
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(left: 10),
+                          icon: Icon(Icons.lock_outline),
+                        ),
+                      ))
+                  : SizedBox(),
               SizedBox(
                 height: 10,
               ),
@@ -191,31 +194,33 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: 10,
               ),
-              isLoading?CircularProgressIndicator()
-              :Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30),
-                  width: 220,
-                  height: 40,
-                  child: RaisedButton(
-                    color: Color(CommonStyle().lightYellowColor),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(60)),
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();  // This is used to hide the keyboard once the signup button is pressed
-                      signUp();
-                    },
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+              isLoading
+                  ? CircularProgressIndicator()
+                  : Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        width: 220,
+                        height: 40,
+                        child: RaisedButton(
+                          color: Color(CommonStyle().lightYellowColor),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(60)),
+                          onPressed: () {
+                            FocusScope.of(context)
+                                .unfocus(); // This is used to hide the keyboard once the signup button is pressed
+                            signUp();
+                          },
+                          child: Text(
+                            "Sign Up",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
               SizedBox(
                 height: 5,
               ),
@@ -247,7 +252,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-
               SizedBox(
                 height: 50,
               )
@@ -257,6 +261,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
+
   Widget appLogo() {
     return Container(
       //height: 50,
@@ -302,18 +307,18 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   signUp() async {
-    if(isEmail) {
+    if (isEmail) {
       var email = emailCont.text.trim();
       var pass1 = passCont.text.trim();
       var pass2 = pass2Cont.text.trim();
       String name = nameCont.text.trim().toString();
       String inviteCode = inviteCodeCont.text.trim().toString();
-      String phoneNo =phoneCont.text.trim().toString();
-      List<DocumentSnapshot> snaps =await CommonFunction().getPost("Users");
+      String phoneNo = phoneCont.text.trim().toString();
+      List<DocumentSnapshot> snaps = await CommonFunction().getPost("Users");
 
       // This function is called always to check if the phone number user entered is not already registered
       for (DocumentSnapshot snap in snaps) {
-        if(snap.documentID=="+91$phoneNo"){
+        if (snap.documentID == "+91$phoneNo") {
           Fluttertoast.showToast(msg: "User already exists try log in");
           return;
         }
@@ -330,8 +335,7 @@ class _SignUpPageState extends State<SignUpPage> {
             backgroundColor: Colors.red,
             textColor: Colors.white);
         return;
-      }
-      else if (email.isEmpty) {
+      } else if (email.isEmpty) {
         Fluttertoast.showToast(
             msg: "Enter email id.",
             backgroundColor: Colors.red,
@@ -343,17 +347,15 @@ class _SignUpPageState extends State<SignUpPage> {
             backgroundColor: Colors.red,
             textColor: Colors.white);
         return;
-      }
-      else {
+      } else {
         if (pass2 == pass1) {
           if (pass1.length < 6) {
-            Fluttertoast.showToast(msg: "please enter a strong password"
-            );
+            Fluttertoast.showToast(msg: "please enter a strong password");
             return;
           }
           try {
             setState(() {
-              isLoading=true;
+              isLoading = true;
             });
             FirebaseAuth auth = FirebaseAuth.instance;
             AuthResult authResult = await auth.createUserWithEmailAndPassword(
@@ -363,48 +365,42 @@ class _SignUpPageState extends State<SignUpPage> {
             try {
               await user.sendEmailVerification();
               Fluttertoast.showToast(
-                  msg: "verification email sent please verify"
-              );
+                  msg: "verification email sent please verify");
               setState(() {
-                isLoading=false;
+                isLoading = false;
               });
               Future.delayed(Duration(seconds: 0), () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                  return VerificationConfirmPage(email,pass1,phoneNo,name,inviteCode: inviteCode);
-                })
-                );
-              }
-              );
-              if(user.isEmailVerified){
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) {
+                  return VerificationConfirmPage(email, pass1, phoneNo, name,
+                      inviteCode: inviteCode);
+                }));
+              });
+              if (user.isEmailVerified) {
                 print("verified");
-              }
-              else{
+              } else {
                 print("not verified");
               }
-            }
-            catch (err) {
+            } catch (err) {
               setState(() {
-                isLoading=false;
+                isLoading = false;
               });
               Fluttertoast.showToast(msg: err.message);
               print(err);
             }
           } catch (err) {
             setState(() {
-              isLoading=false;
+              isLoading = false;
             });
             Fluttertoast.showToast(msg: err.message);
             print(err);
           }
-        }
-        else if (pass1 != pass2) {
-          Fluttertoast.showToast(msg: "Password do not match"
-          );
+        } else if (pass1 != pass2) {
+          Fluttertoast.showToast(msg: "Password do not match");
           return;
         }
       }
-    }
-    else{
+    } else {
       try {
         String name = nameCont.text.trim().toString();
         String phoneNo = emailCont.text.trim().toString();
@@ -438,9 +434,11 @@ class _SignUpPageState extends State<SignUpPage> {
         //  return;
         //}
 
-        if(widget.user.isEmailVerified == false) {
-          AuthResult authResult = await FirebaseAuth.instance.signInWithEmailAndPassword(email: widget.user.email, password: widget.pass);
-          if(authResult.user.isEmailVerified == false) {
+        if (widget.user.isEmailVerified == false) {
+          AuthResult authResult = await FirebaseAuth.instance
+              .signInWithEmailAndPassword(
+                  email: widget.user.email, password: widget.pass);
+          if (authResult.user.isEmailVerified == false) {
             BotToast.showText(text: "Please verify your email id.");
             return;
           }
@@ -450,7 +448,7 @@ class _SignUpPageState extends State<SignUpPage> {
         commonFunction.showProgressDialog(isShowDialog: true, context: context);
 
         DocumentSnapshot snapshot =
-        await _firestore.collection("Users").document("+91$phoneNo").get();
+            await _firestore.collection("Users").document("+91$phoneNo").get();
         debugPrint("SNAPSHOT ${snapshot.exists}");
         if (snapshot.exists == false) {
           prefs.setString("userName", name);
@@ -465,23 +463,25 @@ class _SignUpPageState extends State<SignUpPage> {
             "inviteCode": inviteCode,
             "userId": widget.user.uid.toString()
           };
-          await Firestore.instance.collection("Users").document("+91$phoneNo").setData(userData,merge: true);
+          await Firestore.instance
+              .collection("Users")
+              .document("+91$phoneNo")
+              .setData(userData, merge: true);
           await commonFunction.showProgressDialog(
               isShowDialog: false, context: context);
           prefs.setBool("isLogin", true);
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-              builder: (context) => HomePage()
-          ), (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+              (route) => false);
         } else {
           await commonFunction.showProgressDialog(
               isShowDialog: false, context: context);
           Fluttertoast.showToast(msg: "Mobile no already in used");
         }
-
       } catch (e) {
         debugPrint("Exception : (SignUpService) - ${e.toString()}");
       }
     }
   }
-  }
-
+}

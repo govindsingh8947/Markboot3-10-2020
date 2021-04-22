@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:markBoot/common/style.dart';
-import 'package:markBoot/pages/homeScreen/adminPages/camapign.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/campaigns/campaigns.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/payment_transact.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/post_list_page.dart';
@@ -8,11 +8,9 @@ import 'package:markBoot/pages/homeScreen/adminPages/refer_earn_admin.dart';
 import 'package:markBoot/pages/homeScreen/adminPages/send_emails.dart';
 import 'package:markBoot/pages/singup/intro_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'admin_post_ui.dart';
+import 'admin_post_create.dart';
 import 'amountReqUser_page.dart';
 import 'offers_details_admin.dart';
-import 'refer_earn_admin.dart';
 
 class AdminHomePage extends StatefulWidget {
   @override
@@ -21,8 +19,8 @@ class AdminHomePage extends StatefulWidget {
 
 class _AdminHomePageState extends State<AdminHomePage> {
   List<String> types = ["Gigs", "Offers", "Internship", "Tournament"];
-  String selectedType;
-  String selectedSubType;
+  String selectedType = null;
+  String selectedSubType = null;
   List<String> subTypeList = new List();
 
   @override
@@ -37,14 +35,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
         actions: <Widget>[
-         IconButton(
-           icon: Icon(Icons.email),
-           onPressed: (){
-             Navigator.push(context, MaterialPageRoute(
-               builder: (context) => SendEmailAdmin()
-             ));
-           },
-         ),
+          IconButton(
+            icon: Icon(Icons.email),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SendEmailAdmin()));
+            },
+          ),
           GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -78,9 +75,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        //backgroundColor: Color(CommonStyle().appbarColor),
         backgroundColor: Colors.amber,
         onPressed: () {
+          setState(() {
+            selectedType = null;
+            selectedSubType = null;
+          });
           showPostPopup();
         },
         child: Icon(
@@ -121,24 +121,20 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   action(String path, title) {
-
     // This is for the offers page
     if (path.contains("Cashbacks")) {
-      debugPrint("CCCCCCCCCCCCCCCCCCCCC");
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => offers()));
-    }
-    else if(title.contains("Refer")){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ReferEarn()));
+    } else if (title.contains("Refer")) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ReferEarn()));
     }
 
     // This is for the Campaign page
     else if (title.contains("Campaign")) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Campaigns()));
-
     }
-
     // this will be called for the gigs, Internship and also for the Tournament page
     else {
       Navigator.push(
@@ -146,7 +142,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           MaterialPageRoute(
               builder: (context) => PostListPage(
                     path: path, // Posts/Gigs/Tasks
-                    title: title,  // Gigs for the gigs page
+                    title: title, // Gigs for the gigs page
                   )));
     }
   }
@@ -229,7 +225,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           }
                           Navigator.pop(context);
                           showPostPopup();
-                          setState(() {});
                         },
                         value: selectedType,
                         items: types.map((e) {
@@ -265,7 +260,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           selectedSubType = value;
                           Navigator.pop(context);
                           showPostPopup();
-                          setState(() {});
                         },
                         value: selectedSubType,
                         items: subTypeList.map((e) {
@@ -295,13 +289,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             selectedSubType = "50 on 500";
                           else if (selectedSubType == "Top Offers")
                             selectedSubType = "Coupons";
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddPostAdminPage(
-                                        type: selectedType,
-                                        subtype: selectedSubType,
-                                      )));
+                          if (selectedSubType == null || selectedType == null) {
+                            Fluttertoast.showToast(msg: 'select type');
+                          } else {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddPostAdminPage(
+                                          type: selectedType,
+                                          subtype: selectedSubType,
+                                        )));
+                          }
                         },
                         child: Text("Create"),
                       ),

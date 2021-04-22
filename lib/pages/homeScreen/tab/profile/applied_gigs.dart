@@ -1,11 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:markBoot/common/commonFunc.dart';
-import 'package:markBoot/common/style.dart';
-import 'package:markBoot/pages/homeScreen/adminPages/campaigns/ongoing.dart';
-import 'package:markBoot/pages/homeScreen/adminPages/campaigns/register.dart';
-import 'package:markBoot/pages/homeScreen/adminPages/campaigns/verify.dart';
 import 'package:markBoot/pages/homeScreen/tab/profile/post_list_ui.dart';
 
 class applied_gigs extends StatefulWidget {
